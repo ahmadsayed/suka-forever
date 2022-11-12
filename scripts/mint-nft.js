@@ -59,5 +59,4 @@ async function readURI(tokenid) {
     console.log(data)
   }
   
-//mintNFT()
-readURI(1)
+mintNFT()
