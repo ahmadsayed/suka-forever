@@ -1,0 +1,16 @@
+{
+    "attributes": [
+      {
+        "trait_type": "furniture",
+        "value": "chair"
+      },
+      {
+        "trait_type": "color",
+        "value": "gray"
+      }
+    ],
+    "description": "The world best chair",
+    "image": "ipfs://QmZwHEGxZe7UK4hKxcZdGndVoFvJ9myTqd5voyePc3chgR/1.glb",
+    "name": "chair"
+  }
+  
