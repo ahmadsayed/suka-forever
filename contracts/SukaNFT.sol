@@ -10,14 +10,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract SukaNFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    string greeting;
-
+    uint256 public constant maxSupply = 10000;
     constructor() ERC721("SukaNFT", "SUKA") {}
 
     function mintNFT(address recipient)
         public onlyOwner
         returns (uint256)
     {
+        require (totalSupply() < maxSupply, "Reached NFT max supply");
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
@@ -30,4 +30,7 @@ contract SukaNFT is ERC721URIStorage, Ownable {
         return "ipfs://QmSJGe26DsiRLfM7tryKTFcr1WY81YWMrVFRpRj3TjU8GM/";
     }
 
+    function totalSupply() public view  returns (uint256 supply) {
+        return _tokenIds.current();
+    }
 }
