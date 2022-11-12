@@ -1,14 +1,28 @@
 {
-  "name": "hardhat-project",
+  "name": "suka-forever",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": " NODE_OPTIONS=--experimental-vm-modules  NODE_NO_WARNINGS=1 jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmadsayed/suka-forever.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahmadsayed/suka-forever/issues"
+  },
+  "homepage": "https://github.com/ahmadsayed/suka-forever#readme",
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "@alch/alchemy-web3": "^1.4.7",
-    "@nomiclabs/hardhat-ethers": "^2.2.1",
-    "@nomiclabs/hardhat-etherscan": "^3.1.2",
-    "@nomiclabs/hardhat-truffle5": "^2.0.7",
-    "@openzeppelin/contracts": "^4.8.0",
-    "ethers": "^5.7.2"
+    "jest": "^29.3.1",
+    "supertest": "^6.3.1"
   }
 }
