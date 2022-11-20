@@ -64,7 +64,8 @@ async function fetchAccountData() {
 
   // Get a Web3 instance for the wallet
   const web3 = new Web3(provider);
-  const tokenContract = "0x9b8088C47DCc83987c87ce2C82390630f91d9c7c"
+
+  const tokenContract = (await (await fetch('/api/contract_address')).json()).contract_address;//"0x9b8088C47DCc83987c87ce2C82390630f91d9c7c"
   const tokenURIABI = [
     {
         "inputs": [
@@ -91,7 +92,7 @@ async function fetchAccountData() {
   // Get connected chain id from Ethereum node
   const chainId = await web3.eth.getChainId();
   const message = "Hello World"
-  const chainData = evmChains.getChain(chainId);
+  const chainData = evmChains.getChain(1);
   document.querySelector("#network-name").textContent = chainData.name;
 
   // Get list of accounts of the connected wallet
@@ -115,14 +116,14 @@ async function fetchAccountData() {
 
   // Purge UI elements any previously loaded accounts
   accountContainer.innerHTML = '';
-  const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
+  //const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
 
   // Go through all accounts and get their ETH balance
   const rowResolvers = accounts.map(async (address) => {
     web3.eth.getBalance(address);
     const balance = await web3.eth.getBalance(address);
-    const uri = await contract.methods.tokenURI(1).call();
-    console.log(uri);
+//    const uri = await contract.methods.tokenURI(1).call();
+//    console.log(uri);
 
     // ethBalance is a BigNumber instance
     // https://github.com/indutny/bn.js/

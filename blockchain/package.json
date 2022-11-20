@@ -1,9 +1,13 @@
 {
   "name": "hardhat-project",
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2"
+
   },
-  "scripts": {"hardhat": "node --require esm node_modules/.bin/hardhat"},
+  "scripts": {
+    "hardhat": "node --require esm node_modules/.bin/hardhat"
+  },
   "devDependencies": {
     "@alch/alchemy-web3": "^1.4.7",
     "@nomiclabs/hardhat-ethers": "^2.2.1",

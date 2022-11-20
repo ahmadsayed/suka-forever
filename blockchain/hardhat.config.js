@@ -12,9 +12,10 @@ require("@nomiclabs/hardhat-truffle5");
 const { API_URL, PRIVATE_KEY } = process.env;
 module.exports = {
   solidity: "0.8.17",
-  defaultNetwork: "hardhat",
+  defaultNetwork: "local",
   networks: {
-    hardhat: {},
+    hardhat: {
+    },
     local: {
       url: API_URL,
       accounts: [`0x${PRIVATE_KEY}`]

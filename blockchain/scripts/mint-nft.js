@@ -60,3 +60,4 @@ async function readURI(tokenid) {
   }
   
 mintNFT()
+//readURI(1)

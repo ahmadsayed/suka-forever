@@ -4,6 +4,9 @@ async function main() {
     // Start deployment, returning a promise that resolves to a contract object
     const sukaNFT = await SukaNFT.deploy()
     await sukaNFT.deployed()
+    const network = await ethers.getDefaultProvider().getNetwork();
+    console.log("Network name=", network.name);
+    console.log("Network chain id=", network.chainId);
     console.log("Contract deployed to address:", sukaNFT.address)
 }
 
