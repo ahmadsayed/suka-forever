@@ -85,7 +85,50 @@ async function fetchAccountData() {
         ],
         "stateMutability": "view",
         "type": "function"
-    }
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },   
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenOfOwnerByIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }     
 ];
   console.log("Web3 instance is", web3);
 
@@ -101,29 +144,30 @@ async function fetchAccountData() {
   // MetaMask does not give you all accounts, only the selected account
   console.log("Got accounts", accounts);
   selectedAccount = accounts[0];
-  //let privateKey = "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3"
-  const signature = await web3.eth.personal.sign(web3.utils.sha3(message), selectedAccount);  // Load chain information over an HTTP API
-  console.log(signature);  
-  let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(message) ,signature);
-  console.log(addressx);
-  //const recovered = await web3.eth.recover(signature);
-  //console.log(recovered);
+  //const signature = await web3.eth.personal.sign(web3.utils.sha3(message), selectedAccount);  // Load chain information over an HTTP API
+  //console.log(signature);  
+  //let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(message) ,signature);
+  //console.log(addressx);
   document.querySelector("#selected-account").textContent = selectedAccount;
 
   // Get a handl
   const template = document.querySelector("#template-balance");
   const accountContainer = document.querySelector("#accounts");
+  const nftContainer = document.querySelector("#nft")
 
   // Purge UI elements any previously loaded accounts
   accountContainer.innerHTML = '';
-  //const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
+  nftContainer.innerHTML = '';
+  
+  const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
 
   // Go through all accounts and get their ETH balance
   const rowResolvers = accounts.map(async (address) => {
     web3.eth.getBalance(address);
     const balance = await web3.eth.getBalance(address);
-//    const uri = await contract.methods.tokenURI(1).call();
-//    console.log(uri);
+    console.log(balance);
+    const nftBalance = await contract.methods.balanceOf(address).call();
+    console.log(nftBalance);
 
     // ethBalance is a BigNumber instance
     // https://github.com/indutny/bn.js/
@@ -135,6 +179,20 @@ async function fetchAccountData() {
     clone.querySelector(".balance").textContent = humanFriendlyBalance;
 
     accountContainer.appendChild(clone);
+
+    const nft = template.content.cloneNode(true);
+    nft.querySelector(".address").textContent = "SUKA";
+    nft.querySelector(".balance").textContent = nftBalance;
+    nftContainer.appendChild(nft);
+
+    for (let i = 0; i < nftBalance; i++) { 
+      const nftToken = template.content.cloneNode(true);
+      nftToken.querySelector(".address").textContent = "tokenid/" + i;
+      const tokenid = await contract.methods.tokenOfOwnerByIndex(address, i).call();
+
+      nftToken.querySelector(".balance").textContent = tokenid;
+      nftContainer.appendChild(nftToken);      
+    }
   });
 
   // Because rendering account does its own RPC commucation
