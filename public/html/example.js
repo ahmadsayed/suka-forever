@@ -56,7 +56,13 @@ function init() {
   console.log("Web3Modal instance is", web3Modal);
 }
 
-
+function myFunction(tokenid, account) {
+  //const signature = await web3.eth.personal.sign(web3.utils.sha3(message), selectedAccount);  // Load chain information over an HTTP API
+  //console.log(signature);  
+  //let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(message) ,signature);
+  //console.log(addressx);  
+  console.log(`I am token ${tokenid} Clicked, from Account ${account.toString()}`);
+}
 /**
  * Kick in the UI action after Web3modal dialog has chosen a provider
  */
@@ -135,7 +141,7 @@ async function fetchAccountData() {
   // Get connected chain id from Ethereum node
   const chainId = await web3.eth.getChainId();
   const message = "Hello World"
-  const chainData = evmChains.getChain(1);
+  const chainData = evmChains.getChain(chainId);
   document.querySelector("#network-name").textContent = chainData.name;
 
   // Get list of accounts of the connected wallet
@@ -144,14 +150,13 @@ async function fetchAccountData() {
   // MetaMask does not give you all accounts, only the selected account
   console.log("Got accounts", accounts);
   selectedAccount = accounts[0];
-  //const signature = await web3.eth.personal.sign(web3.utils.sha3(message), selectedAccount);  // Load chain information over an HTTP API
-  //console.log(signature);  
-  //let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(message) ,signature);
-  //console.log(addressx);
+
   document.querySelector("#selected-account").textContent = selectedAccount;
 
   // Get a handl
   const template = document.querySelector("#template-balance");
+  const templateNFT = document.querySelector("#template-nft");
+
   const accountContainer = document.querySelector("#accounts");
   const nftContainer = document.querySelector("#nft")
 
@@ -186,11 +191,17 @@ async function fetchAccountData() {
     nftContainer.appendChild(nft);
 
     for (let i = 0; i < nftBalance; i++) { 
-      const nftToken = template.content.cloneNode(true);
-      nftToken.querySelector(".address").textContent = "tokenid/" + i;
+      const nftToken = templateNFT.content.cloneNode(true);
       const tokenid = await contract.methods.tokenOfOwnerByIndex(address, i).call();
+      nftToken.querySelector(".address").textContent =  tokenid;
+      const tokenURI  = await contract.methods.tokenURI(tokenid).call();
+      nftToken.querySelector(".balance").textContent = tokenURI;
 
-      nftToken.querySelector(".balance").textContent = tokenid;
+      //nftToken.querySelector(".download").innerHTML(`<button onclick="myFunction()">Click me</button>`);
+      let button = document.createElement("button");
+      button.setAttribute("onclick", `myFunction(${tokenid}, "${selectedAccount.toString()}")`);
+      button.textContent = "Download"
+      nftToken.querySelector(".download").appendChild(button);
       nftContainer.appendChild(nftToken);      
     }
   });
