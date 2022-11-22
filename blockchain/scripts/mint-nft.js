@@ -11,7 +11,7 @@ const contract = require("../artifacts/contracts/SukaNFT.sol/SukaNFT.json")
 const contractAddress = CONTRACT_ADDRESS
 const nftContract = new web3.eth.Contract(contract.abi, contractAddress)
 
-async function mintNFT() {
+async function mintNFT(uri) {
   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, "latest") //get latest nonce
   console.log(nonce);
   //the transaction
@@ -20,7 +20,7 @@ async function mintNFT() {
     to: contractAddress,
     nonce: nonce,
     gas: 500000,
-    data: nftContract.methods.mintNFT(PUBLIC_KEY).encodeABI(),
+    data: nftContract.methods.mintNFT(PUBLIC_KEY, uri).encodeABI(),
   }
 
   const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY)
@@ -59,5 +59,7 @@ async function readURI(tokenid) {
     console.log(data)
   }
   
-mintNFT()
+mintNFT("ipfs://QmZD3o5HmeKYCsuFBknp1bWfcS48EMKRWPMrvWPhKNT6Y6/1")
+//mintNFT("ipfs://QmZD3o5HmeKYCsuFBknp1bWfcS48EMKRWPMrvWPhKNT6Y6/2")
+
 //readURI(1)
