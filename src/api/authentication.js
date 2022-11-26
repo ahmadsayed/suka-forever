@@ -51,13 +51,15 @@ export default async function authorize(request, _response, next) {
     // Query the blockchain RPC for the NFT owner
     const contract = new web3.eth.Contract(tokenURIABI, contractAddress);
     const ownerAddress = await contract.methods.ownerOf(parseInt(tokenID)).call();
+    // Logging
+    let addressx = await web3.eth.accounts.recover(message ,signature);
 
     // Ensure the signed message match the owner as per the blockchain
-    let addressx = await web3.eth.accounts.recover(message ,signature);
-    
-    console.log(addressx);
-    console.log(ownerAddress);
-    // set user on-success
-    // always continue to next middleware
+    if (addressx != ownerAddress) {
+        _response.status(403).json({ 
+            error: `Your address ${addressx} does not own token ${tokenID} in contract ${contractAddress}`
+        })
+        return;
+    }
     next();
   }
