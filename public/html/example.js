@@ -3,7 +3,6 @@
 /**
  * Example JavaScript code that interacts with the page and Web3 wallets
  */
-
 // Unpkg imports
 const Web3Modal = window.Web3Modal.default;
 const WalletConnectProvider = window.WalletConnectProvider.default;
@@ -59,15 +58,22 @@ function init() {
 }
 
 async function submitOwnershipProof(tokenid, account, tokenContract) {
-  let message = {
-    tokenid: tokenid,
-    account: account,
-    contract: tokenContract
-  }
-  const signature = await web3.eth.personal.sign(web3.utils.sha3(JSON.stringify(message)), selectedAccount);  // Load chain information over an HTTP API
-  console.log(signature);  
-  let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(JSON.stringify(message)) ,signature);
-  console.log(addressx);  
+  let message = `${tokenid}:${tokenContract}`
+    
+  console.log(JSON.stringify(message));
+  const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
+  let base64message = btoa(message);
+  let base64Signature = btoa(signature);
+  fetch('/api/download', {
+    method: 'GET', 
+    headers: {
+      'authorization':  `Bearer ${base64message}.${base64Signature}`
+    }
+  })
+  .then((response)=> response.json())
+  .then((data)=> console.log(data));
+  //let addressx = await web3.eth.personal.ecRecover(JSON.stringify(message) ,signature);
+  //console.log(addressx);  
   console.log(`I am token ${tokenid} Clicked, Contract ${tokenContract}, owned by Account ${account.toString()} `);
 }
 /**
