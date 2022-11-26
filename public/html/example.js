@@ -21,6 +21,8 @@ let provider;
 let selectedAccount;
 
 
+let web3;
+
 /**
  * Setup the orchestra
  */
@@ -56,12 +58,17 @@ function init() {
   console.log("Web3Modal instance is", web3Modal);
 }
 
-function myFunction(tokenid, account) {
-  //const signature = await web3.eth.personal.sign(web3.utils.sha3(message), selectedAccount);  // Load chain information over an HTTP API
-  //console.log(signature);  
-  //let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(message) ,signature);
-  //console.log(addressx);  
-  console.log(`I am token ${tokenid} Clicked, from Account ${account.toString()}`);
+async function submitOwnershipProof(tokenid, account, tokenContract) {
+  let message = {
+    tokenid: tokenid,
+    account: account,
+    contract: tokenContract
+  }
+  const signature = await web3.eth.personal.sign(web3.utils.sha3(JSON.stringify(message)), selectedAccount);  // Load chain information over an HTTP API
+  console.log(signature);  
+  let addressx = await web3.eth.personal.ecRecover(web3.utils.sha3(JSON.stringify(message)) ,signature);
+  console.log(addressx);  
+  console.log(`I am token ${tokenid} Clicked, Contract ${tokenContract}, owned by Account ${account.toString()} `);
 }
 /**
  * Kick in the UI action after Web3modal dialog has chosen a provider
@@ -69,7 +76,7 @@ function myFunction(tokenid, account) {
 async function fetchAccountData() {
 
   // Get a Web3 instance for the wallet
-  const web3 = new Web3(provider);
+  web3 = new Web3(provider);
 
   const tokenContract = (await (await fetch('/api/contract_address')).json()).contract_address;//"0x9b8088C47DCc83987c87ce2C82390630f91d9c7c"
   const tokenURIABI = [
@@ -197,9 +204,8 @@ async function fetchAccountData() {
       const tokenURI  = await contract.methods.tokenURI(tokenid).call();
       nftToken.querySelector(".balance").textContent = tokenURI;
 
-      //nftToken.querySelector(".download").innerHTML(`<button onclick="myFunction()">Click me</button>`);
       let button = document.createElement("button");
-      button.setAttribute("onclick", `myFunction(${tokenid}, "${selectedAccount.toString()}")`);
+      button.setAttribute("onclick", `submitOwnershipProof(${tokenid}, "${selectedAccount.toString()}", "${tokenContract}")`);
       button.textContent = "Download"
       nftToken.querySelector(".download").appendChild(button);
       nftContainer.appendChild(nftToken);      
