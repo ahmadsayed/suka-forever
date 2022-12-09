@@ -1,7 +1,7 @@
 // Navigation
 nav#mainNav.navbar.navbar-expand-lg.navbar-dark.py-lg-4
     .container
-        a.navbar-brand.text-uppercase.fw-bold.d-lg-none(href='index.html') Start Bootstrap
+        a.navbar-brand.text-uppercase.fw-bold.d-lg-none(href='index.html') SUKA Verse
         button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
         #navbarSupportedContent.collapse.navbar-collapse
@@ -13,4 +13,7 @@ nav#mainNav.navbar.navbar-expand-lg.navbar-dark.py-lg-4
                 li.nav-item.px-lg-4
                     a.nav-link.text-uppercase(href='products.html') Products
                 li.nav-item.px-lg-4
-                    a.nav-link.text-uppercase(href='store.html') Store
+                    div(id="prepare")
+                        button.btn.btn-primary(id='btn-connect') Connect Wallet
+                    div(id="connected" style="display: none")
+                        button.btn.btn-primary(id='btn-disconnect')  Disconnect Wallet

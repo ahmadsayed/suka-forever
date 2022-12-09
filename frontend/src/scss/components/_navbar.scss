@@ -1,7 +1,6 @@
 #mainNav {
     background-color: fade-out($secondary, 0.1);
     font-family: $headings-font-family;
-
     .navbar-brand {
         color: $primary;
     }
@@ -22,8 +21,8 @@
         }
     }
 
-    @media (min-width: 992px) {
-        .navbar-nav {
+    @media (min-width: 992px) {      
+        .navbar-nav {        
             .nav-item {
                 .nav-link {
                     font-size: 0.9rem;
