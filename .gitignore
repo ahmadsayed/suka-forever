@@ -107,4 +107,4 @@ dist
 artifacts
 cache
 
-frontend/dist
+.DS_Store
