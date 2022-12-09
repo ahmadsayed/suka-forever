@@ -1,0 +1,15 @@
+{
+  "attributes": [
+    {
+      "trait_type": "Breed",
+      "value": "Suka"
+    },
+    {
+      "trait_type": "color",
+      "value": "Green"
+    }
+  ],
+  "description": "The world best chair",
+  "animation_url": "ipfs://bafybeifoat553ed2oeauyvjkm3mro6pnq62yiuzdzwditzhtcwfsvmnx3i/green-1.glb",
+  "name": "Goka"
+}

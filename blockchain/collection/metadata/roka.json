@@ -1,0 +1,16 @@
+{
+  "attributes": [
+    {
+      "trait_type": "Breed",
+      "value": "Suka"
+    },
+    {
+      "trait_type": "color",
+      "value": "Red"
+    }
+  ],
+  "description": "The world best chair",
+  "image": "ipfs://QmVifdW3mcgh9JCjk3wmNQMoz5Mnige7yHwNTvoTsAPmYj",
+  "animation_url": "ipfs://bafybeifoat553ed2oeauyvjkm3mro6pnq62yiuzdzwditzhtcwfsvmnx3i/red-1.glb",
+  "name": "Roka"
+}

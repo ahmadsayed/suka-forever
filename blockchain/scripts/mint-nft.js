@@ -58,8 +58,22 @@ async function readURI(tokenid) {
     //const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY)
     console.log(data)
   }
-  
-mintNFT("ipfs://QmZD3o5HmeKYCsuFBknp1bWfcS48EMKRWPMrvWPhKNT6Y6/1")
+ 
+async function mintall () {
+  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/purple-1.json")  
+  await new Promise(resolve => setTimeout(resolve, 50000));
+  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/green-1.json")  
+  await new Promise(resolve => setTimeout(resolve, 50000));
+  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/purple-1.json")
+  await new Promise(resolve => setTimeout(resolve, 50000));
+  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/red-1.json")
+  await new Promise(resolve => setTimeout(resolve, 50000));
+  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/yellow-1.json")
+}
+
+mintNFT("ipfs://QmUMyN4ERfq3ibHBAbYUgkvY3boDCCA3AqSpzKGVcTccmA");
+//mintall();
+
 //mintNFT("ipfs://QmZD3o5HmeKYCsuFBknp1bWfcS48EMKRWPMrvWPhKNT6Y6/2")
 
 //readURI(1)

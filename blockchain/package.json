@@ -5,7 +5,9 @@
     "ethers": "^5.7.2"
   },
   "scripts": {
-    "hardhat": "node --require esm node_modules/.bin/hardhat"
+    "hardhat": "node --require esm node_modules/.bin/hardhat",
+    "test": "npx hardhat --network hardhat test",
+    "deploy": "npx hardhat --network polygon run scripts/deploy.js"
   },
   "devDependencies": {
     "@alch/alchemy-web3": "^1.4.7",

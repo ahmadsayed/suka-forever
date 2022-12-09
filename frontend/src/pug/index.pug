@@ -1,0 +1,42 @@
+doctype html
+html(lang='en')
+
+    head
+
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        meta(name='description', content='')
+        meta(name='author', content='')
+
+        title Business Casual - Start Bootstrap Theme
+
+        link(rel='icon', type='image/x-icon', href='assets/favicon.ico')
+
+        include includes/css
+
+    body
+
+        include includes/header
+
+        include includes/navbar
+
+        section.page-section.clearfix
+            .container-gltf
+                .intro
+                    canvas.intro-img.img-fluid.mb-3.mb-lg-0.rounded(id='renderCanvas')
+
+
+        section.page-section.cta
+            .container
+                .row
+                    .col-xl-9.mx-auto
+                        .cta-inner.bg-faded.text-center.rounded
+                            h2.section-heading.mb-4
+                                span.section-heading-upper Our Promise
+                                span.section-heading-lower To You
+                            p.mb-0
+                                | When you walk into our shop to start your day, we are dedicated to providing you with friendly service, a welcoming atmosphere, and above all else, excellent products made with the highest quality ingredients. If you are not satisfied, please let us know and we will do whatever we can to make things right!
+
+        include includes/footer
+
+        include includes/scripts

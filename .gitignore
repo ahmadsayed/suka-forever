@@ -106,3 +106,5 @@ dist
 # Solidity
 artifacts
 cache
+
+frontend/dist

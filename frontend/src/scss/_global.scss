@@ -1,0 +1,59 @@
+body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('../assets/img/bg.png');
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}
+
+p {
+    line-height: 1.75;
+}
+
+.text-faded {
+    color: lighten($primary, 25%);
+}
+
+.site-heading {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    line-height: 1;
+    font-family: $headings-font-family;
+
+    .site-heading-upper {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .site-heading-lower {
+        font-size: 5rem;
+        font-weight: 100;
+        line-height: 4rem;
+    }
+}
+
+.page-section {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-heading {
+    text-transform: uppercase;
+
+    .section-heading-upper {
+        display: block;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .section-heading-lower {
+        display: block;
+        font-size: 3rem;
+        font-weight: 100;
+    }
+}
+
+.bg-faded {
+    background-color: lighten($primary, 25%);
+}
