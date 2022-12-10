@@ -19,7 +19,7 @@ let web3;
 /**
  * Setup the orchestra
  */
-function init() {
+async function init() {
 
     console.log("Initializing example");
     console.log("WalletConnectProvider is", WalletConnectProvider);
@@ -41,7 +41,6 @@ function init() {
     // like MetaMask, Brave or Opera is added automatically by Web3modal
     const providerOptions = {
     };
-
     web3Modal = new Web3Modal({
         cacheProvider: false, // optional
         providerOptions, // required
@@ -51,6 +50,33 @@ function init() {
     console.log("Web3Modal instance is", web3Modal);
 }
 
+async function switchNetwork(web3) {
+  let mumbaiChainID = 80001;
+  if (window.ethereum.networkVersion !== mumbaiChainID) {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: web3.utils.toHex(mumbaiChainID) }]
+      });
+    } catch (err) {
+        // This error code indicates that the chain has not been added to MetaMask
+      if (err.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainName: 'Polygon Mainnet',
+              chainId: web3.utils.toHex(mumbaiChainID),
+              nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+              rpcUrls: ['https://matic-mumbai.chainstacklabs.com/']
+            }
+          ]
+        });
+      }
+    }
+  }  
+
+}
 /**
  * Kick in the UI action after Web3modal dialog has chosen a provider
  */
@@ -58,7 +84,7 @@ function init() {
 
     // Get a Web3 instance for the wallet
     web3 = new Web3(provider);
-  
+    switchNetwork(web3);
     const tokenContract = (await (await fetch('/api/contract_address')).json()).contract_address;//"0x9b8088C47DCc83987c87ce2C82390630f91d9c7c"
     const tokenURIABI = [
       {
@@ -233,12 +259,14 @@ async function refreshAccountData() {
  * Connect wallet button pressed.
  */
 async function onConnect() {
-
     console.log("Opening a dialog", web3Modal);
+    // Check if Web3 has been injected by the browser (Mist/MetaMask).  
     try {
         provider = await web3Modal.connect();
     } catch (e) {
         console.log("Could not get a wallet connection", e);
+        alert("Could not get a wallet connection");
+
         return;
     }
 

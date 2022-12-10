@@ -39,19 +39,25 @@ function init() {
   //   const alert = document.querySelector("#alert-error-https");
   //   alert.style.display = "block";
   //   document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
-  //   return;
+  //   return;84e0b269fc8648eca8214552083443c1
   //    }
 
   // Tell Web3modal what providers we have available.
   // Built-in web browser provider (only one can exist as a time)
   // like MetaMask, Brave or Opera is added automatically by Web3modal
   const providerOptions = {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        infuraId: "84e0b269fc8648eca8214552083443c1",
+      }
+    },
   };
 
   web3Modal = new Web3Modal({
     cacheProvider: false, // optional
     providerOptions, // required
-    disableInjectedProvider: false, // optional. For MetaMask / Brave / Opera.
+   // disableInjectedProvider: false, // optional. For MetaMask / Brave / Opera.
   });
 
   console.log("Web3Modal instance is", web3Modal);
@@ -153,6 +159,7 @@ async function fetchAccountData() {
 
   // Get connected chain id from Ethereum node
   const chainId = await web3.eth.getChainId();
+
   const message = "Hello World"
   const chainData = evmChains.getChain(chainId);
   document.querySelector("#network-name").textContent = chainData.name;
