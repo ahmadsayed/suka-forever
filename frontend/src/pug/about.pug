@@ -11,7 +11,6 @@ html(lang='en')
         title SUKA Verse
 
         link(rel='icon', type='image/x-icon', href='assets/favicon.ico')
-
         include includes/css
 
     body
@@ -19,24 +18,21 @@ html(lang='en')
         include includes/header
 
         include includes/navbar
-
-        section.page-section.about-heading
+        section.page-section
+        
             .container
-                img.img-fluid.rounded.about-heading-img.mb-3.mb-lg-0(src='assets/img/about.jpg', alt='...')
-                .about-heading-content
-                    .row
-                        .col-xl-9.col-lg-10.mx-auto
-                            .bg-faded.rounded.p-5
-                                h2.section-heading.mb-4
-                                    span.section-heading-upper Strong Coffee, Strong Roots
-                                    span.section-heading-lower About Our Cafe
-                                p
-                                    | Founded in 1987 by the Hernandez brothers, our establishment has been serving up rich coffee sourced from artisan farmers in various regions of South and Central America. We are dedicated to travelling the world, finding the best coffee, and bringing back to you here in our cafe.
+                template#template-balance
+                    .product-item
+                        .product-item-title.d-flex
+                            .bg-faded.p-5.d-flex.ms-auto.rounded
+                                h2.section-heading.mb-0
+                                    span.section-heading-upper A story from the Middleast
+                                    span.section-heading-lower Rema
+                        img.product-item-img.mx-auto.d-flex.rounded-xl.img-fluid.mb-3.mb-lg-0(src='assets/img/rema.jpg' alt='...' style="width:80%")
+                        .product-item-description.d-flex.me-auto
+                            .bg-faded.p-5.rounded
                                 p.mb-0
-                                    | We guarantee that you will fall in 
-                                    em lust
-                                    |  with our decadent blends the moment you walk inside until you finish your last sip. Join us for your daily routine, an outing with friends, or simply just to enjoy some alone time.
-
+                                    | We take pride in our work, and it shows. Every time you order a beverage from us, we guarantee that it will be an experience worth having. Whether it's our world famous Venezuelan Cappuccino, a refreshing iced herbal tea, or something as simple as a cup of speciality sourced black coffee, you will be coming back for more.
         include includes/footer
 
         include includes/scripts
