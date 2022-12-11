@@ -36,7 +36,7 @@ const tokenURIABI = [{
   }];
 // middleware for authentication
 export default async function authorize(request, _response, next) {
-    if (request.path == '/contract_address') {
+    if (request.path != '/download') {
         next();
         return;
     }
