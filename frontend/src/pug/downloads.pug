@@ -15,30 +15,20 @@ html(lang='en')
         include includes/navbar
         section.page-section
             .container
-                div.row
+                div.row#download-row
+                              
+                template#template-downloads
                     div.mb-4.col-sm
-                        .bg-faded.mb-4.px-1.py-lg-4.col-sm.rounded-xl
-                            img.w-100.shadow-1-strong.rounded-xl.mb-4.px-2(src='assets/img/vika-thumbnail.jpg' alt='...')
-                            p.mb-0.px-3
-                                |SUKA SUKA
+                        .bg-faded.mb-4.px-1.py-lg-4.col-sm.rounded-xl(style="width:373px")
+                            img.image-location.shadow-1-strong.rounded-xl.mb-4.px-2(src='assets/img/vika-thumbnail.jpg' style="width:350px; height:350px" alt='...')
+                            table#data
+                                tr
+                                    td
+                                        p.mb-0.px-3.image-description(style="width: 15rem")
+                                            |SUKA SUKA
+                                    td
+                                        button.btn.btn-primary.download-btn Download
 
-                    div.mb-4.col-sm
-                        .bg-faded.mb-4.px-1.py-lg-4.col-sm.rounded-xl            
-                            img.w-100.shadow-1-strong.rounded-xl.mb-4.px-2(src='assets/img/vika-thumbnail.jpg' alt='...')
-                            p.mb-0.px-3
-                                |SUKA SUKA
-                                
-                    div.mb-4.col-sm
-                        .bg-faded.mb-4.px-1.py-lg-4.col-sm.rounded-xl                           
-                            img.w-100.shadow-1-strong.rounded-xl.mb-4.px-2(src='assets/img/vika-thumbnail.jpg' alt='...')
-                            p.mb-0.px-3
-                                |SUKA SUKA
-
-                    div.mb-4.col-sm
-                        .bg-faded.mb-4.px-1.py-lg-4.col-sm.rounded-xl                           
-                            img.w-100.shadow-1-strong.rounded-xl.mb-4.px-2(src='assets/img/vika-thumbnail.jpg' alt='...')
-                            p.mb-0.px-3
-                                |SUKA SUKA                                
         include includes/footer
 
         include includes/scripts

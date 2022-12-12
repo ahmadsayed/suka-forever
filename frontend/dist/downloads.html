@@ -38,32 +38,20 @@
         </nav>
         <section class="page-section">
             <div class="container">
-                <div class="row">
+                <div class="row" id="download-row"></div>
+                <template id="template-downloads">
                     <div class="mb-4 col-sm">
-                        <div class="bg-faded mb-4 px-1 py-lg-4 col-sm rounded-xl">
-                            <img class="w-100 shadow-1-strong rounded-xl mb-4 px-2" src="assets/img/vika-thumbnail.jpg" alt="..." />
-                            <p class="mb-0 px-3">SUKA SUKA</p>
+                        <div class="bg-faded mb-4 px-1 py-lg-4 col-sm rounded-xl" style="width: 373px">
+                            <img class="image-location shadow-1-strong rounded-xl mb-4 px-2" src="assets/img/vika-thumbnail.jpg" style="width: 350px; height: 350px" alt="..." />
+                            <table id="data">
+                                <tr>
+                                    <td><p class="mb-0 px-3 image-description" style="width: 15rem">SUKA SUKA</p></td>
+                                    <td><button class="btn btn-primary download-btn">Download</button></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
-                    <div class="mb-4 col-sm">
-                        <div class="bg-faded mb-4 px-1 py-lg-4 col-sm rounded-xl">
-                            <img class="w-100 shadow-1-strong rounded-xl mb-4 px-2" src="assets/img/vika-thumbnail.jpg" alt="..." />
-                            <p class="mb-0 px-3">SUKA SUKA</p>
-                        </div>
-                    </div>
-                    <div class="mb-4 col-sm">
-                        <div class="bg-faded mb-4 px-1 py-lg-4 col-sm rounded-xl">
-                            <img class="w-100 shadow-1-strong rounded-xl mb-4 px-2" src="assets/img/vika-thumbnail.jpg" alt="..." />
-                            <p class="mb-0 px-3">SUKA SUKA</p>
-                        </div>
-                    </div>
-                    <div class="mb-4 col-sm">
-                        <div class="bg-faded mb-4 px-1 py-lg-4 col-sm rounded-xl">
-                            <img class="w-100 shadow-1-strong rounded-xl mb-4 px-2" src="assets/img/vika-thumbnail.jpg" alt="..." />
-                            <p class="mb-0 px-3">SUKA SUKA</p>
-                        </div>
-                    </div>
-                </div>
+                </template>
             </div>
         </section>
         <footer class="footer text-faded text-center py-5">

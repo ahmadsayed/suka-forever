@@ -1,7 +1,3 @@
-const Web3Modal = window.Web3Modal.default;
-const WalletConnectProvider = window.WalletConnectProvider.default;
-const Fortmatic = window.Fortmatic;
-const evmChains = window.evmChains;
 
 // Web3modal instance
 let web3Modal
@@ -16,10 +12,16 @@ let selectedAccount;
 
 let web3;
 
+let evmChains;
+
 /**
  * Setup the orchestra
  */
 async function init() {
+    const Web3Modal = window.Web3Modal.default;
+    // const WalletConnectProvider = window.WalletConnectProvider.default;
+    // const Fortmatic = window.Fortmatic;
+    evmChains = window.evmChains;
 
     console.log("Initializing example");
     console.log("window.web3 is", window.web3, "window.ethereum is", window.ethereum);
@@ -72,6 +74,19 @@ async function switchNetwork(web3, chainID, chainName, urls) {
             }
         }
     }
+}
+
+function createCatalog(image, name, isCurrentOwnwer) {
+    const template = document.querySelector("#template-downloads");
+    const downloadRow = document.querySelector("#download-row");
+
+
+    const clone = template.content.cloneNode(true);
+    clone.querySelector(".image-location").src = image;
+    clone.querySelector(".image-description").textContent = name;
+    clone.querySelector(".download-btn").style.display = isCurrentOwnwer ? "block" : "none";
+    downloadRow.appendChild(clone);
+
 }
 /**
  * Kick in the UI action after Web3modal dialog has chosen a provider
@@ -152,7 +167,39 @@ async function fetchAccountData() {
             ],
             "stateMutability": "view",
             "type": "function"
-        }
+        },
+        {
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "supply",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+              }
+            ],
+            "name": "ownerOf",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }        
     ];
     console.log("Web3 instance is", web3);
 
@@ -169,66 +216,51 @@ async function fetchAccountData() {
     console.log("Got accounts", accounts);
     selectedAccount = accounts[0];
 
-    //document.querySelector("#selected-account").textContent = selectedAccount;
-
-    // Get a handl
-    // const template = document.querySelector("#template-balance");
-    // const templateNFT = document.querySelector("#template-nft");
-
-    // const accountContainer = document.querySelector("#accounts");
-    // const nftContainer = document.querySelector("#nft")
-
-    // Purge UI elements any previously loaded accounts
-    // accountContainer.innerHTML = '';
-    // nftContainer.innerHTML = '';
-
     const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
+    myNode = document.querySelector("#download-row")
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.lastChild);
+      }
+    const totalSupply = await contract.methods.totalSupply().call();
+    for (let i = 1; i <= totalSupply; i++) {
+        //List all Token
+        const tokenURI = await contract.methods.tokenURI(i).call();
+        console.log(`Token id ${i}, Token URI ${tokenURI}`);
+        metadata = (await (await fetch(`https://cloudflare-ipfs.com/ipfs/${tokenURI.slice(7)}`)).json());
+        imgCID = metadata.image;
+        imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
+        console.log(imageURL);
+        const ownerAddress = await contract.methods.ownerOf(i).call();
+        createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress);
+    }
 
     // Go through all accounts and get their ETH balance
-    const rowResolvers = accounts.map(async (address) => {
-        web3.eth.getBalance(address);
-        const balance = await web3.eth.getBalance(address);
-        console.log(balance);
-        const nftBalance = await contract.methods.balanceOf(address).call();
-        console.log(nftBalance);
+    // const rowResolvers = accounts.map(async (address) => {
+    //     web3.eth.getBalance(address);
+    //     const balance = await web3.eth.getBalance(address);
+    //     console.log(balance);
+    //     const nftBalance = await contract.methods.balanceOf(address).call();
+    //     console.log(nftBalance);
 
-        // ethBalance is a BigNumber instance
-        // https://github.com/indutny/bn.js/
-        const ethBalance = web3.utils.fromWei(balance, "ether");
-        const humanFriendlyBalance = parseFloat(ethBalance).toFixed(4);
-        console.log(humanFriendlyBalance);
-        //Fill in the templated row and put in the document
-        //const clone = template.content.cloneNode(true);
-        //clone.querySelector(".address").textContent = address;
-        //clone.querySelector(".balance").textContent = humanFriendlyBalance;
+    //     // ethBalance is a BigNumber instance
+    //     // https://github.com/indutny/bn.js/
+    //     const ethBalance = web3.utils.fromWei(balance, "ether");
+    //     const humanFriendlyBalance = parseFloat(ethBalance).toFixed(4);
+    //     console.log(humanFriendlyBalance);
 
-        //accountContainer.appendChild(clone);
-
-        //   const nft = template.content.cloneNode(true);
-        //   nft.querySelector(".address").textContent = "SUKA";
-        //   nft.querySelector(".balance").textContent = nftBalance;
-        //   nftContainer.appendChild(nft);
-
-        for (let i = 0; i < nftBalance; i++) {
-            const nftToken = templateNFT.content.cloneNode(true);
-            const tokenid = await contract.methods.tokenOfOwnerByIndex(address, i).call();
-            //nftToken.querySelector(".address").textContent =  tokenid;
-            const tokenURI = await contract.methods.tokenURI(tokenid).call();
-            console.log(tokenURI);
-            //nftToken.querySelector(".balance").textContent = tokenURI;
-
-            // let button = document.createElement("button");
-            // button.setAttribute("onclick", `submitOwnershipProof(${tokenid}, "${selectedAccount.toString()}", "${tokenContract}")`);
-            // button.textContent = "Download"
-            // nftToken.querySelector(".download").appendChild(button);
-            // nftContainer.appendChild(nftToken);      
-        }
-    });
+    //     for (let i = 0; i < nftBalance; i++) {
+    //         const nftToken = templateNFT.content.cloneNode(true);
+    //         const tokenid = await contract.methods.tokenOfOwnerByIndex(address, i).call();
+    //         //nftToken.querySelector(".address").textContent =  tokenid;
+    //         const tokenURI = await contract.methods.tokenURI(tokenid).call();
+    //         console.log(tokenURI);
+    //     }
+    // });
 
     // Because rendering account does its own RPC commucation
     // with Ethereum node, we do not want to display any results
     // until data for all accounts is loaded
-    await Promise.all(rowResolvers);
+    //await Promise.all(rowResolvers);
 
     // Display fully loaded UI for wallet data
     document.querySelector("#prepare").style.display = "none";
@@ -326,5 +358,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
     document.querySelector("#prepare").style.display = "block";
     document.querySelector("#connected").style.display = "none";
+
+
 
 })
