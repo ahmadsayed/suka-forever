@@ -26,6 +26,8 @@ window.addEventListener('DOMContentLoaded', event => {
         let scrollHeight = canvas.scrollHeight;
         let stop = false;
         BABYLON.SceneLoader.ImportMesh("", "/assets/glb/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+            newMeshes.forEach(mesh => {
+            })
             animationGroups.forEach(animation => {
                 animation.stop();
             });

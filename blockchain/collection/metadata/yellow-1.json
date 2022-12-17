@@ -6,10 +6,11 @@
     },
     {
       "trait_type": "color",
-      "value": "yellow"
+      "value": "Yellow"
     }
   ],
-  "description": "The world best chair",
-  "animation_url": "ipfs://bafybeifoat553ed2oeauyvjkm3mro6pnq62yiuzdzwditzhtcwfsvmnx3i/yellow-1.glb",
+  "description": "Yoka is yellow SUKA",
+  "image": "ipfs://QmZYZuXxzZUXxHaZ2G1DUodXLuyabB5gsVPPMPNXmisg3e/yellow-1.jpg",
+  "animation_url": "ipfs://QmZYZuXxzZUXxHaZ2G1DUodXLuyabB5gsVPPMPNXmisg3e/yellow-1.glb",
   "name": "Yoka"
 }

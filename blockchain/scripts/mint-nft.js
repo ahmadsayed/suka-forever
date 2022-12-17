@@ -60,19 +60,19 @@ async function readURI(tokenid) {
   }
  
 async function mintall () {
-  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/purple-1.json")  
+  mintNFT("ipfs://QmYw2Twd9UJ5KVWPj2rHrFAj7SskLmKgPJyTnRCvTZJmpv/purple-1.json")  
   await new Promise(resolve => setTimeout(resolve, 50000));
-  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/green-1.json")  
+  mintNFT("ipfs://QmYw2Twd9UJ5KVWPj2rHrFAj7SskLmKgPJyTnRCvTZJmpv/green-1.json")  
   await new Promise(resolve => setTimeout(resolve, 50000));
-  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/purple-1.json")
+  mintNFT("ipfs://QmYw2Twd9UJ5KVWPj2rHrFAj7SskLmKgPJyTnRCvTZJmpv/purple-1.json")
   await new Promise(resolve => setTimeout(resolve, 50000));
-  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/red-1.json")
+  mintNFT("ipfs://QmYw2Twd9UJ5KVWPj2rHrFAj7SskLmKgPJyTnRCvTZJmpv/red-1.json")
   await new Promise(resolve => setTimeout(resolve, 50000));
-  mintNFT("ipfs://QmabwwUNceMTbNRP5M3TDbW8QR4k3dethxjNDUaQWPFTfk/yellow-1.json")
+  mintNFT("ipfs://QmYw2Twd9UJ5KVWPj2rHrFAj7SskLmKgPJyTnRCvTZJmpv/yellow-1.json")
 }
 
-mintNFT("ipfs://QmUMyN4ERfq3ibHBAbYUgkvY3boDCCA3AqSpzKGVcTccmA");
-//mintall();
+//mintNFT("ipfs://QmUMyN4ERfq3ibHBAbYUgkvY3boDCCA3AqSpzKGVcTccmA");
+mintall();
 
 //mintNFT("ipfs://QmZD3o5HmeKYCsuFBknp1bWfcS48EMKRWPMrvWPhKNT6Y6/2")
 
