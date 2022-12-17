@@ -1,5 +1,6 @@
-FROM node:18.12-alpine3.17
-RUN apk add --update --no-cache python3 make gcc  alpine-sdk &&  mkdir -p /app/frontend && mkdir /app/blockchain/
+FROM node:bullseye
+#RUN apk add --update --no-cache python3 make gcc  alpine-sdk &&  mkdir -p /app/frontend && mkdir /app/blockchain/
+RUN apt update && apt install -y python3 build-essentials
 WORKDIR "/app"
 COPY package.json package.json
 RUN npm install
