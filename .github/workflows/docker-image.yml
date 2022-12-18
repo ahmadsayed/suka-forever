@@ -24,4 +24,4 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}    
     - name: Build the Docker image
-      run: docker buildx build . --file Dockerfile --push --platform=linux/amd64 -t ahmadhassan83/suka-forever:latest
+      run: docker buildx build . --file Dockerfile --push --platform=linux/amd64 -t ahmadhassan83/suka-forever:$(date +%s) 
