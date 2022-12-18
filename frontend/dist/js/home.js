@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', event => {
         // This targets the camera to scene origin
         camera.setTarget(new BABYLON.Vector3(0, 0.2, 0));
     
-    
+
         let scrollHeight = canvas.scrollHeight;
         let stop = false;
         BABYLON.SceneLoader.ImportMesh("", "https://gateway.pinata.cloud/ipfs/QmbqS6iBNdpNL3LLvTTR7HPPFzbf7rr3dXcrsZ7S1H81t2/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {

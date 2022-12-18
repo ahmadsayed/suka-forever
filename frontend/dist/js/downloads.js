@@ -76,7 +76,7 @@ async function switchNetwork(web3, chainID, chainName, urls) {
     }
 }
 
-function createCatalog(image, name, isCurrentOwnwer) {
+function createCatalog(image, name, isCurrentOwnwer, tokenid, tokenContract) {
     const template = document.querySelector("#template-downloads");
     const downloadRow = document.querySelector("#download-row");
 
@@ -84,10 +84,34 @@ function createCatalog(image, name, isCurrentOwnwer) {
     const clone = template.content.cloneNode(true);
     clone.querySelector(".image-location").src = image;
     clone.querySelector(".image-description").textContent = name;
-    clone.querySelector(".download-btn").style.display = isCurrentOwnwer ? "block" : "none";
+    let downloadButton = clone.querySelector(".download-btn");
+    downloadButton.style.display = isCurrentOwnwer ? "block" : "none";
+    downloadButton.setAttribute("onclick", `submitOwnershipProof(${tokenid}, "${selectedAccount.toString()}", "${tokenContract}")`);
+
     downloadRow.appendChild(clone);
 
 }
+
+async function submitOwnershipProof(tokenid, account, tokenContract) {
+    let message = `${tokenid}:${tokenContract}`
+
+    console.log(JSON.stringify(message));
+    const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
+    let base64message = btoa(message);
+    let base64Signature = btoa(signature);
+    fetch('/api/download', {
+        method: 'GET',
+        headers: {
+            'authorization': `Bearer ${base64message}.${base64Signature}`
+        }
+    })
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+    //let addressx = await web3.eth.personal.ecRecover(JSON.stringify(message) ,signature);
+    //console.log(addressx);  
+    console.log(`I am token ${tokenid} Clicked, Contract ${tokenContract}, owned by Account ${account.toString()} `);
+}
+
 /**
  * Kick in the UI action after Web3modal dialog has chosen a provider
  */
@@ -183,23 +207,23 @@ async function fetchAccountData() {
         },
         {
             "inputs": [
-              {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-              }
+                {
+                    "internalType": "uint256",
+                    "name": "tokenId",
+                    "type": "uint256"
+                }
             ],
             "name": "ownerOf",
             "outputs": [
-              {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-              }
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
             ],
             "stateMutability": "view",
             "type": "function"
-        }        
+        }
     ];
     console.log("Web3 instance is", web3);
 
@@ -220,7 +244,7 @@ async function fetchAccountData() {
     myNode = document.querySelector("#download-row")
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
-      }
+    }
     const totalSupply = await contract.methods.totalSupply().call();
     for (let i = 1; i <= totalSupply; i++) {
         //List all Token
@@ -231,7 +255,7 @@ async function fetchAccountData() {
         imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
         console.log(imageURL);
         const ownerAddress = await contract.methods.ownerOf(i).call();
-        createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress);
+        createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
     }
 
     // Go through all accounts and get their ETH balance
@@ -353,6 +377,7 @@ async function onDisconnect() {
 // Highlights current date on contact page
 window.addEventListener('DOMContentLoaded', event => {
     init();
+    onConnect();
     document.querySelector("#btn-connect").addEventListener("click", onConnect);
     document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
 
