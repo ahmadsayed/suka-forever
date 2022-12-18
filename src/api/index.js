@@ -11,6 +11,7 @@ dotenv.config({
 
 const CONTRACT_ADDRESS =  process.env.CONTRACT_ADDRESS
 
+const ASSETS_IPFS = process.env.ASSETS_IPFS
 
 import authenticate from "./authentication.js"; 
 export default () => {
@@ -24,7 +25,7 @@ export default () => {
     api.get('/download', async (req, res) => {
         //let addressx = await web3.eth.accounts.recover(req.body.message ,req.body.signature);
         //console.log(addressx);
-        let zipURL = `https://cloudflare-ipfs.com/ipfs/QmWPV7KiAt9U5UtE4E5Z3a9yPYP4LzqtvY6ENzpMdeLK9o/${res.locals.tokenID}.zip`;
+        let zipURL = `https://cloudflare-ipfs.com/ipfs/${ASSETS_IPFS}/${res.locals.tokenID}.zip`;
         console.log(zipURL);
         request(zipURL).pipe(res);
         // console.log();
