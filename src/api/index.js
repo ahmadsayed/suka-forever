@@ -2,6 +2,7 @@ import { query, Router } from 'express';
 import path from 'path';
 import url from 'url';;
 import * as dotenv from 'dotenv' 
+import  request  from 'request';
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 dotenv.config({
@@ -23,9 +24,13 @@ export default () => {
     api.get('/download', async (req, res) => {
         //let addressx = await web3.eth.accounts.recover(req.body.message ,req.body.signature);
         //console.log(addressx);
-        res.json(JSON.stringify({
-            result: "success"
-        }));
+        let zipURL = `https://cloudflare-ipfs.com/ipfs/QmWPV7KiAt9U5UtE4E5Z3a9yPYP4LzqtvY6ENzpMdeLK9o/${res.locals.tokenID}.zip`;
+        console.log(zipURL);
+        request(zipURL).pipe(res);
+        // console.log();
+        // res.json(JSON.stringify({
+        //     result: "success"
+        // }));
     });
     return api;
 }

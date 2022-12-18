@@ -105,8 +105,16 @@ async function submitOwnershipProof(tokenid, account, tokenContract) {
             'authorization': `Bearer ${base64message}.${base64Signature}`
         }
     })
-        .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then(res => res.blob())
+        .then(blob => {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = `${tokenid}.zip`;
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();    
+            a.remove();  //afterwards we remove the element again 
+        });
     //let addressx = await web3.eth.personal.ecRecover(JSON.stringify(message) ,signature);
     //console.log(addressx);  
     console.log(`I am token ${tokenid} Clicked, Contract ${tokenContract}, owned by Account ${account.toString()} `);
@@ -257,34 +265,6 @@ async function fetchAccountData() {
         const ownerAddress = await contract.methods.ownerOf(i).call();
         createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
     }
-
-    // Go through all accounts and get their ETH balance
-    // const rowResolvers = accounts.map(async (address) => {
-    //     web3.eth.getBalance(address);
-    //     const balance = await web3.eth.getBalance(address);
-    //     console.log(balance);
-    //     const nftBalance = await contract.methods.balanceOf(address).call();
-    //     console.log(nftBalance);
-
-    //     // ethBalance is a BigNumber instance
-    //     // https://github.com/indutny/bn.js/
-    //     const ethBalance = web3.utils.fromWei(balance, "ether");
-    //     const humanFriendlyBalance = parseFloat(ethBalance).toFixed(4);
-    //     console.log(humanFriendlyBalance);
-
-    //     for (let i = 0; i < nftBalance; i++) {
-    //         const nftToken = templateNFT.content.cloneNode(true);
-    //         const tokenid = await contract.methods.tokenOfOwnerByIndex(address, i).call();
-    //         //nftToken.querySelector(".address").textContent =  tokenid;
-    //         const tokenURI = await contract.methods.tokenURI(tokenid).call();
-    //         console.log(tokenURI);
-    //     }
-    // });
-
-    // Because rendering account does its own RPC commucation
-    // with Ethereum node, we do not want to display any results
-    // until data for all accounts is loaded
-    //await Promise.all(rowResolvers);
 
     // Display fully loaded UI for wallet data
     document.querySelector("#prepare").style.display = "none";
