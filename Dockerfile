@@ -6,6 +6,6 @@ COPY package.json package.json
 RUN npm install
 COPY src src
 COPY frontend/dist frontend/dist
-#COPY blockchain/.env blockchain/.env
+COPY blockchain/.env blockchain/.env
 EXPOSE 9090
 CMD node src/index.js
