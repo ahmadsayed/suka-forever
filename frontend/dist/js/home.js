@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
         let scrollHeight = canvas.scrollHeight;
         let stop = false;
-        BABYLON.SceneLoader.ImportMesh("", "https://www.cloudflare.com/ipfs/QmbqS6iBNdpNL3LLvTTR7HPPFzbf7rr3dXcrsZ7S1H81t2/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        BABYLON.SceneLoader.ImportMesh("", "https://www.cloudflare-ipfs.com/ipfs/QmbqS6iBNdpNL3LLvTTR7HPPFzbf7rr3dXcrsZ7S1H81t2/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
             })
             animationGroups.forEach(animation => {
