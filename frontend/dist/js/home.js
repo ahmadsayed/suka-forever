@@ -5,7 +5,23 @@ window.addEventListener('DOMContentLoaded', async event => {
     }
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
-    
+    var loadingScreenDiv = window.document.getElementById("loadingScreen");
+    function customLoadingScreen() {
+        console.log("customLoadingScreen creation")
+    }
+    customLoadingScreen.prototype.displayLoadingUI = function () {
+        console.log("customLoadingScreen loading")
+        loadingScreenDiv.innerHTML = "Blooming ... ";
+    };
+    customLoadingScreen.prototype.hideLoadingUI = function () {
+        console.log("customLoadingScreen loaded")
+        loadingScreenDiv.style.display = "none";
+    };
+    var loadingScreen = new customLoadingScreen();
+    engine.loadingScreen = loadingScreen;
+
+    engine.displayLoadingUI();
+
     var createScene = function () {            
         var scene = new BABYLON.Scene(engine);
     
@@ -22,10 +38,11 @@ window.addEventListener('DOMContentLoaded', async event => {
         //var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 40, new BABYLON.Vector3(0, 0, 0), scene);
         var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2.5, 6.5), scene);
         // This targets the camera to scene origin
-        camera.setTarget(new BABYLON.Vector3(0, 0.2, 0));
-    
-
+        //camera.setTarget(new BABYLON.Vector3(0, 0.2, 0));
         let scrollHeight = canvas.scrollHeight;
+
+        camera.setTarget(new BABYLON.Vector3(0, 0.2 + (this.scrollY / (scrollHeight / 6)), 0));
+
         let stop = false;
         BABYLON.SceneLoader.ImportMesh("", "https://bafybeifzrtovnaq47f3gl6fiafwllf6ayixzbdgysxmbyldlfnky27r4fu.ipfs.w3s.link/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
@@ -33,6 +50,7 @@ window.addEventListener('DOMContentLoaded', async event => {
             animationGroups.forEach(animation => {
                 animation.stop();
             });
+            engine.hideLoadingUI();
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop)
