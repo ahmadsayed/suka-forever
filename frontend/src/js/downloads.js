@@ -132,9 +132,15 @@ async function fetchAccountData() {
     });
 
     if (params.network && params.network == 'live') {
-        switchNetwork(web3, 137, 'Polygon', 'https://polygon-rpc.com')
+        if (window.ethereum.networkVersion !== "137") {
+            switchNetwork(web3, 137, 'Polygon', 'https://polygon-rpc.com');
+            return;
+        }        
     } else {
-        switchNetwork(web3, 80001, 'Mumbai', 'https://matic-mumbai.chainstacklabs.com/');
+        if (window.ethereum.networkVersion !== "80001") {
+            switchNetwork(web3, 80001, 'Mumbai', 'https://matic-mumbai.chainstacklabs.com/');
+            return;
+        }
     }
     const tokenContract = (await (await fetch('/api/contract_address')).json()).contract_address;//"0x9b8088C47DCc83987c87ce2C82390630f91d9c7c"
     const tokenURIABI = [
@@ -290,6 +296,10 @@ async function refreshAccountData() {
     // with Ethereum node via JSON-RPC and loads chain data
     // over an API call.
     document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
+    let myNode = document.querySelector("#download-row")
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.lastChild);
+    }    
     await fetchAccountData(provider);
     document.querySelector("#btn-connect").removeAttribute("disabled")
 }
