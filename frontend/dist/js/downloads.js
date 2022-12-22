@@ -94,8 +94,6 @@ function createCatalog(image, name, isCurrentOwnwer, tokenid, tokenContract) {
 
 async function submitOwnershipProof(tokenid, account, tokenContract) {
     let message = `${tokenid}:${tokenContract}`
-
-    console.log(JSON.stringify(message));
     const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
     let base64message = btoa(message);
     let base64Signature = btoa(signature);
@@ -115,9 +113,6 @@ async function submitOwnershipProof(tokenid, account, tokenContract) {
             a.click();    
             a.remove();  //afterwards we remove the element again 
         });
-    //let addressx = await web3.eth.personal.ecRecover(JSON.stringify(message) ,signature);
-    //console.log(addressx);  
-    console.log(`I am token ${tokenid} Clicked, Contract ${tokenContract}, owned by Account ${account.toString()} `);
 }
 
 /**
@@ -263,11 +258,9 @@ async function fetchAccountData() {
     for (let i = 1; i <= totalSupply; i++) {
         //List all Token
         const tokenURI = await contract.methods.tokenURI(i).call();
-        console.log(`Token id ${i}, Token URI ${tokenURI}`);
         metadata = (await (await fetch(`https://cloudflare-ipfs.com/ipfs/${tokenURI.slice(7)}`)).json());
         imgCID = metadata.image;
         imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
-        console.log(imageURL);
         const ownerAddress = await contract.methods.ownerOf(i).call();
         createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
     }

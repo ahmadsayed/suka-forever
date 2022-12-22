@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.setTarget(new BABYLON.Vector3(0, 0.2 + (this.scrollY / (scrollHeight / 6)), 0));
 
         let stop = false;
-        BABYLON.SceneLoader.ImportMesh("", "https://bafybeifzrtovnaq47f3gl6fiafwllf6ayixzbdgysxmbyldlfnky27r4fu.ipfs.w3s.link/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        BABYLON.SceneLoader.ImportMesh("", "https://bafybeifb3nz6be3fzn7zwt5em72ki6kobca3xzqjkwhss2vywwrnhe4eme.ipfs.w3s.link/ipfs/bafybeifb3nz6be3fzn7zwt5em72ki6kobca3xzqjkwhss2vywwrnhe4eme/", "intro_small.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
             })
             animationGroups.forEach(animation => {
