@@ -1,5 +1,5 @@
 
-window.addEventListener('DOMContentLoaded', async event => {
+window.addEventListener('load', async event => {
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var loadingScreenDiv = window.document.getElementById("loadingScreen");
