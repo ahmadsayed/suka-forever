@@ -6,6 +6,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <script src="js/home.js"></script>
+        <script src="js/team.js"></script>
         <title>SUKA Verse</title>
         <script>
             var loaded = false;
@@ -36,8 +37,8 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="#ourteam">Team</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="about.html">Stories</a></li>
-                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="team.html">Team</a></li>
                         <li class="nav-item px-lg-4">
                             <div id="prepare">
                                 <button class="btn btn-primary" id="btn-connect" onclick="window.location.href='downloads.html'">
@@ -81,6 +82,33 @@
                 </div>
             </div>
         </section>
+        <div class="container mt-4" id="ourteam">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-9 mx-auto">
+                        <div class="cta-inner text-center rounded">
+                            <h2 class="section-heading mb-4"><span class="section-heading-lower" style="color: white !important">Our Team</span></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" id="team-list">
+                <template id="template-team">
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 shadow-lg pt-5 my-5 position-relative">
+                            <div class="card-body p-4">
+                                <div class="member-profile position-absolute w-100 text-center"><img class="rounded-circle mx-auto d-inline-block shadow-sm profile-img" src="assets/img/vika-thumbnail.jpg" alt="" /></div>
+                                <div class="card-text pt-1">
+                                    <h5 class="member-name mb-0 text-center text-primary font-weight-bold profile-name">John Lynch</h5>
+                                    <div class="mb-3 text-center profile-role">Co-founder / CEO</div>
+                                    <div class="profile-description">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Vivamus eget eros vestibulum, accumsan ante viverra, condimentum tellus. Curabitur pellentesque convallis purus non ornare. Donec bibendum sed purus dignissim rutrum. Maecenas bibendum feugiat est, et venenatis nunc.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
         <footer class="footer text-faded text-center py-5">
             <div class="container">
                 <p class="m-0 small">Copyright &copy; SUKA Verse 2022</p>

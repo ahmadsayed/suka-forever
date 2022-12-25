@@ -19,6 +19,8 @@ window.addEventListener('load', async event => {
         loadingScreenDiv.classList.remove("loadingScreen");
         loadingScreenDiv.classList.add("screenContent");
         sideContent.textContent = "SUKA is a person he grows in a flower.";
+        sideContent.style.top = `${this.scrollY/20 + 100}vw` ;
+        sideContent.style.left = `0%`;
         sideContentMiddle.textContent = "He has gold gems  on his tummy";
         sideContentMiddle.style.fontSize = '3vw';
         sideContentMiddle.style.color = 'pink';
@@ -68,9 +70,12 @@ window.addEventListener('load', async event => {
                 let position = this.scrollY;
                 if (!stop) {
                     camera.setTarget(new BABYLON.Vector3(-3, 0 + (position / (scrollHeight / 7)), 0));
-                    let contents = [sideContent, sideContentMiddle, sideContentBottom];
+                    sideContent.style.top = `${this.scrollY/20 + 5}vw`;
+                    sideContent.style.left = `0%`;
+
+                    let contents = [sideContentMiddle, sideContentBottom];
                     contents.forEach((content, index) => {
-                        content.style.top = `${this.scrollY/20}vw`;
+                        content.style.top = `${this.scrollY/20 + 5}vw`;
                         let speed = index + 0.3;
                         let leftPos = (100-(this.scrollY/speed)) <= 0? 0: (100-(this.scrollY/speed));
                         content.style.left = `${leftPos}%`;
