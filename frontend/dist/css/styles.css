@@ -11303,11 +11303,29 @@ body {
   width: 100%;
   height: 100%;
   color: white;
-  font-size: 50px;
+  font-size: 3rem;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.1);
-  opacity: 80%;
   z-index: 9999;
+}
+
+.screenContent {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-size: 2.5vw;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 9999;
+}
+.screenContent p {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  margin-left: 48vw;
+  text-align: center;
+  position: relative;
+  left: 100%;
 }
 
 p {

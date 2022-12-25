@@ -26,12 +26,8 @@ export default () => {
         //let addressx = await web3.eth.accounts.recover(req.body.message ,req.body.signature);
         //console.log(addressx);
         let zipURL = `https://cloudflare-ipfs.com/ipfs/${ASSETS_IPFS}/${res.locals.tokenID}.zip`;
-        console.log(zipURL);
+        console.log(`Address ${res.locals.userAddress} downloaded the assets from ${zipURL}`);
         request(zipURL).pipe(res);
-        // console.log();
-        // res.json(JSON.stringify({
-        //     result: "success"
-        // }));
     });
     return api;
 }

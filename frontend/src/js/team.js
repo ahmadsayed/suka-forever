@@ -7,13 +7,13 @@ window.addEventListener('DOMContentLoaded', event => {
             role: " Co-founder / Artist",
             name: "Khulood Radi",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-            description: "I started as a 3D animator, currently focusing on building real-time models and animation that I can use to create a 3D interactive website."
+            description: "3D animator, currently focusing on building an optimized real-time models and animation that can be used to create a 3D interactive website."
         },
         {
             role: " Co-founder / Developer",
             name: "Ahmed Hassan",
             image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            description: "I am a developer, System Engineer, and Cloud architect exploring how to help contents creator monetize their content in a censorship resistance blockchain-based governed platform."
+            description: "Developer, System Engineer, and Cloud architect exploring how to leverage Web 3.0 in contents creation collaboration and monetization."
         },
     ]
     authors.forEach(profile => {

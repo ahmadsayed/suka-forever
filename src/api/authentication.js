@@ -73,7 +73,8 @@ export default async function authorize(request, _response, next) {
   const ownerAddress = await contract.methods.ownerOf(parseInt(tokenID)).call();
   // Logging
   let addressx = await web3.eth.accounts.recover(message, signature);
-
+  _response.locals.tokenID = tokenID;
+  _response.locals.userAddress = addressx;
   // Ensure the signed message match the owner as per the blockchain
   if (addressx != ownerAddress) {
     _response.status(403).json({
@@ -81,6 +82,6 @@ export default async function authorize(request, _response, next) {
     })
     return;
   } 
-  _response.locals.tokenID = tokenID;
+
   next();
 }

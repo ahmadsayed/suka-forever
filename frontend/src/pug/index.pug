@@ -16,15 +16,17 @@ html(lang='en')
 
     body
 
-        include includes/header
-
         include includes/navbar
 
         section.page-section.clearfix
             #loadingScreen.loadingScreen
+                p#sideContent Blooming ...
+                p#sideContentMiddle 
+                p#sideContentBottom 
+  
             .container-gltf
                 .intro
-                    canvas.intro-img.img-fluid.mb-3.mb-lg-0(id='renderCanvas')
+                    canvas.intro-img.mx-auto.d-flex.rounded-xl.img-fluid.mb-3.mb-lg-0(id='renderCanvas')
         section.page-section.cta
             .container
                 .row
