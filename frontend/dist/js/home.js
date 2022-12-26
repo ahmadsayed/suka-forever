@@ -69,7 +69,9 @@ window.addEventListener('load', async event => {
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop) {
-                    camera.setTarget(new BABYLON.Vector3(-3, 0 + (position / (scrollHeight / 7)), 0));
+                    let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
+                    
+                    camera.setTarget(new BABYLON.Vector3(-3, 0 + pos, 0));
 
                     let contents = [sideContentMiddle, sideContentBottom];
                     sideContent.style.top = `${this.scrollY/20 + 5}vw`;
