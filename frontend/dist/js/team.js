@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', event => {
         {
             role: " Co-founder / Developer",
             name: "Ahmed Hassan",
-            image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             description: "Developer, System Engineer, and Cloud architect exploring how to leverage Web 3.0 in contents creation collaboration and monetization."
         },
     ]
