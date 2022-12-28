@@ -57,7 +57,7 @@ window.addEventListener('load', async event => {
         camera.setTarget(new BABYLON.Vector3(-3, 0 + (this.scrollY / (scrollHeight / 7)), 0));
 
         let stop = false;
-        BABYLON.SceneLoader.ImportMesh("", "https://bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q.ipfs.w3s.link/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
             })
             animationGroups.forEach(animation => {
