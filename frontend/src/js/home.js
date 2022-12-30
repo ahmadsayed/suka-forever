@@ -4,8 +4,11 @@ window.addEventListener('load', async event => {
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var loadingScreenDiv = window.document.getElementById("loadingScreen");
     var sideContent = window.document.getElementById("sideContent");
-    var sideContentMiddle = window.document.getElementById("sideContentMiddle");
-    var sideContentBottom = window.document.getElementById("sideContentBottom");
+    var sukaVerse1 = window.document.getElementById("suka_verse1");
+    var sukaVerse2 = window.document.getElementById("suka_verse2");
+    var sukaVerse3 = window.document.getElementById("suka_verse3");    
+    // var sideContentMiddle = window.document.getElementById("sideContentMiddle");
+    // var sideContentBottom = window.document.getElementById("sideContentBottom");
 
     function customLoadingScreen() {
         console.log("customLoadingScreen creation")
@@ -15,18 +18,20 @@ window.addEventListener('load', async event => {
         //document.querySelector("#navbarSupportedContent").classList.remove("collapse");
     };
     customLoadingScreen.prototype.hideLoadingUI = function () {
+
+
+        // var sukeVerse4 = window.document.getElementById("suka_verse4");
+
+        sukaVerse1.style.display="none";
+        sukaVerse2.style.display="none";
+
+        sukaVerse3.style.display="none";
+        //sukeVerse4.style.display="block";
+
         console.log("customLoadingScreen loaded")
         loadingScreenDiv.classList.remove("loadingScreen");
         loadingScreenDiv.classList.add("screenContent");
-        sideContent.textContent = "SUKA is a person he grows in a flower.";
-        sideContentMiddle.textContent = "He has gold gems  on his tummy";
-        sideContentMiddle.style.fontSize = '3vw';
-        sideContentMiddle.style.color = 'pink';
-        sideContentBottom.textContent = "He has a golden hat";
-        sideContentBottom.style.fontSize = '2.7vw';
-        sideContentBottom.style.color = 'green';
-
-
+        sideContent.style.display='none';
 
         //loadingScreenDiv.style.display = "none";
     };
@@ -64,24 +69,26 @@ window.addEventListener('load', async event => {
                 animation.stop();
             });
             engine.hideLoadingUI();
-            sideContent.style.top = `${this.scrollY/20 + 5}vw`;
-            sideContent.style.left = `0%`;            
+            //sideContent.style.top = `${this.scrollY/20 + 5}vw`;
+            //sideContent.style.left = `0%`;            
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop) {
                     let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
                     
                     camera.setTarget(new BABYLON.Vector3(-3, 0 + pos, 0));
+                    // let contents = [sideContentMiddle, sideContentBottom];
+                    sukaVerse1.style.top = `${2+this.scrollY/15}vw`;
+                    sukaVerse1.style.marginLeft = `${this.scrollY/38+35}vw`;
 
-                    let contents = [sideContentMiddle, sideContentBottom];
-                    sideContent.style.top = `${this.scrollY/20 + 5}vw`;
+                    sukaVerse1.style.height = `${7.5-this.scrollY/150}vw`;
 
-                    contents.forEach((content, index) => {
-                        content.style.top = `${this.scrollY/20 + 5}vw`;
-                        let speed = index + 0.3;
-                        let leftPos = (100-(this.scrollY/speed)) <= 0? 0: (100-(this.scrollY/speed));
-                        content.style.left = `${leftPos}%`;
-                    })
+                    // contents.forEach((content, index) => {
+                    //     content.style.top = `${this.scrollY/20 + 5}vw`;
+                    //     let speed = index + 0.3;
+                    //     let leftPos = (100-(this.scrollY/speed)) <= 0? 0: (100-(this.scrollY/speed));
+                    //     content.style.left = `${leftPos}%`;
+                    // })
 
 
                 }

@@ -4,13 +4,13 @@ window.addEventListener('DOMContentLoaded', event => {
     const teamList = document.querySelector("#team-list");
     const authors = [
         {
-            role: " Co-founder / Artist",
+            role: "Artist",
             name: "Khulood Radi",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
             description: "3D animator, currently focusing on building an optimized real-time models and animation that can be used to create a 3D interactive website."
         },
         {
-            role: " Co-founder / Developer",
+            role: "Developer",
             name: "Ahmed Hassan",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             description: "Developer, System Engineer, and Cloud architect exploring how to leverage Web 3.0 in contents creation collaboration and monetization."

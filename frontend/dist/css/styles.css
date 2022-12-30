@@ -11327,6 +11327,12 @@ body {
   position: relative;
   left: 100%;
 }
+.screenContent img {
+  position: relative;
+  height: 7.5vw;
+  margin-top: 2vw;
+  margin-left: 35vw;
+}
 
 p {
   line-height: 1.75;

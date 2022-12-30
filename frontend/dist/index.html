@@ -15,8 +15,8 @@
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
-        <!--link(href='css/styles.css', rel='stylesheet')-->
-        <link href="https://cloudflare-ipfs.com/ipfs/bafybeidd66hlnvnf6jfymvuouw6gfuf2q43igirzmup6llwmynhwlrdx3u/styles.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <!--link(href='https://cloudflare-ipfs.com/ipfs/bafybeidd66hlnvnf6jfymvuouw6gfuf2q43igirzmup6llwmynhwlrdx3u/styles.css', rel='stylesheet')-->
         <!-- Babylon JS-->
         <script defer src="https://cdn.babylonjs.com/babylon.js" onload="loaded=true;"></script>
         <script defer src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
@@ -39,6 +39,7 @@
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#ourteam">Team</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#gallery">Gallery</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="about.html">Stories</a></li>
                         <li class="nav-item px-lg-4">
                             <div id="prepare">
@@ -60,15 +61,16 @@
         </nav>
         <section class="page-section clearfix">
             <div class="loadingScreen" id="loadingScreen">
+                <img id="suka_verse1" src="assets/img/sukaverse.svg" style="display: none" />
+                <img id="suka_verse2" src="assets/img/clean_slate.svg" style="display: none" />
+                <img id="suka_verse3" src="assets/img/whereMinds.svg" style="display: none" />
                 <p id="sideContent">Blooming ...</p>
-                <p id="sideContentMiddle"></p>
-                <p id="sideContentBottom"></p>
             </div>
             <div class="container-gltf">
                 <div class="intro"><canvas class="intro-img mx-auto d-flex rounded-xl img-fluid mb-3 mb-lg-0" id="renderCanvas"></canvas></div>
             </div>
         </section>
-        <section class="page-section cta">
+        <section class="page-section cta" style="background-color: #8b5973">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
@@ -110,6 +112,33 @@
                 </template>
             </div>
         </div>
+        <section class="page-section" id="gallery" style="background-color: #1d1d1d">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-9 mx-auto">
+                        <div class="cta-inner text-center rounded">
+                            <h2 class="section-heading mt-4"><span class="section-heading-lower" style="color: white !important">GALLERY</span></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmXoxjZSEN7mvZE51gSuoNE41zbhSB86194CxDFyYwPvX4?filename=900x600.jpg" alt="Boat on Calm Water" />
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmYikNKQYAZE4KpVj7EhxbgBH4vwgShRdLN456Cjnqsyww?filename=300x300.jpg" alt="Wintry Mountain Landscape" />
+                    </div>
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmSqUc7mHY9EikpwQqNW5PhawUESaxukDpP69mhj57Hzp5?filename=300x300.jpg" alt="Mountains in the Clouds" />
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmR6omxqY1JAKq96kVrG8Vz9tku45VyuhmT2fPje9JDsHM?filename=900x600.jpg" alt="Boat on Calm Water" />
+                    </div>
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmVw4GrmA5T9wtXJDtyyuuCVZvkiwQA5QkdYRhCoNC1Lj5?filename=900x600.jpg" alt="Waves at Sea" />
+                        <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmWg2R35fKVWaJa7UhCqr58fH8LK592GTTkjMpL8pkevfb?filename=300x300.jpg" alt="Yosemite National Park" />
+                    </div>
+                </div>
+            </div>
+        </section>
         <footer class="footer text-faded text-center py-5">
             <div class="container">
                 <p class="m-0 small">Copyright &copy; SUKA Verse 2022</p>
