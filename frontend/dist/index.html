@@ -7,6 +7,7 @@
         <meta name="author" content="" />
         <script src="js/home.js"></script>
         <script src="js/team.js"></script>
+        <script src="js/faq.js"></script>
         <title>SUKA Verse</title>
         <script>
             var loaded = false;
@@ -40,6 +41,7 @@
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#ourteam">Team</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#gallery">Gallery</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#faq">FAQ</a></li>
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="about.html">Stories</a></li>
                         <li class="nav-item px-lg-4">
                             <div id="prepare">
@@ -70,7 +72,7 @@
                 <div class="intro"><canvas class="intro-img mx-auto d-flex rounded-xl img-fluid mb-3 mb-lg-0" id="renderCanvas"></canvas></div>
             </div>
         </section>
-        <section class="page-section cta" style="background-color: #8b5973">
+        <section class="page-section cta" style="background-color: #545e95">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
@@ -136,6 +138,28 @@
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmVw4GrmA5T9wtXJDtyyuuCVZvkiwQA5QkdYRhCoNC1Lj5?filename=900x600.jpg" alt="Waves at Sea" />
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://cloudflare-ipfs.com/ipfs/QmWg2R35fKVWaJa7UhCqr58fH8LK592GTTkjMpL8pkevfb?filename=300x300.jpg" alt="Yosemite National Park" />
                     </div>
+                </div>
+            </div>
+        </section>
+        <section class="page-section bg-faded" id="faq">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-9 mx-auto">
+                        <div class="cta-inner text-center rounded">
+                            <h2 class="section-heading mt-4"><span class="section-heading-lower">FAQ</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center mb-5">Find the answers for the most frequently asked questions below</p>
+            </div>
+            <div class="container mt-4">
+                <div class="row" id="faq-list">
+                    <template id="template-faq">
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <h6 class="mb-3 text-primary"><i class="far fa-paper-plane text-primary pe-2 question"></i></h6>
+                            <p class="answer"></p>
+                        </div>
+                    </template>
                 </div>
             </div>
         </section>
