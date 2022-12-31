@@ -22,7 +22,11 @@ window.addEventListener('DOMContentLoaded', event => {
         {
             question: "What is the future of SukaVerse?",
             answer: "We have yet to publish a roadmap. We are enhancing our dApp, enabling users to customize and mint their SUKA. The original SUKA collection is limited to 1000 and will be only our artist's takes on their craft."
-        },     
+        },
+        {
+            question: "What do we mean by WEB 2.5?",
+            answer: "We use the WEB 3.0 eco-system, currently only Polygon network and IPFS, for identity verification and storing the assets. Still, the website is hosted and managed by SUKA-Verse Team."
+        }
     ]
     faqs.forEach(faq => {
         const clone = template.content.cloneNode(true);
