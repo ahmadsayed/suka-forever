@@ -67,7 +67,7 @@ async function switchNetwork(web3, chainID, chainName, urls) {
                             chainName: chainName,
                             chainId: web3.utils.toHex(chainID),
                             nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
-                            rpcUrls: [urls]//https://matic-mumbai.chainstacklabs.com/']
+                            rpcUrls: [urls]//https://rpc-mumbai.matic.today/']
                         }
                     ]
                 });
@@ -110,7 +110,7 @@ async function submitOwnershipProof(tokenid, account, tokenContract) {
             a.href = url;
             a.download = `${tokenid}.zip`;
             document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-            a.click();    
+            a.click();
             a.remove();  //afterwards we remove the element again 
         });
 }
@@ -130,10 +130,10 @@ async function fetchAccountData() {
         if (window.ethereum.networkVersion !== "137") {
             switchNetwork(web3, 137, 'Polygon', 'https://polygon-rpc.com');
             return;
-        }        
+        }
     } else {
         if (window.ethereum.networkVersion !== "80001") {
-            switchNetwork(web3, 80001, 'Mumbai', 'https://matic-mumbai.chainstacklabs.com/');
+            switchNetwork(web3, 80001, 'Mumbai', 'https://rpc-mumbai.matic.today/');
             return;
         }
     }
@@ -257,12 +257,16 @@ async function fetchAccountData() {
     const totalSupply = await contract.methods.totalSupply().call();
     for (let i = 1; i <= totalSupply; i++) {
         //List all Token
-        const tokenURI = await contract.methods.tokenURI(i).call();
-        metadata = (await (await fetch(`https://cloudflare-ipfs.com/ipfs/${tokenURI.slice(7)}`)).json());
-        imgCID = metadata.image;
-        imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
-        const ownerAddress = await contract.methods.ownerOf(i).call();
-        createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
+        contract.methods.tokenURI(i).call().then(tokenURI => {
+            fetch(`https://cloudflare-ipfs.com/ipfs/${tokenURI.slice(7)}`)
+                .then(res => res.json())
+                .then(async (metadata) => {
+                    const imgCID = metadata.image;
+                    const imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
+                    const ownerAddress = await contract.methods.ownerOf(i).call();
+                    createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
+                });
+        });
     }
 
     // Display fully loaded UI for wallet data
@@ -292,7 +296,7 @@ async function refreshAccountData() {
     let myNode = document.querySelector("#download-row")
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
-    }    
+    }
     await fetchAccountData(provider);
     document.querySelector("#btn-connect").removeAttribute("disabled")
 }

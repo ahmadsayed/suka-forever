@@ -53,17 +53,30 @@ window.addEventListener('load', async event => {
         });
         //scene.ambientColor = BABYLON.Color3.White();
         scene.clearColor = new BABYLON.Color4(0.0, 0.0, 0.0, 0.0);
-        //var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 40, new BABYLON.Vector3(0, 0, 0), scene);
-        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(2, 2.5, 7.5), scene);
+        var degress = Math.PI / 360;
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2 , Math.PI/2, 10, new BABYLON.Vector3(0, 0, 0 ), scene);
+        camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+        //camera.setPosition  (new BABYLON.Vector3(20, 0 , 10));
+
+
+        //var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(2, 2.5, 8.0), scene);
         // This targets the camera to scene origin
         //camera.setTarget(new BABYLON.Vector3(0, 0.2, 0));
         let scrollHeight = canvas.scrollHeight;
-
-        camera.setTarget(new BABYLON.Vector3(-3, 0 + (this.scrollY / (scrollHeight / 7)), 0));
+       // camera.setPosition(new BABYLON.Vector3(2, 0, 8));
+       // camera.setTarget(new BABYLON.Vector3(0, 0 , 0));
 
         let stop = false;
-        BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        //BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        BABYLON.SceneLoader.ImportMesh("", "assets/glb/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {            
+            let root = null
             newMeshes.forEach(mesh => {
+                if (mesh.name == "__root__") {
+                    root = mesh;
+                   // mesh.position = (new BABYLON.Vector3(0, 0, 0))
+
+                }
+
             })
             animationGroups.forEach(animation => {
                 animation.stop();
@@ -75,13 +88,12 @@ window.addEventListener('load', async event => {
                 let position = this.scrollY;
                 if (!stop) {
                     let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
-                    
-                    camera.setTarget(new BABYLON.Vector3(-3, 0 + pos, 0));
-                    // let contents = [sideContentMiddle, sideContentBottom];
-                    sukaVerse1.style.top = `${2+this.scrollY/15}vw`;
-                    sukaVerse1.style.marginLeft = `${this.scrollY/38+35}vw`;
+                    console.log(root);
+                    root.position.y = - pos;
 
-                    sukaVerse1.style.height = `${7.5-this.scrollY/150}vw`;
+
+                    // let contents = [sideContentMiddle, sideContentBottom];
+
 
                     // contents.forEach((content, index) => {
                     //     content.style.top = `${this.scrollY/20 + 5}vw`;
@@ -105,6 +117,8 @@ window.addEventListener('load', async event => {
                 });
             });
         });
+        camera.attachControl(canvas, true);
+
         return scene;
     };
     
