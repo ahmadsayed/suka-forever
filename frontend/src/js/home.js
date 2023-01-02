@@ -22,7 +22,7 @@ window.addEventListener('load', async event => {
 
         // var sukeVerse4 = window.document.getElementById("suka_verse4");
 
-        sukaVerse1.style.display="none";
+        sukaVerse1.style.display="block";
         sukaVerse2.style.display="none";
 
         sukaVerse3.style.display="none";
@@ -53,18 +53,9 @@ window.addEventListener('load', async event => {
         });
         //scene.ambientColor = BABYLON.Color3.White();
         scene.clearColor = new BABYLON.Color4(0.0, 0.0, 0.0, 0.0);
-        var degress = Math.PI / 360;
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2 , Math.PI/2, 10, new BABYLON.Vector3(0, 0, 0 ), scene);
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2 , Math.PI/2, 8.5, new BABYLON.Vector3(0, 0, 0 ), scene);
         camera.setTarget(new BABYLON.Vector3(0, 0, 0));
-        //camera.setPosition  (new BABYLON.Vector3(20, 0 , 10));
-
-
-        //var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(2, 2.5, 8.0), scene);
-        // This targets the camera to scene origin
-        //camera.setTarget(new BABYLON.Vector3(0, 0.2, 0));
         let scrollHeight = canvas.scrollHeight;
-       // camera.setPosition(new BABYLON.Vector3(2, 0, 8));
-       // camera.setTarget(new BABYLON.Vector3(0, 0 , 0));
 
         let stop = false;
         //BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
@@ -73,8 +64,6 @@ window.addEventListener('load', async event => {
             newMeshes.forEach(mesh => {
                 if (mesh.name == "__root__") {
                     root = mesh;
-                   // mesh.position = (new BABYLON.Vector3(0, 0, 0))
-
                 }
 
             })
@@ -82,14 +71,15 @@ window.addEventListener('load', async event => {
                 animation.stop();
             });
             engine.hideLoadingUI();
-            //sideContent.style.top = `${this.scrollY/20 + 5}vw`;
-            //sideContent.style.left = `0%`;            
+            sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
+          
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop) {
                     let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
                     console.log(root);
                     root.position.y = - pos;
+                    sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
 
 
                     // let contents = [sideContentMiddle, sideContentBottom];
@@ -117,7 +107,6 @@ window.addEventListener('load', async event => {
                 });
             });
         });
-        camera.attachControl(canvas, true);
 
         return scene;
     };
