@@ -23,7 +23,7 @@ window.addEventListener('load', async event => {
         // var sukeVerse4 = window.document.getElementById("suka_verse4");
 
         sukaVerse1.style.display="block";
-        sukaVerse2.style.display="none";
+        sukaVerse2.style.display="block";
 
         sukaVerse3.style.display="none";
         //sukeVerse4.style.display="block";
@@ -72,7 +72,8 @@ window.addEventListener('load', async event => {
             });
             engine.hideLoadingUI();
             sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
-          
+            sukaVerse2.style.top = `${this.scrollY/20 + 6}vw`;
+
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop) {
@@ -81,6 +82,7 @@ window.addEventListener('load', async event => {
                     root.position.y = - pos;
                     sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
 
+                    sukaVerse2.style.top = `${this.scrollY/20 + 6}vw`;
 
                     // let contents = [sideContentMiddle, sideContentBottom];
 
