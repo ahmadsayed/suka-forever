@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', event => {
         {
             brief: "A story from the India",
             name: "Muka",
-            image: "https://cloudflare-ipfs.com/ipfs/QmXoxjZSEN7mvZE51gSuoNE41zbhSB86194CxDFyYwPvX4?filename=900x600.jpg",
+            image: "https://cloudflare-ipfs.com/ipfs/QmfRJ2Hq45CtDMhku1MvByLvHTQS5oaUA7CNpz2gkwzQr5?filename=muka600x900_BG1.jpg",
             story: "Diwali, Dewali, Divali, or Deepavali, also known as the Festival of Lights, related to Jain Diwali, Bandi Chhor Divas, Tihar, Swanti, Sohrai, and Bandna, is a Dharmic religious celebration and one of the most important festivals within Hinduism."
  
         },

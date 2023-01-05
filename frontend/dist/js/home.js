@@ -53,7 +53,7 @@ window.addEventListener('load', async event => {
         });
         //scene.ambientColor = BABYLON.Color3.White();
         scene.clearColor = new BABYLON.Color4(0.0, 0.0, 0.0, 0.0);
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2 , Math.PI/2, 8.5, new BABYLON.Vector3(0, 0, 0 ), scene);
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2 , Math.PI/2, 10, new BABYLON.Vector3(0, 0, 0 ), scene);
         camera.setTarget(new BABYLON.Vector3(0, 0, 0));
         let scrollHeight = canvas.scrollHeight;
 
@@ -71,18 +71,20 @@ window.addEventListener('load', async event => {
                 animation.stop();
             });
             engine.hideLoadingUI();
-            sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
-            sukaVerse2.style.top = `${this.scrollY/20 + 6}vw`;
+            sukaVerse1.style.top = `${this.scrollY/20 + 0}vw`;
+            sukaVerse1.style.left = `-10vw`;
 
+            sukaVerse2.style.top = `${this.scrollY/20 + 2}vw`;
+            sukaVerse2.style.left = `6vw`
             window.addEventListener("scroll", (event) => {
                 let position = this.scrollY;
                 if (!stop) {
                     let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
                     console.log(root);
                     root.position.y = - pos;
-                    sukaVerse1.style.top = `${this.scrollY/20 + 5}vw`;
+                    sukaVerse1.style.top = `${this.scrollY/20 + 0}vw`;
 
-                    sukaVerse2.style.top = `${this.scrollY/20 + 6}vw`;
+                    sukaVerse2.style.top = `${this.scrollY/20 + 2}vw`;
 
                     // let contents = [sideContentMiddle, sideContentBottom];
 
@@ -99,7 +101,7 @@ window.addEventListener('load', async event => {
 
                 //camera.position.y = camera.position.y + (position/(scrollHeight/6))
                 animationGroups.forEach(animation => {
-                    let key = ((position / scrollHeight) * animation.to) * 3
+                    let key = ((position / scrollHeight) * animation.to) * 3;
                     if (key < animation.to && key > 0) {
                         stop = false;
                         animation.start(false, 1, key, key, false);
