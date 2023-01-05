@@ -23,7 +23,6 @@ async function init() {
     // const Fortmatic = window.Fortmatic;
     evmChains = window.evmChains;
 
-    console.log("Initializing example");
     console.log("window.web3 is", window.web3, "window.ethereum is", window.ethereum);
 
     // Check that the web page is run in a secure context,

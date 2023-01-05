@@ -80,7 +80,6 @@ window.addEventListener('load', async event => {
                 let position = this.scrollY;
                 if (!stop) {
                     let pos =  (position / (scrollHeight / 7)) > 2.4 ? 2.4 :  (position / (scrollHeight / 7)) ;
-                    console.log(root);
                     root.position.y = - pos;
                     sukaVerse1.style.top = `${this.scrollY/20 + 0}vw`;
 
