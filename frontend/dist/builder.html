@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>SUKA Verse</title>
+        <script src="js/builder.js"></script>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!--link(href='https://cloudflare-ipfs.com/ipfs/bafybeidd66hlnvnf6jfymvuouw6gfuf2q43igirzmup6llwmynhwlrdx3u/styles.css', rel='stylesheet')-->
+        <!-- Babylon JS-->
+        <script defer src="https://cdn.babylonjs.com/babylon.js" onload="loaded=true;"></script>
+        <script defer src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+        <script defer src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+        <script defer src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
+        <script defer src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
+        <script defer src="https://unpkg.com/evm-chains@0.2.0/dist/umd/index.min.js"></script>
+        <script defer src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
+        <script defer src="https://unpkg.com/fortmatic@2.0.6/dist/fortmatic.js"></script>
+        <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark px-4">
+            <img src="assets/img/logo.svg" style="width: 15vw" />
+            <div class="div" style="margin-right: revert; margin-left: auto">
+                <a class="navbar-brand text-uppercase fw-bold d-lg-none" href="index.html">SUKA Verse</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#ourteam">Team</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#gallery">Gallery</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html#faq">FAQ</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="about.html">Stories</a></li>
+                        <li class="nav-item px-lg-4">
+                            <div id="prepare">
+                                <button class="btn btn-primary" id="btn-connect" onclick="window.location.href='downloads.html'">
+                                    <svg class="bi bi-wallet2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 20 20"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path></svg>
+                                    <a>Connect dApp</a>
+                                </button>
+                            </div>
+                            <div id="connected" style="display: none">
+                                <button class="btn btn-primary" id="btn-disconnect">
+                                    <svg class="bi bi-wallet2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 20 20"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path></svg>
+                                    <a>Disconnect dApp</a>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section class="page-section clearfix mt-0">
+            <div class="container-gltf mx-4">
+                <div class="intro mx-4"><canvas class="intro-img mx-auto d-flex rounded-xl img-fluid mb-3 mb-lg-0" id="renderCanvas"></canvas></div>
+            </div>
+        </section>
+        <footer class="footer text-faded text-center py-5">
+            <div class="container">
+                <p class="m-0 small">Copyright &copy; SUKA Verse 2022</p>
+                <p class="m-0 small">Contact: contacts@sukaverse.club</p>
+            </div>
+        </footer>
+        <!-- Core theme JS-->
+        <script defer src="js/scripts.js"></script>
+    </body>
+</html>
