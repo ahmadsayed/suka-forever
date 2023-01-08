@@ -1,8 +1,24 @@
 window.addEventListener('DOMContentLoaded', event => {
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
-    var createScene = function () {
-        var scene = new BABYLON.Scene(engine);
+    var scene = new BABYLON.Scene(engine);
+    var advancedTexture = null;
+
+    function createMenu() {
+        const width = 100;
+        const height = 50;
+        var downloadButton = BABYLON.GUI.Button.CreateImageButton("downlaod", "Download", "assets/img/download.png");
+        downloadButton.width = `${width}px`;
+        downloadButton.height = `${height}px`;
+        downloadButton.color = "white";
+        downloadButton.fontSize = 15;
+        downloadButton.background = "gray";
+        downloadButton.top = (window.innerHeight / 2) - height * 3;
+        downloadButton.left = -width;
+        advancedTexture.addControl(downloadButton);
+    }
+
+    function createScene() {
 
         var environment = scene.createDefaultEnvironment({
             createSkybox: false,
@@ -17,11 +33,11 @@ window.addEventListener('DOMContentLoaded', event => {
         });
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
-
+        advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         return scene;
     };
-    const scene = createScene(); //Call the createScene function
-
+    createScene(); 
+    createMenu(); 
     // Register a render loop to repeatedly render the scene
     engine.runRenderLoop(function () {
         scene.render();
