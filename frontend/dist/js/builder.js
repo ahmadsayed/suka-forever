@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var scene = new BABYLON.Scene(engine);
     var advancedTexture = null;
-    const WIDTH = 100, HEIGHT=50, TOP_FACTOR=0.9;
+    const WIDTH = 100, HEIGHT=50, TOP_FACTOR=1;
     var button = BABYLON.GUI.Button.CreateImageButton("downlaod", "Download", "assets/img/download.png");
     var picker = null;
     var pickerTitle = null;
@@ -61,7 +61,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         button.color = "white";
         button.fontSize = 15;
         button.background = "gray";
-        button.top = (window.innerHeight / 2) - WIDTH * TOP_FACTOR;
+        button.top = (canvas.height / 2) - (HEIGHT * TOP_FACTOR);
         button.left = index * WIDTH;
         button.onPointerClickObservable.add(() => {
             //  window.location.reload();
@@ -74,8 +74,8 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     function resize(button, index) {
 
-        button.top = (window.innerHeight / 2) - HEIGHT * TOP_FACTOR;
-        button.left = index * WIDTH;
+        button.top = (canvas.height / 2)- (HEIGHT * TOP_FACTOR); ;
+       // button.left = index * WIDTH;
 
     }
 
@@ -127,7 +127,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         // We try to pick an object
         if (pickResult.hit) {
             // pickResult.pickedMesh.name;
-            console.log(pickResult.pickedMesh.material);
             showPicker(pickResult.pickedMesh);
         }  else {
             hidePicker();
@@ -146,7 +145,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         switch (kbInfo.type) {
 
           case BABYLON.KeyboardEventTypes.KEYUP:
-            console.log("KEY UP: ", kbInfo.event.code);
             if (kbInfo.event.code == "Escape") {
                 hidePicker();
             }
