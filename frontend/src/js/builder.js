@@ -123,10 +123,10 @@ window.addEventListener('DOMContentLoaded', async event => {
             enableGroundShadow: false,
             groundYBias: 1
         });
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2, Math.PI/2, 6.5, new BABYLON.Vector3(0, 0, 0), scene);
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2, Math.PI/2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
-        camera.lowerRadiusLimit = 6.5;
-        camera.upperRadiusLimit = 6.5;
+        camera.lowerRadiusLimit = 6;
+        camera.upperRadiusLimit = 6;
         camera.panningSensibility = 0;
         BABYLON.SceneLoader.ImportMesh("", "assets/glb/", "suka.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
