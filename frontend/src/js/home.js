@@ -58,8 +58,8 @@ window.addEventListener('load', async event => {
         let scrollHeight = canvas.scrollHeight;
 
         let stop = false;
-        //BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeicifqtj2guv3ylfbiybrt2wwsi5xjflygsnmjtlt3foasitjc7l7q/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
-        BABYLON.SceneLoader.ImportMesh("", "assets/glb/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {            
+        BABYLON.SceneLoader.ImportMesh("", "https://cloudflare-ipfs.com/ipfs/bafybeiav5dvtpws4vmegajter4y5rk2et64ct4goohjl3vejnewyqk7iuq/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        //BABYLON.SceneLoader.ImportMesh("", "assets/glb/", "intro.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {            
             let root = null
             newMeshes.forEach(mesh => {
                 if (mesh.name == "__root__") {

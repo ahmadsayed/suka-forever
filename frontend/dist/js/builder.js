@@ -10,6 +10,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Right click to change color", "assets/img/rightClick.png");
     var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Left click and Drag to rotate", "assets/img/leftClick.png");
     var button = BABYLON.GUI.Button.CreateImageButton("Save", "Save GLB to disk", "assets/img/save.png");
+    var gltf = null;
     function guideLocation() {
         const GUIDE_WIDTH = 300, GUIDE_HEIGHT=100;
         rightClick.width = `${GUIDE_WIDTH}px`;
@@ -65,6 +66,14 @@ window.addEventListener('DOMContentLoaded', async event => {
             picker.value = mesh.material.albedoColor;
             picker.onValueChangedObservable.add(function(value) { // value is a color3
                 mesh.material.albedoColor.copyFrom(value);
+                gltf.materials.forEach(material => {
+                    if (material.name == mesh.material.name) {
+                        material.pbrMetallicRoughness.baseColorFactor[0]=value.r;
+                        material.pbrMetallicRoughness.baseColorFactor[1]=value.g;
+                        material.pbrMetallicRoughness.baseColorFactor[2]=value.b;
+    
+                    }
+                });
             });            
         }
 
@@ -97,10 +106,18 @@ window.addEventListener('DOMContentLoaded', async event => {
     function createMenu() {
         menuLocation();
         button.onPointerClickObservable.add(() => {
+            var blob = new Blob([JSON.stringify(gltf)]);
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = `suka.gltf`;
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();
+            a.remove();  //afterwards we remove the element again             
             //  window.location.reload();
-            BABYLON.GLTF2Export.GLBAsync(scene, "suka").then((glb) => {
-                glb.downloadFiles();
-              });
+            // BABYLON.GLTF2Export.GLBAsync(scene, "suka").then((glb) => {
+            //     glb.downloadFiles();
+            //   });
         });        
         advancedTexture.addControl(button);
     }
@@ -128,7 +145,10 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.lowerRadiusLimit = 6;
         camera.upperRadiusLimit = 6;
         camera.panningSensibility = 0;
-        BABYLON.SceneLoader.ImportMesh("", "assets/glb/", "suka.glb", scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        gltf = await (await fetch("https://cloudflare-ipfs.com/ipfs/bafybeie2rv6ezpmrsgd5b3xkwx3owjnptebs4fish4h4okcxno5enet7pi/suka.gltf")).json();
+        console.log(gltf.materials);
+        var gltfData = `data:${JSON.stringify(gltf)}`;
+        BABYLON.SceneLoader.ImportMesh('', '',gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
                 if (mesh.name == "__root__") {
                     root = mesh;
