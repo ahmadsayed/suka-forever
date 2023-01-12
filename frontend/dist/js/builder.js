@@ -145,7 +145,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.lowerRadiusLimit = 6;
         camera.upperRadiusLimit = 6;
         camera.panningSensibility = 0;
-        gltf = await (await fetch("https://cloudflare-ipfs.com/ipfs/bafybeie2rv6ezpmrsgd5b3xkwx3owjnptebs4fish4h4okcxno5enet7pi/suka.gltf")).json();
+        gltf = await (await fetch("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf")).json();
         console.log(gltf.materials);
         var gltfData = `data:${JSON.stringify(gltf)}`;
         BABYLON.SceneLoader.ImportMesh('', '',gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
@@ -153,7 +153,7 @@ window.addEventListener('DOMContentLoaded', async event => {
                 if (mesh.name == "__root__") {
                     root = mesh;
                     mesh.position.y -=2;
-                    mesh.position.z -=1;
+                   // mesh.position.z -=1;
                 }
                 //root.position.y -= 2;
             })
