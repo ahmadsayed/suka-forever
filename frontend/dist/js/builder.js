@@ -9,20 +9,20 @@ window.addEventListener('DOMContentLoaded', async event => {
     var pickerTitle = null;
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Right click to change color", "assets/img/rightClick.png");
     var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Left click and Drag to rotate", "assets/img/leftClick.png");
-    var button = BABYLON.GUI.Button.CreateImageButton("Save", "Save GLB to disk", "assets/img/save.png");
+    var button = BABYLON.GUI.Button.CreateImageButton("Save", "Save to disk", "assets/img/save.png");
     var gltf = null;
     function guideLocation() {
         const GUIDE_WIDTH = 300, GUIDE_HEIGHT=100;
         rightClick.width = `${GUIDE_WIDTH}px`;
         rightClick.height = `${GUIDE_HEIGHT}px`;
-        rightClick.color = "white";
+        rightClick.color = "#acb5ce";
         rightClick.thickness = 0;
         rightClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT  / 2) + 30;
         rightClick.left =  (canvas.width/2) - (GUIDE_WIDTH/2) - 20;
         rightClick.isEnabled = false;
         leftClick.width = `${GUIDE_WIDTH}px`;
         leftClick.height = `${GUIDE_HEIGHT}px`;
-        leftClick.color = "white";
+        leftClick.color = "#acb5ce";
         leftClick.thickness = 0;
         leftClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT/2 ) + 30;
         leftClick.left = - (canvas.width/2) + (GUIDE_WIDTH/2) + 20;
@@ -92,16 +92,17 @@ window.addEventListener('DOMContentLoaded', async event => {
     }
 
     function menuLocation() {
-        const WIDTH = 250, HEIGHT=50;     
+        const WIDTH = 150, HEIGHT=50;     
         const style = advancedTexture.createStyle();
         style.borderRadius = "20px";
         button.style = style;
         button.width = `${WIDTH}px`;
         button.height = `${HEIGHT}px`;
-        button.color = "black";
-        button.background= "#eba4c9";
+        button.color = "#acb5ce";
+        button.background= "#262d48";
+        button.thickness = 0.1;
         button.top = (canvas.height / 2) - (HEIGHT * 2);
-        button.left = (canvas.width/2) - (WIDTH/2) - 50;
+        button.left = (canvas.width/2) - (WIDTH/2) - 130;
     }
     function createMenu() {
         menuLocation();
