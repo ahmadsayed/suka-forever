@@ -13,12 +13,27 @@ html(lang='en')
         include includes/css
     body
         //- include includes/header
-        include includes/navbar
+        include includes/editorbar
 
-        section.page-section.clearfix.mt-0
-            .container-gltf.mx-4
-                .intro.mx-4
-                    canvas.intro-img.mx-auto.d-flex.rounded-xl.img-fluid.mb-3.mb-lg-0(id='renderCanvas')
+        section.page-section.clearfix
+            .container
+                div.splitter 
+                    div#first(style="height:550px;  overflow-y: scroll;")
+                            div.row#download-row
+                                div.col-sm(style="width:250px")
+                                    img.image-location.shadow-1-strong.rounded-m.mb-4(src='assets/img/vika-thumbnail.jpg' style="width:200px; height:200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt='...')
+                                div.col-sm(style="width:250px")
+                                    img.image-location.shadow-1-strong.rounded-m.mb-4(src='assets/img/vika-thumbnail.jpg' style="width:200px; height:200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt='...')
+                                div.col-sm(style="width:250px")
+                                    img.image-location.shadow-1-strong.rounded-m.mb-4(src='assets/img/vika-thumbnail.jpg' style="width:200px; height:200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt='...')
+                                div.col-sm(style="width:250px")
+                                    img.image-location.shadow-1-strong.rounded-m.mb-4(src='assets/img/vika-thumbnail.jpg' style="width:200px; height:200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt='...')
+                    div#separator
+                    div#second
+                        .container-gltf
+                            .intro
+                                canvas.intro-img.mx-auto.d-flex.rounded-m.img-fluid.mb-3.mb-lg-0(id='renderCanvas', style="height:550px; width:100%")
+
         include includes/footer
 
         include includes/scripts

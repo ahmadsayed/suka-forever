@@ -1,32 +1,34 @@
+
+
 window.addEventListener('DOMContentLoaded', async event => {
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var scene = new BABYLON.Scene(engine);
-    var advancedTexture =  BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    const  TOP_FACTOR=0.8;
-
+    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    const TOP_FACTOR = 0.8;
+    
     var picker = null;
     var pickerTitle = null;
-    var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Right click to change color", "assets/img/rightClick.png");
-    var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Left click and Drag to rotate", "assets/img/leftClick.png");
+    var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Edit Color", "assets/img/rightClick.png");
+    var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Explore 360", "assets/img/leftClick.png");
     var button = BABYLON.GUI.Button.CreateImageButton("Save", "Save to disk", "assets/img/save.png");
     var gltf = null;
     function guideLocation() {
-        const GUIDE_WIDTH = 300, GUIDE_HEIGHT=100;
+        const GUIDE_WIDTH = 150, GUIDE_HEIGHT = 100;
         rightClick.width = `${GUIDE_WIDTH}px`;
         rightClick.height = `${GUIDE_HEIGHT}px`;
         rightClick.color = "#acb5ce";
         rightClick.thickness = 0;
-        rightClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT  / 2) + 30;
-        rightClick.left =  (canvas.width/2) - (GUIDE_WIDTH/2) - 20;
+        rightClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT / 2);
+        rightClick.left = (canvas.width / 2) - (GUIDE_WIDTH / 2) - 20;
         rightClick.isEnabled = false;
         leftClick.width = `${GUIDE_WIDTH}px`;
         leftClick.height = `${GUIDE_HEIGHT}px`;
         leftClick.color = "#acb5ce";
         leftClick.thickness = 0;
-        leftClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT/2 ) + 30;
-        leftClick.left = - (canvas.width/2) + (GUIDE_WIDTH/2) + 20;
-        leftClick.isEnabled = false;   
+        leftClick.top = - (canvas.height / 2) + (GUIDE_HEIGHT / 2);
+        leftClick.left = - (canvas.width / 2) + (GUIDE_WIDTH / 2) + 20;
+        leftClick.isEnabled = false;
     }
     function createGuide() {
         guideLocation();
@@ -43,7 +45,7 @@ window.addEventListener('DOMContentLoaded', async event => {
             pickerTitle.height = "30px";
             pickerTitle.isVisible = false;
             pickerTitle.color = "white";
-                        
+
             picker = new BABYLON.GUI.ColorPicker();
             //picker.value = skullMaterial.diffuseColor;
             picker.height = `${PICKER_HEIGHT}px`;
@@ -57,24 +59,24 @@ window.addEventListener('DOMContentLoaded', async event => {
         picker.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2))}px`;
         picker.left = pickerTitle.left = `${window.innerWidth / 2 - PICKER_WIDTH}px`;
         pickerTitle.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2.6))}px`;
-        
+
         picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         picker.onValueChangedObservable.clear();
         if (mesh != null) {
             pickerTitle.text = mesh.material.name;
 
             picker.value = mesh.material.albedoColor;
-            picker.onValueChangedObservable.add(function(value) { // value is a color3
+            picker.onValueChangedObservable.add(function (value) { // value is a color3
                 mesh.material.albedoColor.copyFrom(value);
                 gltf.materials.forEach(material => {
                     if (material.name == mesh.material.name) {
-                        material.pbrMetallicRoughness.baseColorFactor[0]=value.r;
-                        material.pbrMetallicRoughness.baseColorFactor[1]=value.g;
-                        material.pbrMetallicRoughness.baseColorFactor[2]=value.b;
-    
+                        material.pbrMetallicRoughness.baseColorFactor[0] = value.r;
+                        material.pbrMetallicRoughness.baseColorFactor[1] = value.g;
+                        material.pbrMetallicRoughness.baseColorFactor[2] = value.b;
+
                     }
                 });
-            });            
+            });
         }
 
         return picker;
@@ -91,43 +93,8 @@ window.addEventListener('DOMContentLoaded', async event => {
         pickerTitle.isVisible = false;
     }
 
-    function menuLocation() {
-        const WIDTH = 150, HEIGHT=50;     
-        const style = advancedTexture.createStyle();
-        style.borderRadius = "20px";
-        button.style = style;
-        button.width = `${WIDTH}px`;
-        button.height = `${HEIGHT}px`;
-        button.color = "#acb5ce";
-        button.background= "#262d48";
-        button.thickness = 0.1;
-        button.top = (canvas.height / 2) - (HEIGHT * 2);
-        button.left = (canvas.width/2) - (WIDTH/2) - 130;
-    }
-    function createMenu() {
-        menuLocation();
-        button.onPointerClickObservable.add(() => {
-            var blob = new Blob([JSON.stringify(gltf)]);
-            var url = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = `suka.gltf`;
-            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-            a.click();
-            a.remove();  //afterwards we remove the element again             
-            //  window.location.reload();
-            // BABYLON.GLTF2Export.GLBAsync(scene, "suka").then((glb) => {
-            //     glb.downloadFiles();
-            //   });
-        });        
-        advancedTexture.addControl(button);
-    }
 
-    function resize(button, index) {
-
-       // button.top = (canvas.height / 2)- (HEIGHT * TOP_FACTOR); ;
-       // button.left = index * WIDTH;
-        menuLocation();
+    function resize() {
         guideLocation();
     }
 
@@ -141,7 +108,7 @@ window.addEventListener('DOMContentLoaded', async event => {
             enableGroundShadow: false,
             groundYBias: 1
         });
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI/2, Math.PI/2, 5, new BABYLON.Vector3(0, 0, 0), scene);
+        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
         camera.lowerRadiusLimit = 6;
         camera.upperRadiusLimit = 6;
@@ -149,31 +116,41 @@ window.addEventListener('DOMContentLoaded', async event => {
         gltf = await (await fetch("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf")).json();
         console.log(gltf.materials);
         var gltfData = `data:${JSON.stringify(gltf)}`;
-        BABYLON.SceneLoader.ImportMesh('', '',gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
             newMeshes.forEach(mesh => {
                 if (mesh.name == "__root__") {
                     root = mesh;
-                    mesh.position.y -=2;
-                   // mesh.position.z -=1;
+                    mesh.position.y -= 2.0;
+                    // mesh.position.z -=1;
                 }
                 //root.position.y -= 2;
             })
         });
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
-       // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         scene.clearColor = new BABYLON.Color4(0.03, 0.03, 0.03, 0.5);
 
         return scene;
     };
-    await createScene(); 
-    createMenu(); 
+    await createScene();
     createGuide();
     // Register a render loop to repeatedly render the scene
     engine.runRenderLoop(function () {
         scene.render();
-        
+
     });
+    function saveToDisk() {
+        var blob = new Blob([JSON.stringify(gltf)]);
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = `suka.gltf`;
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        a.remove();       
+    }
+    document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
 
     // Watch for browser/canvas resize events
     window.addEventListener("resize", function () {
@@ -187,28 +164,81 @@ window.addEventListener('DOMContentLoaded', async event => {
         if (pickResult.hit) {
             // pickResult.pickedMesh.name;
             showPicker(pickResult.pickedMesh);
-        }  else {
+        } else {
             hidePicker();
         }
-    });    
+    });
 
     window.addEventListener("click", function () {
         var pickResult = scene.pick(scene.pointerX, scene.pointerY);
         // We try to pick an object
         if (!pickResult.hit) {
-           // getPicker().isVisible = false;
+            // getPicker().isVisible = false;
         }
-    });   
-    
-   scene.onKeyboardObservable.add((kbInfo) => {
+    });
+
+    scene.onKeyboardObservable.add((kbInfo) => {
         console.log(kbInfo.event);
 
         switch (kbInfo.type) {
-          case BABYLON.KeyboardEventTypes.KEYUP:
-            if (kbInfo.event.code == "Escape") {
-                hidePicker();
-            }
-            break;
+            case BABYLON.KeyboardEventTypes.KEYUP:
+                if (kbInfo.event.code == "Escape") {
+                    hidePicker();
+                }
+                break;
         }
-      });
+    });
+
+
+
+    // A function is used for dragging and moving
+    function dragElement(element, direction) {
+        var md; // remember mouse down info
+        const first = document.getElementById("first");
+        const second = document.getElementById("second");
+
+        element.onmousedown = onMouseDown;
+
+        function onMouseDown(e) {
+            //console.log("mouse down: " + e.clientX);
+            md = {
+                e,
+                offsetLeft: element.offsetLeft,
+                offsetTop: element.offsetTop,
+                firstWidth: first.offsetWidth,
+                secondWidth: second.offsetWidth
+            };
+
+            document.onmousemove = onMouseMove;
+            document.onmouseup = () => {
+                //console.log("mouse up");
+                document.onmousemove = document.onmouseup = null;
+            }
+        }
+
+        function onMouseMove(e) {
+            //console.log("mouse move: " + e.clientX);
+            var delta = {
+                x: e.clientX - md.e.clientX,
+                y: e.clientY - md.e.clientY
+            };
+
+            if (direction === "H") // Horizontal
+            {
+                // Prevent negative-sized elements
+                delta.x = Math.min(Math.max(delta.x, -md.firstWidth),
+                    md.secondWidth);
+
+                element.style.left = md.offsetLeft + delta.x + "px";
+                first.style.width = (md.firstWidth + delta.x) + "px";
+                second.style.width = (md.secondWidth - delta.x) + "px";
+            }
+            resize();
+            engine.resize();
+        }
+    }
+
+
+    dragElement(document.getElementById("separator"), "H");
+
 });
