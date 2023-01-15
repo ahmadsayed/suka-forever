@@ -1,35 +1,62 @@
 
-
+var clearAll = null;
 window.addEventListener('DOMContentLoaded', async event => {
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var scene = new BABYLON.Scene(engine);
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     const TOP_FACTOR = 0.8;
-
+    var camera = null;
     var root = null;
     const template = document.querySelector("#suka-template");
     const sukaList = document.querySelector("#sukas-list");
+    const dropdown = document.querySelector(".dropdown-menu");
 
+    var currentSuka = null;
+    var  node;
+    var microLedger = {};
+    Ipfs.create().then(data => {
+        node = data;
+    });
+    clearAll = function() {
+        localStorage.removeItem(currentSuka.name);
+        importMesh(currentSuka);
+        updateHistoryList();
+    };
     const sukas = [
         {
+            name:"tota",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiei5lrnolscvwfw7qe46cs2rqaolux4zx7fxfilm4d5w33wkpnmcy/tota.gltf"
         },
         {
+            name:"howdy",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf"
         },
-    ]    
+        {
+            name:"muka",
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiarvplxdrll5ysmijh3vncg3m77a6bm6euhhbo3dz5wyhkmsczf7e/muka.gltf"
+        },
+        {
+            name:"laith",
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeidn3e7jytcmzc6b5ilibsx7bomumbijp3pndth2e2w27idz2l6kjq/laith.gltf"
+
+        }
+    ]
 
     sukas.forEach(suka => {
         const clone = template.content.cloneNode(true);
         clone.querySelector(".my-suka").src = suka.image;
-        clone.querySelector(".my-suka").onclick = function () {
-            console.log(suka.gltf);
-            console.log(root);
+        clone.querySelector(".my-suka").onclick = async function () {
+            currentSuka = suka;
+            
+            importMesh(suka);
+            updateHistoryList();
 
-            importMesh(suka.gltf);
+
         }
         sukaList.appendChild(clone);
     })
@@ -77,13 +104,13 @@ window.addEventListener('DOMContentLoaded', async event => {
             picker.height = `${PICKER_HEIGHT}px`;
             picker.width = `${PICKER_WIDTH}px`;
             picker.isVisible = false;
-  
+
             advancedTexture.addControl(picker);
             //advancedTexture.addControl(pickerTitle);
 
         }
-        picker.top = - (canvas.height / 2) + (PICKER_HEIGHT*1.2);
-        picker.left = (canvas.width / 2) - ( PICKER_WIDTH / 2) - 20;
+        picker.top = - (canvas.height / 2) + (PICKER_HEIGHT * 1.2);
+        picker.left = (canvas.width / 2) - (PICKER_WIDTH / 2) - 20;
         pickerTitle.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2.6))}px`;
 
         picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -124,33 +151,94 @@ window.addEventListener('DOMContentLoaded', async event => {
         guideLocation();
         getPicker();
     }
-    async function importMesh(meshURL) {
-        for (let i =0; i < scene.meshes.length; i++) {
+    let parent = null;
+
+    async function importMesh(suka, historyItem) {
+        for (let i = 0; i < scene.meshes.length; i++) {
             scene.meshes[i].dispose();
         }
-        gltf = await (await fetch(meshURL)).json();
-        console.log(gltf.materials);
-        var gltfData = `data:${JSON.stringify(gltf)}`;
-        BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        if (parent != null) {
+            parent.dispose();
+        }
+        var gltfData = null;
+        if (historyItem == null) {                      // Get the latest from the IPFS or Local
+            if (localStorage.getItem(suka.name)==null) {
+                gltf = await (await fetch(suka.gltf)).json();
+            } else {
+                const latestCID = localStorage.getItem(suka.name);
+                const latestLedger = await getFromIPFS(latestCID);
+                const latest = JSON.parse(latestLedger);
+                gltf = JSON.parse(await getFromIPFS(latest.cid));
+                currentSuka = suka;
+
+            }
+        } else {
+            gltf = JSON.parse(await getFromIPFS(historyItem.cid));   
+        }
+
+        gltfData = `data:${JSON.stringify(gltf)}`;
+
+        var result = await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
             maxRadius = 0;
-            maxHighestPoint = 0;
+            max = null;
+            min = null;
             biggestMesh = null;
+            minMesh = null;
+            parent = new BABYLON.Mesh("parent", scene);
             newMeshes.forEach(mesh => {
-                highestPoint = mesh.getBoundingInfo().boundingBox.maximumWorld._y;
-                if (maxHighestPoint < highestPoint) {
-                    maxHighestPoint = highestPoint;
-                    biggestMesh = mesh;
+                meshBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
+                if (max == null) {
+                    max = new BABYLON.Vector3(meshBox.x, meshBox.y, meshBox.z);
                 }
+                if (max.x < meshBox.x) {
+                    max.x = meshBox.x;
+                }
+                if (max.y < meshBox.y) {
+                    max.y = meshBox.y;
+                }
+                if (max.z < meshBox.z) {
+                    max.z = meshBox.z;
+                }
+                minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
+                if (min == null) {
+                    min = new BABYLON.Vector3(minBox.x, minBox.y, minBox.z);
+                }
+                if (min.x > minBox.x) {
+                    min.x = minBox.x;
+                }
+                if (min.y > minBox.y) {
+                    min.y = minBox.y;
+                }
+                if (min.z > minBox.z) {
+                    min.z = minBox.z;
+                }
+
+
                 if (mesh.name == "__root__") {
-                    root = mesh;                    
+                    root = mesh;
                     // mesh.position.z -=1;
                 }
-                //root.position.y -= 2;
+                // console.log(mesh.getBoundingInfo().boundingBox);
+                //mesh.showBoundingBox = true;
             })
-            console.log(biggestMesh.getBoundingInfo() );
-            console.log(maxHighestPoint);
-            root.position.y -= (maxHighestPoint/2);
+
+            // console.log(max + " : " + min);
+
+            // console.log(minLowestPoint + ":" + maxHighestPoint);
+
+            parent.setBoundingInfo(new BABYLON.BoundingInfo(new BABYLON.Vector3(min.x, min.y, min.z), new BABYLON.Vector3(max.x, max.y, max.z)));
+            // //parent.setBoundingInfo(minMesh, biggestMesh);
+            var zoomFactor = 1.4;
+            camera.lowerRadiusLimit = (max.y - min.y) * zoomFactor;
+            camera.upperRadiusLimit = (max.y - min.y) * zoomFactor;
+            console.log(min.y)
+            console.log(max.y - min.y);
+            root.position.y -= min.y;
+            root.position.y -= ((max.y - min.y) / 2);
+            // parent.showBoundingBox = true;  
+            // parent.showBoundingBox = true;
         });
+
     }
     async function createScene() {
 
@@ -162,14 +250,15 @@ window.addEventListener('DOMContentLoaded', async event => {
             enableGroundShadow: false,
             groundYBias: 1
         });
-        var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
+        camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
-        camera.lowerRadiusLimit = 7.5;
-        camera.upperRadiusLimit = 7.5;
+        camera.lowerRadiusLimit = 9;
+        camera.upperRadiusLimit = 9;
         camera.panningSensibility = 0;
-        importMesh("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
+        //importMesh("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
+        console.log(camera.fov);
         // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         scene.clearColor = new BABYLON.Color4(0.03, 0.03, 0.03, 0.5);
 
@@ -191,10 +280,79 @@ window.addEventListener('DOMContentLoaded', async event => {
         a.download = `suka.gltf`;
         document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
         a.click();
-        a.remove();       
+        a.remove();
+    }
+    function ab2str(buf) {
+        return String.fromCharCode.apply(null, new Uint16Array(buf));
+    }
+    async function getFromIPFS(cid) {
+        let data = '';
+        for await (const file of node.cat(cid)) {
+            //const buf = Buffer.from(file, 'utf8');
+            //data = buf.toString();
+
+            buffer = new Uint16Array(file);
+            buffer.forEach( code => {
+                data += String.fromCharCode(code);
+               // console.log(String.fromCharCode)
+            });
+        }
+        return data;
+    }
+    async function microLedgerToList(cid, cids=[]) {
+        const data =  JSON.parse(await getFromIPFS(cid));
+        cids.push(data);
+        if (data.prev != null) {
+            await microLedgerToList(data.prev, cids);
+        } 
+        return cids;
+    }
+
+    async function updateHistoryList() {
+        var historyList = [];
+
+        while (dropdown.getElementsByClassName("item-history").length >0) {
+            dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
+        }
+
+        if (localStorage.getItem(currentSuka.name) != null) {
+            historyList = await microLedgerToList(localStorage.getItem(currentSuka.name));
+        };
+
+        historyList.forEach(historyItem => {
+            const para = document.createElement("p");
+            const node = document.createTextNode(historyItem.ts);
+            para.appendChild(node);
+            para.classList.add("dropdown-item");
+            para.classList.add("item-history");
+            para.style.marginBottom="0rem";
+            para.onclick = async function () {
+                console.log(historyItem);
+                await importMesh(null, historyItem) 
+            }
+            dropdown.appendChild(para);
+        });
+    }
+    async function saveToIPFS() {
+        const results = await node.add(JSON.stringify(gltf));
+        const cid = results.path
+        // localStorage.setItem(currentSuka.name, cid);
+
+        microLedger = {
+            prev: localStorage.getItem(currentSuka.name),
+            ts:  new Date(new Date().getTime()).toLocaleString(),
+            cid: cid
+        };
+        const updateLedger = await node.add(JSON.stringify(microLedger));
+
+        console.log('CID created via ipfs.add:', cid)
+        localStorage.setItem(currentSuka.name, updateLedger.path);
+
+        updateHistoryList();
+
     }
     document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
-
+    document.getElementById("ipfs-save").onclick = saveToIPFS;
     // Watch for browser/canvas resize events
     window.addEventListener("resize", function () {
         engine.resize();

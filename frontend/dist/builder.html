@@ -26,6 +26,8 @@
         <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script defer src="https://cdn.babylonjs.com/gui/babylon.gui.js"></script>
         <script defer src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
     </head>
     <body>
         <!-- Navigation-->
@@ -38,10 +40,26 @@
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
                         <li class="nav-item px-lg-4">
+                            <div id="save-history">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="ipfs-save" type="button">
+                                        <img src="assets/img/save.png" style="width: 25px" />
+                                        <a>Save</a>
+                                    </button>
+                                    <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleHistory();">
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" onclick="clearAll()">Clear all</a>
+                                            <div class="dropdown-divider"></div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item px-lg-4">
                             <div id="save">
                                 <button class="btn btn-primary" id="btn-save">
                                     <img src="assets/img/save.png" style="width: 25px" />
-                                    <a>Save to local Disk</a>
+                                    <a>Download</a>
                                 </button>
                             </div>
                         </li>

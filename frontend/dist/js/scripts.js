@@ -11,7 +11,7 @@
 
 function toggle() {
   var element = document.querySelector("#navbarSupportedContent");
-  if (element.classList.contains("collapse")){
+  if (element.classList.contains("collapse")) {
     document.querySelector("#navbarSupportedContent").classList.remove("collapse");
 
   } else {
@@ -22,4 +22,17 @@ function toggle() {
 window.addEventListener('DOMContentLoaded', event => {
   document.querySelector(".navbar-toggler").setAttribute("onclick", `toggle()`);
 })
+
+//style="display: block; margin-top:2.4rem
+function toggleHistory() {
+  var element = document.querySelector(".btn-group");
+  if (element.classList.contains("open")) {
+    document.querySelector(".dropdown-menu").style.display = "none";
+    
+
+  } else {
+    document.querySelector(".dropdown-menu").style.display = "block";
+    document.querySelector(".dropdown-menu").style.marginTop = "2.4rem";
+  }
+}
 
