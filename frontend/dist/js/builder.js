@@ -6,7 +6,33 @@ window.addEventListener('DOMContentLoaded', async event => {
     var scene = new BABYLON.Scene(engine);
     var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     const TOP_FACTOR = 0.8;
-    
+
+    var root = null;
+    const template = document.querySelector("#suka-template");
+    const sukaList = document.querySelector("#sukas-list");
+
+    const sukas = [
+        {
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiei5lrnolscvwfw7qe46cs2rqaolux4zx7fxfilm4d5w33wkpnmcy/tota.gltf"
+        },
+        {
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf"
+        },
+    ]    
+
+    sukas.forEach(suka => {
+        const clone = template.content.cloneNode(true);
+        clone.querySelector(".my-suka").src = suka.image;
+        clone.querySelector(".my-suka").onclick = function () {
+            console.log(suka.gltf);
+            console.log(root);
+
+            importMesh(suka.gltf);
+        }
+        sukaList.appendChild(clone);
+    })
     var picker = null;
     var pickerTitle = null;
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Edit Color", "assets/img/rightClick.png");
@@ -37,7 +63,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     }
     function getPicker(mesh) {
-        const PICKER_HEIGHT = 220, PICKER_WIDTH = 220;
+        const PICKER_HEIGHT = 200, PICKER_WIDTH = 200;
 
         if (picker == null) {
             pickerTitle = new BABYLON.GUI.TextBlock();
@@ -51,13 +77,13 @@ window.addEventListener('DOMContentLoaded', async event => {
             picker.height = `${PICKER_HEIGHT}px`;
             picker.width = `${PICKER_WIDTH}px`;
             picker.isVisible = false;
-
+  
             advancedTexture.addControl(picker);
             //advancedTexture.addControl(pickerTitle);
 
         }
-        picker.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2))}px`;
-        picker.left = pickerTitle.left = `${window.innerWidth / 2 - PICKER_WIDTH}px`;
+        picker.top = - (canvas.height / 2) + (PICKER_HEIGHT*1.2);
+        picker.left = (canvas.width / 2) - ( PICKER_WIDTH / 2) - 20;
         pickerTitle.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2.6))}px`;
 
         picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -96,8 +122,36 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     function resize() {
         guideLocation();
+        getPicker();
     }
-
+    async function importMesh(meshURL) {
+        for (let i =0; i < scene.meshes.length; i++) {
+            scene.meshes[i].dispose();
+        }
+        gltf = await (await fetch(meshURL)).json();
+        console.log(gltf.materials);
+        var gltfData = `data:${JSON.stringify(gltf)}`;
+        BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+            maxRadius = 0;
+            maxHighestPoint = 0;
+            biggestMesh = null;
+            newMeshes.forEach(mesh => {
+                highestPoint = mesh.getBoundingInfo().boundingBox.maximumWorld._y;
+                if (maxHighestPoint < highestPoint) {
+                    maxHighestPoint = highestPoint;
+                    biggestMesh = mesh;
+                }
+                if (mesh.name == "__root__") {
+                    root = mesh;                    
+                    // mesh.position.z -=1;
+                }
+                //root.position.y -= 2;
+            })
+            console.log(biggestMesh.getBoundingInfo() );
+            console.log(maxHighestPoint);
+            root.position.y -= (maxHighestPoint/2);
+        });
+    }
     async function createScene() {
 
         var environment = scene.createDefaultEnvironment({
@@ -110,22 +164,10 @@ window.addEventListener('DOMContentLoaded', async event => {
         });
         var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
-        camera.lowerRadiusLimit = 6;
-        camera.upperRadiusLimit = 6;
+        camera.lowerRadiusLimit = 7.5;
+        camera.upperRadiusLimit = 7.5;
         camera.panningSensibility = 0;
-        gltf = await (await fetch("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf")).json();
-        console.log(gltf.materials);
-        var gltfData = `data:${JSON.stringify(gltf)}`;
-        BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
-            newMeshes.forEach(mesh => {
-                if (mesh.name == "__root__") {
-                    root = mesh;
-                    mesh.position.y -= 2.0;
-                    // mesh.position.z -=1;
-                }
-                //root.position.y -= 2;
-            })
-        });
+        importMesh("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
         // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -133,6 +175,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
         return scene;
     };
+
     await createScene();
     createGuide();
     // Register a render loop to repeatedly render the scene
@@ -155,7 +198,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     // Watch for browser/canvas resize events
     window.addEventListener("resize", function () {
         engine.resize();
-        resize(button, 0);
+        resize();
     });
     window.addEventListener("auxclick", function () {
         // We try to pick an object
