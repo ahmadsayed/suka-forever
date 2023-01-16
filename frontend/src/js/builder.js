@@ -27,22 +27,22 @@ window.addEventListener('DOMContentLoaded', async event => {
         {
             name:"tota",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiei5lrnolscvwfw7qe46cs2rqaolux4zx7fxfilm4d5w33wkpnmcy/tota.gltf"
+            gltf: "https://bafybeiev2jo3nghj6tgxalvpks624hrb7edooa75dw2qs4cjspwkxgx7ja.ipfs.w3s.link/ipfs/bafybeiev2jo3nghj6tgxalvpks624hrb7edooa75dw2qs4cjspwkxgx7ja/tota.gltf"
         },
         {
             name:"howdy",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf"
+            gltf: "https://bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4.ipfs.w3s.link/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
             name:"muka",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiarvplxdrll5ysmijh3vncg3m77a6bm6euhhbo3dz5wyhkmsczf7e/muka.gltf"
+            gltf: "https://bafybeieoksrjaxmhx6uoxzcnr5mu6xtxi6cwvlgxcoyozdmegegxiaqsba.ipfs.w3s.link/ipfs/bafybeieoksrjaxmhx6uoxzcnr5mu6xtxi6cwvlgxcoyozdmegegxiaqsba/muka.gltf"
         },
         {
             name:"laith",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeidn3e7jytcmzc6b5ilibsx7bomumbijp3pndth2e2w27idz2l6kjq/laith.gltf"
+            gltf: "https://bafybeidn3e7jytcmzc6b5ilibsx7bomumbijp3pndth2e2w27idz2l6kjq.ipfs.w3s.link/ipfs/bafybeidn3e7jytcmzc6b5ilibsx7bomumbijp3pndth2e2w27idz2l6kjq/laith.gltf"
 
         }
     ]
