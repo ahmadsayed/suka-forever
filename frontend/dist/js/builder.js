@@ -11,40 +11,61 @@ window.addEventListener('DOMContentLoaded', async event => {
     const template = document.querySelector("#suka-template");
     const sukaList = document.querySelector("#sukas-list");
     const dropdown = document.querySelector(".dropdown-menu");
-
     var currentSuka = null;
     var  node;
     var microLedger = {};
+    var isIPFSReady = false;
+    function enableSave() {
+        document.getElementById("ipfs-save").disabled = false;
+        document.getElementById("ipfs-drop").disabled = false;
+    }
+
+    function disableSave() {
+        document.getElementById("ipfs-save").disabled = true;
+        document.getElementById("ipfs-drop").disabled = true;
+
+    }
+
+
+    disableSave();
     Ipfs.create().then(data => {
         node = data;
+        isIPFSReady = true;
+        enableSave();
+
+
+//        cacheToIPFS();
     });
     clearAll = function() {
         localStorage.removeItem(currentSuka.name);
         importMesh(currentSuka);
         updateHistoryList();
+        document.getElementById("ipfs-save").disabled = !isIPFSReady;
+
     };
     const sukas = [
-        {
-            name:"tota",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeiev2jo3nghj6tgxalvpks624hrb7edooa75dw2qs4cjspwkxgx7ja/tota.gltf"
-        },
         {
             name:"howdy",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
-            name:"muka",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeieoksrjaxmhx6uoxzcnr5mu6xtxi6cwvlgxcoyozdmegegxiaqsba/muka.gltf"
-        },
-        {
             name:"laith",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeidn3e7jytcmzc6b5ilibsx7bomumbijp3pndth2e2w27idz2l6kjq/laith.gltf"
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
-        }
+        },        
+        {
+            name:"muka",
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
+        },
+        {
+            name:"tota",
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
+        },        
+
     ]
 
     sukas.forEach(suka => {
@@ -55,7 +76,6 @@ window.addEventListener('DOMContentLoaded', async event => {
             
             importMesh(suka);
             updateHistoryList();
-
 
         }
         sukaList.appendChild(clone);
@@ -120,6 +140,8 @@ window.addEventListener('DOMContentLoaded', async event => {
 
             picker.value = mesh.material.albedoColor;
             picker.onValueChangedObservable.add(function (value) { // value is a color3
+                document.getElementById("ipfs-save").disabled = !isIPFSReady;
+
                 mesh.material.albedoColor.copyFrom(value);
                 gltf.materials.forEach(material => {
                     if (material.name == mesh.material.name) {
@@ -160,23 +182,28 @@ window.addEventListener('DOMContentLoaded', async event => {
         if (parent != null) {
             parent.dispose();
         }
+        hidePicker();
         var gltfData = null;
+        var gltfString = null;
         if (historyItem == null) {                      // Get the latest from the IPFS or Local
             if (localStorage.getItem(suka.name)==null) {
                 gltf = await (await fetch(suka.gltf)).json();
+                gltfString = JSON.stringify(gltf);
             } else {
                 const latestCID = localStorage.getItem(suka.name);
                 const latestLedger = await getFromIPFS(latestCID);
                 const latest = JSON.parse(latestLedger);
-                gltf = JSON.parse(await getFromIPFS(latest.cid));
+                gltfString = await getFromIPFS(latest.cid)
+                gltf = JSON.parse(gltfString);
                 currentSuka = suka;
 
             }
         } else {
-            gltf = JSON.parse(await getFromIPFS(historyItem.cid));   
+            gltfString = await getFromIPFS(historyItem.cid);
+            gltf = JSON.parse(gltfString);   
         }
 
-        gltfData = `data:${JSON.stringify(gltf)}`;
+        gltfData = `data:${gltfString}`;
 
         var result = await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
             maxRadius = 0;
@@ -333,6 +360,31 @@ window.addEventListener('DOMContentLoaded', async event => {
             dropdown.appendChild(para);
         });
     }
+    async function cacheToIPFS() {
+        sukas.forEach(async suka => {
+            fetch(suka.gltf)
+            .then(res => res.json())
+            .then(async gltf => {
+                const results = await node.add(JSON.stringify(gltf));
+                const cid = results.path
+                // localStorage.setItem(currentSuka.name, cid);
+        
+                microLedger = {
+                    prev: localStorage.getItem(suka.name),
+                    ts:  new Date(new Date().getTime()).toLocaleString(),
+                    cid: cid
+                };
+
+                const updateLedger = await node.add(JSON.stringify(microLedger));
+        
+                console.log('CID created via ipfs.add:', updateLedger.path)
+                localStorage.setItem(suka.name, updateLedger.path);
+            })
+
+
+        })        
+
+    }
     async function saveToIPFS() {
         const results = await node.add(JSON.stringify(gltf));
         const cid = results.path
@@ -347,6 +399,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
         console.log('CID created via ipfs.add:', cid)
         localStorage.setItem(currentSuka.name, updateLedger.path);
+        document.getElementById("ipfs-save").disabled = true;
 
         updateHistoryList();
 
@@ -441,5 +494,4 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
     dragElement(document.getElementById("separator"), "H");
-
 });

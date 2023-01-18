@@ -1,12 +1,14 @@
 // Navigation
 nav.navbar.navbar-expand-lg.navbar-dark.px-4
     img(src='assets/img/logo.svg' style="width: 15vw;")
+    button.btn.btn-primary(id='notification', style="width: 15vw;margin-left: 23vw;display: none", disabled) 
+            a Loading    
     .div(style="margin-right:revert; margin-left:auto;")
         a.navbar-brand.text-uppercase.fw-bold.d-lg-none(href='index.html') SUKA Verse
         button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
             span.navbar-toggler-icon
         #navbarSupportedContent.collapse.navbar-collapse
-            ul.navbar-nav.mx-auto    
+            ul.navbar-nav.mx-auto            
                 li.nav-item.px-lg-4
                     a.nav-link.text-uppercase(href='index.html') Home      
                 li.nav-item.px-lg-4
@@ -15,7 +17,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.px-4
                             button#ipfs-save.btn.btn-primary(type='button') 
                                 img(src="assets/img/save.png" style="width:25px")
                                 a Save
-                            button.btn.btn-primary.dropdown-toggle.dropdown-toggle-split(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick='toggleHistory();' )
+                            button#ipfs-drop.btn.btn-primary.dropdown-toggle.dropdown-toggle-split(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick='toggleHistory();' )
                                 .dropdown-menu
                                     a.dropdown-item(onclick="clearAll()") Clear all                                       
                                     .dropdown-divider
