@@ -3,6 +3,11 @@ import path from 'path';
 import url from 'url';;
 import * as dotenv from 'dotenv' 
 import  request  from 'request';
+import * as IPFS from 'ipfs-core'
+
+const ipfs = await IPFS.create()
+
+
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 dotenv.config({

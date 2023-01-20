@@ -39,19 +39,7 @@ window.addEventListener('DOMContentLoaded', async event => {
                     webRTCStar: {
                         Enabled: true
                     }
-                },
-                Peering: {
-                    Peers: [
-                      {
-                        "ID": "QmcfgsJsMtx6qJb74akCw1M24X1zFwgGo11h1cuhwQjtJP",
-                        "Addrs": ["/dnsaddr/node-8.ingress.cloudflare-ipfs.com"]
-                      },
-                      {
-                        "ID": "12D3KooWCVXs8P7iq6ao4XhfAmKWrEeuKFWCJgqe9jGDMTqHYBjw	",
-                        "Addrs": ["/ip4/139.178.68.217/tcp/6744"]                        
-                      }
-                    ]
-                  }                
+                }   
             },
             preload: {
                 enabled: false
