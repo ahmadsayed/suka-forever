@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', event => {
             role: "Artist",
             name: "Khulood Radi",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-            description: "3D animator, currently focusing on building an optimized real-time models and animation that can be used to create a 3D interactive website."
+            description: "3D artist, specialized in 3D animation and modeling, building optimized real-time 3D assets used in games, and 3D interactive websites."
         },
         {
             role: "Developer",
