@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', async event => {
                     webRTCStar: {
                         Enabled: true
                     }
-                }   
+                }
             },
             preload: {
                 enabled: false
@@ -421,8 +421,59 @@ window.addEventListener('DOMContentLoaded', async event => {
         updateHistoryList();
 
     }
+
+    async function saveToRemoteIPFS(data) {
+        const response = await fetch(`/api/push-ipfs`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache', 
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            referrerPolicy: 'no-referrer', 
+            body: data
+        });
+        return await response.json();
+    }
+    async function updateContract(name, cid) {
+        const response = await fetch(`/api/update-contract`, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache', 
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            referrerPolicy: 'no-referrer', 
+            body: JSON.stringify({
+                name: name,
+                cid: cid
+            })
+        });
+        return await response.json();
+    }
+    async function getLatest(name) {
+        const response  = await (await fetch(`/api/latest-ipfs/${name}`)).json();
+        return response.cid;
+    }    
+    async function saveLedgerToRemoteIPFS() {
+        let response = await saveToRemoteIPFS( JSON.stringify(gltf));
+        let cid = response["/"];
+        let latestCID = await getLatest(currentSuka.name)
+        microLedger = {
+            prev: latestCID,
+            ts: new Date(new Date().getTime()).toLocaleString(),
+            cid: cid
+        };
+        let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
+        console.log('CID created via ipfs.add:', ledgerCID)
+        updateContract(currentSuka.name, ledgerCID["/"]);
+    }
     document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
     document.getElementById("ipfs-save").onclick = saveToIPFS;
+    document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
+
     // Watch for browser/canvas resize events
     window.addEventListener("resize", function () {
         engine.resize();
