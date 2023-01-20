@@ -8,20 +8,20 @@ window.addEventListener('DOMContentLoaded', event => {
             name: "Rema",
             
             image: "https://cloudflare-ipfs.com/ipfs/QmVw4GrmA5T9wtXJDtyyuuCVZvkiwQA5QkdYRhCoNC1Lj5?filename=900x600.jpg",
-            story: "Maqluba or Maqlooba is a traditional Iraqi, Lebanese, Palestinian, Jordanian, and Syrian dish served throughout the Levant. It consists of meat, rice, and fried vegetables placed in a pot which is flipped upside down when served, hence the name maqluba"
+            story: "She has a strong-willed and nurturing aura, Reema is an extraordinary mother, a caring sister, and a Fearless daughter."
         },
         {
             brief: "A story from the India",
             name: "Muka",
             image: "https://cloudflare-ipfs.com/ipfs/QmfRJ2Hq45CtDMhku1MvByLvHTQS5oaUA7CNpz2gkwzQr5?filename=muka600x900_BG1.jpg",
-            story: "Diwali, Dewali, Divali, or Deepavali, also known as the Festival of Lights, related to Jain Diwali, Bandi Chhor Divas, Tihar, Swanti, Sohrai, and Bandna, is a Dharmic religious celebration and one of the most important festivals within Hinduism."
+            story: "Muka specializes in all forms of relaxation, She is friendly, funny, and spiritually connected."
  
         },
         {
             brief: "A wild wild West",
             name: "Howdy",
             image: "https://cloudflare-ipfs.com/ipfs/QmR6omxqY1JAKq96kVrG8Vz9tku45VyuhmT2fPje9JDsHM?filename=900x600.jpg",
-            story: "Literature from that period (1563/87) includes the use of How-do, how-do and How as a greeting used by the Scottish when addressing Anglo settlers in greeting. The double form of the idiom is still found in parts of the American Southwest as Howdy, howdy. Without regard to etymological beginnings, the word is used as a greeting such as \"Hello\" and not, normally, as an inquiry."
+            story: "Howdy is a wise soul, He seeks adventures to fulfill his curiosity, He is solid yet thoughtful and considerate."
  
         }
     ]

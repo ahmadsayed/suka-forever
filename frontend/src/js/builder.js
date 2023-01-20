@@ -1,6 +1,7 @@
 
 var clearAll = null;
 window.addEventListener('DOMContentLoaded', async event => {
+
     const canvas = document.getElementById("renderCanvas"); // Get the canvas element
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     var scene = new BABYLON.Scene(engine);
@@ -12,7 +13,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     const sukaList = document.querySelector("#sukas-list");
     const dropdown = document.querySelector(".dropdown-menu");
     var currentSuka = null;
-    var  node;
+    var node;
     var microLedger = {};
     var isIPFSReady = false;
     function enableSave() {
@@ -28,15 +29,43 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
     disableSave();
-    Ipfs.create().then(data => {
+    Ipfs.create(
+        {
+            config: {
+                Discovery: {
+                    MDNS: {
+                        Enabled: true
+                    },
+                    webRTCStar: {
+                        Enabled: true
+                    }
+                },
+                Peering: {
+                    Peers: [
+                      {
+                        "ID": "QmcfgsJsMtx6qJb74akCw1M24X1zFwgGo11h1cuhwQjtJP",
+                        "Addrs": ["/dnsaddr/node-8.ingress.cloudflare-ipfs.com"]
+                      },
+                      {
+                        "ID": "12D3KooWCVXs8P7iq6ao4XhfAmKWrEeuKFWCJgqe9jGDMTqHYBjw	",
+                        "Addrs": ["/ip4/139.178.68.217/tcp/6744"]                        
+                      }
+                    ]
+                  }                
+            },
+            preload: {
+                enabled: false
+            }
+        }
+    ).then(data => {
         node = data;
         isIPFSReady = true;
         enableSave();
 
 
-//        cacheToIPFS();
+        //        cacheToIPFS();
     });
-    clearAll = function() {
+    clearAll = function () {
         localStorage.removeItem(currentSuka.name);
         importMesh(currentSuka);
         updateHistoryList();
@@ -45,26 +74,26 @@ window.addEventListener('DOMContentLoaded', async event => {
     };
     const sukas = [
         {
-            name:"howdy",
+            name: "howdy",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
-            name:"laith",
+            name: "laith",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
-        },        
+        },
         {
-            name:"muka",
+            name: "muka",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
         },
         {
-            name:"tota",
+            name: "tota",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
-        },        
+        },
 
     ]
 
@@ -73,7 +102,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         clone.querySelector(".my-suka").src = suka.image;
         clone.querySelector(".my-suka").onclick = async function () {
             currentSuka = suka;
-            
+
             importMesh(suka);
             updateHistoryList();
 
@@ -186,7 +215,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         var gltfData = null;
         var gltfString = null;
         if (historyItem == null) {                      // Get the latest from the IPFS or Local
-            if (localStorage.getItem(suka.name)==null) {
+            if (localStorage.getItem(suka.name) == null) {
                 gltf = await (await fetch(suka.gltf)).json();
                 gltfString = JSON.stringify(gltf);
             } else {
@@ -200,7 +229,7 @@ window.addEventListener('DOMContentLoaded', async event => {
             }
         } else {
             gltfString = await getFromIPFS(historyItem.cid);
-            gltf = JSON.parse(gltfString);   
+            gltf = JSON.parse(gltfString);
         }
 
         gltfData = `data:${gltfString}`;
@@ -319,26 +348,26 @@ window.addEventListener('DOMContentLoaded', async event => {
             //data = buf.toString();
 
             buffer = new Uint16Array(file);
-            buffer.forEach( code => {
+            buffer.forEach(code => {
                 data += String.fromCharCode(code);
-               // console.log(String.fromCharCode)
+                // console.log(String.fromCharCode)
             });
         }
         return data;
     }
-    async function microLedgerToList(cid, cids=[]) {
-        const data =  JSON.parse(await getFromIPFS(cid));
+    async function microLedgerToList(cid, cids = []) {
+        const data = JSON.parse(await getFromIPFS(cid));
         cids.push(data);
         if (data.prev != null) {
             await microLedgerToList(data.prev, cids);
-        } 
+        }
         return cids;
     }
 
     async function updateHistoryList() {
         var historyList = [];
 
-        while (dropdown.getElementsByClassName("item-history").length >0) {
+        while (dropdown.getElementsByClassName("item-history").length > 0) {
             dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
         }
 
@@ -352,10 +381,10 @@ window.addEventListener('DOMContentLoaded', async event => {
             para.appendChild(node);
             para.classList.add("dropdown-item");
             para.classList.add("item-history");
-            para.style.marginBottom="0rem";
+            para.style.marginBottom = "0rem";
             para.onclick = async function () {
                 console.log(historyItem);
-                await importMesh(null, historyItem) 
+                await importMesh(null, historyItem)
             }
             dropdown.appendChild(para);
         });
@@ -363,26 +392,26 @@ window.addEventListener('DOMContentLoaded', async event => {
     async function cacheToIPFS() {
         sukas.forEach(async suka => {
             fetch(suka.gltf)
-            .then(res => res.json())
-            .then(async gltf => {
-                const results = await node.add(JSON.stringify(gltf));
-                const cid = results.path
-                // localStorage.setItem(currentSuka.name, cid);
-        
-                microLedger = {
-                    prev: localStorage.getItem(suka.name),
-                    ts:  new Date(new Date().getTime()).toLocaleString(),
-                    cid: cid
-                };
+                .then(res => res.json())
+                .then(async gltf => {
+                    const results = await node.add(JSON.stringify(gltf));
+                    const cid = results.path
+                    // localStorage.setItem(currentSuka.name, cid);
 
-                const updateLedger = await node.add(JSON.stringify(microLedger));
-        
-                console.log('CID created via ipfs.add:', updateLedger.path)
-                localStorage.setItem(suka.name, updateLedger.path);
-            })
+                    microLedger = {
+                        prev: localStorage.getItem(suka.name),
+                        ts: new Date(new Date().getTime()).toLocaleString(),
+                        cid: cid
+                    };
+
+                    const updateLedger = await node.add(JSON.stringify(microLedger));
+
+                    console.log('CID created via ipfs.add:', updateLedger.path)
+                    localStorage.setItem(suka.name, updateLedger.path);
+                })
 
 
-        })        
+        })
 
     }
     async function saveToIPFS() {
@@ -392,7 +421,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
         microLedger = {
             prev: localStorage.getItem(currentSuka.name),
-            ts:  new Date(new Date().getTime()).toLocaleString(),
+            ts: new Date(new Date().getTime()).toLocaleString(),
             cid: cid
         };
         const updateLedger = await node.add(JSON.stringify(microLedger));

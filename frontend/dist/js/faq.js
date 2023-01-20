@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', event => {
         },
         {
             question: "Who is Suka?",
-            answer: "SUKA is a fictional character inspired by the Matryoshka doll and The Chinese Biggy Bank, fitting it into different cultures worldwide and historical traditions."
+            answer: "Suka and friends are a small community representing diversity. Each one of them has its persona and energy. These characters come together to build a multicultural atmosphere. They can be a part of a game or a puzzle. They can also play a role in an animated movie. Suka and friends are a small community representing diversity."
         },
         {
             question: "How can I access the assets files?",
