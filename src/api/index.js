@@ -3,19 +3,13 @@ import path from 'path';
 import url from 'url';;
 import * as dotenv from 'dotenv'
 import request from 'request';
-import * as IPFS from 'ipfs-core';
 import fs from 'fs';
 
-const ipfs = await IPFS.create({
-    Peering: {
-        peers: [
-            {
-                "ID": "QmcfgsJsMtx6qJb74akCw1M24X1zFwgGo11h1cuhwQjtJP",
-                "Addrs": ["/dnsaddr/node-8.ingress.cloudflare-ipfs.com"]
-            }
-        ]
-    }
-});
+import { create } from 'ipfs-http-client'
+
+
+const ipfs = create(new URL('http://139.162.132.130:5001'))
+
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -68,7 +62,7 @@ export default () => {
             let cid = fs.readFileSync(req.params.model, { encoding: 'utf8', flag: 'r' });
             res.send(JSON.stringify({
                 cid: cid
-            }))
+            })) 
         } else {
             res.send(
                 JSON.stringify({

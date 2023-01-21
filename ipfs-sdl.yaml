@@ -1,0 +1,53 @@
+---
+version: "2.0"
+endpoints:
+ myendpoint:
+   kind: ip 
+services:
+  ipfs:
+    image: linuxserver/ipfs:version-v2.12.4
+    expose:
+      - port: 80
+        as: 80
+        to:
+          - global: true
+            ip: "myendpoint"          
+      - port: 4001
+        as: 4001
+        to:
+          - global: true
+            ip: "myendpoint"
+      - port: 5001
+        as: 5001
+        to:
+          - global: true
+            ip: "myendpoint"
+      - port: 8080
+        as: 8080
+        to:
+          - global: true
+            ip: "myendpoint"
+profiles:
+  compute:
+    ipfs:
+      resources:
+        cpu:
+          units: 1.0
+        memory:
+          size: 1Gi
+        storage:
+          size: 0.5Gi
+  placement:
+    akash:
+      attributes:
+        host: akash      
+      pricing:
+        ipfs:
+          denom: uakt
+          amount: 10000
+
+deployment:
+  ipfs:
+    akash:
+      profile: ipfs
+      count: 1
