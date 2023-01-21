@@ -451,7 +451,7 @@ window.addEventListener('DOMContentLoaded', async event => {
                 cid: cid
             })
         });
-        return await response.json();
+       // return await response.json();
     }
     async function getLatest(name) {
         const response  = await (await fetch(`/api/latest-ipfs/${name}`)).json();

@@ -64,10 +64,19 @@ export default () => {
 
     // TODO: Replace with smart Contract
     api.get('/latest-ipfs/:model', (req, res) => {
-        let cid = fs.readFileSync(req.params.model, { encoding: 'utf8', flag: 'r' });
-        res.send({
-            cid: cid
-        })
+        if (fs.existsSync(req.params.model)) {
+            let cid = fs.readFileSync(req.params.model, { encoding: 'utf8', flag: 'r' });
+            res.send(JSON.stringify({
+                cid: cid
+            }))
+        } else {
+            res.send(
+                JSON.stringify({
+                    cid: null
+                }
+            ));
+        }
+
     });
 
     return api;
