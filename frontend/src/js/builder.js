@@ -228,7 +228,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
             }
         } else {
-            const sukaURL = `http://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
+            const sukaURL = `https://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
             gltf = await (await fetch(sukaURL)).json();
             gltfString = JSON.stringify(gltf);
         }
