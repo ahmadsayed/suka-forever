@@ -8,7 +8,7 @@ import fs from 'fs';
 import { create } from 'ipfs-http-client'
 
 
-const ipfs = create(new URL('http://139.162.132.130:5001'))
+const ipfs = create(new URL('http://ipfs.sukaverse.club:5001'))
 
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
@@ -46,13 +46,21 @@ export default () => {
 
     //TODO: Replace with smart contract
     api.post('/update-contract', async (req, res) => {
-
         fs.writeFile(req.body.name, req.body.cid, err => {
             if (err) {
                 console.error(err);
             }
             // file written successfully
         });
+
+        res.send();
+    });
+
+    api.delete('/update-contract/:model', async (req, res) => {
+        if (fs.existsSync(req.params.model)) {
+            fs.unlinkSync(req.params.model);
+
+        }
         res.send();
     });
 
@@ -62,15 +70,37 @@ export default () => {
             let cid = fs.readFileSync(req.params.model, { encoding: 'utf8', flag: 'r' });
             res.send(JSON.stringify({
                 cid: cid
-            })) 
+            }))
         } else {
             res.send(
                 JSON.stringify({
                     cid: null
                 }
-            ));
+                ));
         }
 
+    });
+    async function getFromIPFS(cid) {
+        let data = '';
+        for await (const file of ipfs.cat(cid)) {
+
+            const buffer = new Uint16Array(file);
+            buffer.forEach(code => {
+                data += String.fromCharCode(code);
+            });
+        }
+        return data;
+    }
+    async function microLedgerToList(cid, cids = []) {
+        const data = JSON.parse(await getFromIPFS(cid));
+        cids.push(data);
+        if (data.prev != null) {
+            await microLedgerToList(data.prev, cids);
+        }
+        return cids;
+    }
+    api.get('/microledger/:cid', async (req, res) => {
+        res.send(JSON.stringify(await microLedgerToList(req.params.cid)));
     });
 
     return api;

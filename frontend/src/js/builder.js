@@ -17,49 +17,61 @@ window.addEventListener('DOMContentLoaded', async event => {
     var microLedger = {};
     var isIPFSReady = false;
     function enableSave() {
-        document.getElementById("ipfs-save").disabled = false;
-        document.getElementById("ipfs-drop").disabled = false;
+        // document.getElementById("ipfs-save").disabled = false;
+        // document.getElementById("ipfs-drop").disabled = false;
     }
 
     function disableSave() {
-        document.getElementById("ipfs-save").disabled = true;
-        document.getElementById("ipfs-drop").disabled = true;
+        // document.getElementById("ipfs-save").disabled = true;
+        // document.getElementById("ipfs-drop").disabled = true;
 
     }
 
 
-    disableSave();
-    Ipfs.create(
-        {
-            config: {
-                Discovery: {
-                    MDNS: {
-                        Enabled: true
-                    },
-                    webRTCStar: {
-                        Enabled: true
-                    }
-                }
+        // disableSave();
+        // Ipfs.create(
+        //     {
+        //         config: {
+        //             Discovery: {
+        //                 MDNS: {
+        //                     Enabled: true
+        //                 },
+        //                 webRTCStar: {
+        //                     Enabled: true
+        //                 }
+        //             }
+        //         },
+        //         preload: {
+        //             enabled: false
+        //         }
+        //     }
+        // ).then(data => {
+        //     node = data;
+        //     isIPFSReady = true;
+        //     enableSave();
+
+
+        //     //        cacheToIPFS();
+        // });
+
+    clearAll = async function () {
+
+        const response = await fetch(`/api/update-contract/${currentSuka.name}`, {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            preload: {
-                enabled: false
-            }
-        }
-    ).then(data => {
-        node = data;
-        isIPFSReady = true;
-        enableSave();
-
-
-        //        cacheToIPFS();
-    });
-    clearAll = function () {
-        localStorage.removeItem(currentSuka.name);
+        });
+        // localStorage.removeItem(currentSuka.name);
         importMesh(currentSuka);
         updateHistoryList();
-        document.getElementById("ipfs-save").disabled = !isIPFSReady;
+        document.getElementById("remote-save").disabled = !isIPFSReady;
 
-    };
+    };  
+
     const sukas = [
         {
             name: "howdy",
@@ -72,16 +84,16 @@ window.addEventListener('DOMContentLoaded', async event => {
             gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
-        {
-            name: "muka",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
-        },
-        {
-            name: "tota",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
-        },
+        // {
+        //     name: "muka",
+        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
+        // },
+        // {
+        //     name: "tota",
+        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
+        // },
 
     ]
 
@@ -157,7 +169,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
             picker.value = mesh.material.albedoColor;
             picker.onValueChangedObservable.add(function (value) { // value is a color3
-                document.getElementById("ipfs-save").disabled = !isIPFSReady;
+                document.getElementById("remote-save").disabled = false;
 
                 mesh.material.albedoColor.copyFrom(value);
                 gltf.materials.forEach(material => {
@@ -216,8 +228,9 @@ window.addEventListener('DOMContentLoaded', async event => {
 
             }
         } else {
-            gltfString = await getFromIPFS(historyItem.cid);
-            gltf = JSON.parse(gltfString);
+            const sukaURL = `http://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
+            gltf = await (await fetch(sukaURL)).json();
+            gltfString = JSON.stringify(gltf);
         }
 
         gltfData = `data:${gltfString}`;
@@ -329,6 +342,8 @@ window.addEventListener('DOMContentLoaded', async event => {
     function ab2str(buf) {
         return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
+
+
     async function getFromIPFS(cid) {
         let data = '';
         for await (const file of node.cat(cid)) {
@@ -351,17 +366,23 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
         return cids;
     }
-
+    async function remoteMicroLedgerToList(cid) {
+        const historyItems = await (await fetch(`/api/microledger/${cid}`)).json();
+        return historyItems;
+    }
     async function updateHistoryList() {
         var historyList = [];
 
         while (dropdown.getElementsByClassName("item-history").length > 0) {
             dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
         }
-
-        if (localStorage.getItem(currentSuka.name) != null) {
-            historyList = await microLedgerToList(localStorage.getItem(currentSuka.name));
-        };
+        const latestCID = await getLatest(currentSuka.name);
+        if (latestCID != null) {
+            historyList = await remoteMicroLedgerToList(latestCID);
+        }
+        // if (localStorage.getItem(currentSuka.name) != null) {
+        //     historyList = await microLedgerToList(localStorage.getItem(currentSuka.name));
+        // };
 
         historyList.forEach(historyItem => {
             const para = document.createElement("p");
@@ -416,49 +437,55 @@ window.addEventListener('DOMContentLoaded', async event => {
 
         console.log('CID created via ipfs.add:', cid)
         localStorage.setItem(currentSuka.name, updateLedger.path);
-        document.getElementById("ipfs-save").disabled = true;
+        //document.getElementById("ipfs-save").disabled = true;
 
         updateHistoryList();
 
     }
 
     async function saveToRemoteIPFS(data) {
+        document.getElementById("remote-save").disabled = true;
+
         const response = await fetch(`/api/push-ipfs`, {
             method: 'POST',
             mode: 'cors',
-            cache: 'no-cache', 
+            cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json'
             },
-            referrerPolicy: 'no-referrer', 
+            referrerPolicy: 'no-referrer',
             body: data
         });
-        return await response.json();
+        const res = await response.json();
+
+        return res;
     }
     async function updateContract(name, cid) {
         const response = await fetch(`/api/update-contract`, {
             method: 'POST',
             mode: 'cors',
-            cache: 'no-cache', 
+            cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json'
             },
-            referrerPolicy: 'no-referrer', 
+            referrerPolicy: 'no-referrer',
             body: JSON.stringify({
                 name: name,
                 cid: cid
             })
         });
-       // return await response.json();
+        updateHistoryList();
+
+        // return await response.json();
     }
     async function getLatest(name) {
-        const response  = await (await fetch(`/api/latest-ipfs/${name}`)).json();
+        const response = await (await fetch(`/api/latest-ipfs/${name}`)).json();
         return response.cid;
-    }    
+    }
     async function saveLedgerToRemoteIPFS() {
-        let response = await saveToRemoteIPFS( JSON.stringify(gltf));
+        let response = await saveToRemoteIPFS(JSON.stringify(gltf));
         let cid = response["/"];
         let latestCID = await getLatest(currentSuka.name)
         microLedger = {
@@ -471,7 +498,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         updateContract(currentSuka.name, ledgerCID["/"]);
     }
     document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
-    document.getElementById("ipfs-save").onclick = saveToIPFS;
+    // document.getElementById("ipfs-save").onclick = saveToIPFS;
     document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
 
     // Watch for browser/canvas resize events

@@ -12,20 +12,25 @@ nav.navbar.navbar-expand-lg.navbar-dark.px-4
                 li.nav-item.px-lg-4
                     a.nav-link.text-uppercase(href='index.html') Home      
                 li.nav-item.px-lg-4
-                    div(id="save-remote")
-                        button#remote-save.btn.btn-primary(type='button') 
-                            img(src="assets/img/save.png" style="width:25px")
-                            a Save remotely                     
-                li.nav-item.px-lg-4
                     div(id="save-history")
                         .btn-group
-                            button#ipfs-save.btn.btn-primary(type='button') 
+                            button#remote-save.btn.btn-primary(type='button') 
                                 img(src="assets/img/save.png" style="width:25px")
-                                a Save locally
+                                a Save remotely       
                             button#ipfs-drop.btn.btn-primary.dropdown-toggle.dropdown-toggle-split(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick='toggleHistory();' )
                                 .dropdown-menu
                                     a.dropdown-item(onclick="clearAll()") Clear all                                       
-                                    .dropdown-divider                               
+                                    .dropdown-divider                                                    
+                //- li.nav-item.px-lg-4
+                //-     div(id="save-history")
+                //-         .btn-group
+                //-             button#ipfs-save.btn.btn-primary(type='button') 
+                //-                 img(src="assets/img/save.png" style="width:25px")
+                //-                 a Save locally
+                //-             button#ipfs-drop.btn.btn-primary.dropdown-toggle.dropdown-toggle-split(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick='toggleHistory();' )
+                //-                 .dropdown-menu
+                //-                     a.dropdown-item(onclick="clearAll()") Clear all                                       
+                //-                     .dropdown-divider                               
                 li.nav-item.px-lg-4
                     div(id="save")
                         button.btn.btn-primary(id='btn-save') 
