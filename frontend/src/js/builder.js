@@ -589,4 +589,14 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
     dragElement(document.getElementById("separator"), "H");
+
+
+    /**
+     *  Wallet Connection Button 
+     */
+    document.querySelector("#btn-connect").addEventListener("click", onConnect);
+    document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
+
+    document.querySelector("#prepare").style.display = "block";
+    document.querySelector("#connected").style.display = "none";
 });
