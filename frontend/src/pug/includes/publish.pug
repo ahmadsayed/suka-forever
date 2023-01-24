@@ -1,0 +1,21 @@
+#myModal.modal.fade(role='dialog')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                h4.modal-title Mint a sharable item
+            .modal-body
+                .form-group
+                    label(for='projectName') Project name
+                    input#projectName.form-control(aria-describedby='projectHelp' placeholder='Enter a uniq project name')
+                    small#projectHelp.form-text.text-muted Choose the name of this project
+                .form-group
+                    label(for='teams') Teams wallets
+                    textarea#teams.form-control(aria-describedby='teamHelp' placeholder='Enter comman sperated address of your team')
+                    small#teamHelp.form-text.text-muted This will be the list of team member who can edit and see your changes and history                   
+                //- .form-check
+                //-     input#saveProject.form-check-input(type='checkbox')
+                //-     label.form-check-label(for='saveProject') Use as default
+
+            .modal-footer
+                button#confirm.btn.btn-primary(type='button' data-dismiss='modal') Confirm
+                button#cancel.btn.btn-primary(type='button' data-dismiss='modal') Cancel

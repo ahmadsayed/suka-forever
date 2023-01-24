@@ -11496,6 +11496,18 @@ p {
   min-width: 10px;
 }
 
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.3rem;
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: calc(0.3rem - 1px);
+  border-top-right-radius: calc(0.3rem - 1px);
+  background-color: #99a6d2;
+}
+
 .btn-xl {
   font-weight: 700;
   font-size: 0.8rem;

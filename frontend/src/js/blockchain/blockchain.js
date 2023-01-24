@@ -64,6 +64,7 @@ async function switchToFileCoin() {
         }
     }
 }
+let contract = null;
 
 async function fetchAccountData() {
 
@@ -71,7 +72,7 @@ async function fetchAccountData() {
     web3 = new Web3(provider);
     switchToFileCoin();
     const tokenContract = "0xD6177dd28FD4F8e661E5A4a1b46e15b41d030E43";
-    const tokenURIABI =  (await (await fetch('/js/abi.json')).json()).output.abi;
+    const tokenURIABI =  (await (await fetch('/js/blockchain/abi.json')).json()).output.abi;
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
 
@@ -79,10 +80,43 @@ async function fetchAccountData() {
     console.log("Got accounts", accounts);
     selectedAccount = accounts[0];
 
-    const contract = new web3.eth.Contract(tokenURIABI, tokenContract);
+    contract = new web3.eth.Contract(tokenURIABI, tokenContract);
 
     const totalSupply = await contract.methods.totalSupply().call();
     console.log(totalSupply);
+
+}
+
+function checkIfAddressOwnThisNTF(address, name) {
+    const balance = contract.method.balanceOf(address).call();
+    let owner = false;
+    for (let i =0; i < balance; i++) {
+        const token = contract.method.tokenOfOwnerByIndex(address, i).call();
+        if (token == name) {
+            owner = true;
+            break;
+        }
+    }
+    return owner;
+}
+function createNewProject(cid, name) {
+    contract.methods.mintNFT(cid, name).send({
+        from: selectedAccount
+    }).on('transactionHash', function(hash){
+        console.log(`tx hash: ${hash}`);
+    })
+    .on('confirmation', function(confirmationNumber, receipt){
+        console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+    })
+    .on('receipt', function(receipt){
+        console.log(`receipt: ${JSON.stringify(receipt)}`);
+    })
+    .on('error', function(error, receipt) { 
+        console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+    });
+}
+
+function updateProject() {
     contract.methods.updateTokenURI(1,"helooo").send({
         from: selectedAccount
     }).on('transactionHash', function(hash){
@@ -97,7 +131,6 @@ async function fetchAccountData() {
     .on('error', function(error, receipt) { 
         console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
     });
-
 }
 
 /**
@@ -155,7 +188,13 @@ async function onConnect() {
         fetchAccountData();
     });
 
-    await refreshAccountData();
+    await refreshAccountData();    // Set the UI back to the initial state
+    document.querySelector("#prepare").style.display = "none";
+    document.querySelector("#connected").style.display = "block";
+    document.querySelector("#publish").style.display = "block";
+    document.querySelector("#notification").style.display = "block";
+
+
 }
 
 /**
@@ -182,6 +221,47 @@ async function onDisconnect() {
     // Set the UI back to the initial state
     document.querySelector("#prepare").style.display = "block";
     document.querySelector("#connected").style.display = "none";
+    document.querySelector("#publish").style.display = "none";
+    document.querySelector("#notification").style.display = "none";
+
+
+}
+
+function publish() {
+    console.log("Publish");
+    const activeProject = localStorage.getItem("active-project");
+    console.log(`Update the URI for ${activeProject }`);
+    //TODO: Update the URI for this specific Item 
+
+}
+
+function openDialog() {
+    document.querySelector("#myModal").classList.add("show");
 }
 
 
+function confirm() {
+    const activeProject = document.getElementById("projectName").value;
+    localStorage.setItem("active-project", activeProject);
+    document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+
+    console.log(`Set active project -> ${activeProject}`);
+
+    //TODO: Call Mint NFT
+    //TODO: Add Member if needed
+}
+function cancel() {
+    console.log("Cancelled");
+}
+window.addEventListener('DOMContentLoaded', async event => {
+    document.getElementById("publish").onclick = publish;
+    document.getElementById("notification").onclick = openDialog;
+    document.getElementById("confirm").onclick = confirm;
+    document.getElementById("cancel").onclick = cancel;
+    const activeProject = localStorage.getItem("active-project");
+    if (activeProject != null) {
+        document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+    }
+
+
+});

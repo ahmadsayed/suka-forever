@@ -1,20 +1,216 @@
 
 var clearAll = null;
-window.addEventListener('DOMContentLoaded', async event => {
+var gltf = null;
+var currentSuka = null;
+var microLedger = {};
+var scene = null;
 
-    const canvas = document.getElementById("renderCanvas"); // Get the canvas element
+let parent = null;
+
+var picker = null;
+var pickerTitle = null;
+var advancedTexture = null;
+var  canvas = null;
+var camera = null;
+
+function showPicker(mesh) {
+    getPicker(mesh).isVisible = true;
+    pickerTitle.isVisible = true;
+}
+
+function hidePicker(mesh) {
+    getPicker(mesh).isVisible = false;
+    pickerTitle.isVisible = false;
+}
+
+
+async function updateHistoryList() {
+    const dropdown = document.querySelector(".dropdown-menu");
+
+    var historyList = [];
+
+    while (dropdown.getElementsByClassName("item-history").length > 0) {
+        dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
+    }
+    const latestCID = await getLatest(currentSuka.name);
+    if (latestCID != null) {
+        historyList = await remoteMicroLedgerToList(latestCID);
+    }
+    // if (localStorage.getItem(currentSuka.name) != null) {
+    //     historyList = await microLedgerToList(localStorage.getItem(currentSuka.name));
+    // };
+
+    historyList.forEach(historyItem => {
+        const para = document.createElement("p");
+        const node = document.createTextNode(historyItem.ts);
+        para.appendChild(node);
+        para.classList.add("dropdown-item");
+        para.classList.add("item-history");
+        para.style.marginBottom = "0rem";
+        para.onclick = async function () {
+            console.log(historyItem);
+            await importMesh(null, historyItem)
+        }
+        dropdown.appendChild(para);
+    });
+}
+
+
+async function importMesh(suka, historyItem) {
+    for (let i = 0; i < scene.meshes.length; i++) {
+        scene.meshes[i].dispose();
+    }
+    if (parent != null) {
+        parent.dispose();
+    }
+    hidePicker();
+    var gltfData = null;
+    var gltfString = null;
+    if (historyItem == null) {                      // Get the latest from the IPFS or Local
+        if (localStorage.getItem(suka.name) == null) {
+            gltf = await (await fetch(suka.gltf)).json();
+            gltfString = JSON.stringify(gltf);
+        } else {
+            const latestCID = localStorage.getItem(suka.name);
+            const latestLedger = await getFromIPFS(latestCID);
+            const latest = JSON.parse(latestLedger);
+            gltfString = await getFromIPFS(latest.cid)
+            gltf = JSON.parse(gltfString);
+            currentSuka = suka;
+
+        }
+    } else {
+        const sukaURL = `https://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
+        gltf = await (await fetch(sukaURL)).json();
+        gltfString = JSON.stringify(gltf);
+    }
+
+    gltfData = `data:${gltfString}`;
+
+    var result = await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
+        maxRadius = 0;
+        max = null;
+        min = null;
+        biggestMesh = null;
+        minMesh = null;
+        parent = new BABYLON.Mesh("parent", scene);
+        newMeshes.forEach(mesh => {
+            meshBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
+            if (max == null) {
+                max = new BABYLON.Vector3(meshBox.x, meshBox.y, meshBox.z);
+            }
+            if (max.x < meshBox.x) {
+                max.x = meshBox.x;
+            }
+            if (max.y < meshBox.y) {
+                max.y = meshBox.y;
+            }
+            if (max.z < meshBox.z) {
+                max.z = meshBox.z;
+            }
+            minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
+            if (min == null) {
+                min = new BABYLON.Vector3(minBox.x, minBox.y, minBox.z);
+            }
+            if (min.x > minBox.x) {
+                min.x = minBox.x;
+            }
+            if (min.y > minBox.y) {
+                min.y = minBox.y;
+            }
+            if (min.z > minBox.z) {
+                min.z = minBox.z;
+            }
+
+
+            if (mesh.name == "__root__") {
+                root = mesh;
+                // mesh.position.z -=1;
+            }
+            // console.log(mesh.getBoundingInfo().boundingBox);
+            //mesh.showBoundingBox = true;
+        })
+
+        // console.log(max + " : " + min);
+
+        // console.log(minLowestPoint + ":" + maxHighestPoint);
+
+        parent.setBoundingInfo(new BABYLON.BoundingInfo(new BABYLON.Vector3(min.x, min.y, min.z), new BABYLON.Vector3(max.x, max.y, max.z)));
+        // //parent.setBoundingInfo(minMesh, biggestMesh);
+        var zoomFactor = 1.4;
+        camera.lowerRadiusLimit = (max.y - min.y) * zoomFactor;
+        camera.upperRadiusLimit = (max.y - min.y) * zoomFactor;
+        console.log(min.y)
+        console.log(max.y - min.y);
+        root.position.y -= min.y;
+        root.position.y -= ((max.y - min.y) / 2);
+        // parent.showBoundingBox = true;  
+        // parent.showBoundingBox = true;
+    });
+
+}
+
+function getPicker(mesh) {
+    const PICKER_HEIGHT = 200, PICKER_WIDTH = 200;
+
+    if (picker == null) {
+        pickerTitle = new BABYLON.GUI.TextBlock();
+        pickerTitle.text = "";
+        pickerTitle.height = "30px";
+        pickerTitle.isVisible = false;
+        pickerTitle.color = "white";
+
+        picker = new BABYLON.GUI.ColorPicker();
+        //picker.value = skullMaterial.diffuseColor;
+        picker.height = `${PICKER_HEIGHT}px`;
+        picker.width = `${PICKER_WIDTH}px`;
+        picker.isVisible = false;
+
+        advancedTexture.addControl(picker);
+        //advancedTexture.addControl(pickerTitle);
+
+    }
+    picker.top = - (canvas.height / 2) + (PICKER_HEIGHT * 1.2);
+    picker.left = (canvas.width / 2) - (PICKER_WIDTH / 2) - 20;
+    pickerTitle.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2.6))}px`;
+
+    picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    picker.onValueChangedObservable.clear();
+    if (mesh != null) {
+        pickerTitle.text = mesh.material.name;
+
+        picker.value = mesh.material.albedoColor;
+        picker.onValueChangedObservable.add(function (value) { // value is a color3
+            document.getElementById("remote-save").disabled = false;
+
+            mesh.material.albedoColor.copyFrom(value);
+            gltf.materials.forEach(material => {
+                if (material.name == mesh.material.name) {
+                    material.pbrMetallicRoughness.baseColorFactor[0] = value.r;
+                    material.pbrMetallicRoughness.baseColorFactor[1] = value.g;
+                    material.pbrMetallicRoughness.baseColorFactor[2] = value.b;
+
+                }
+            });
+        });
+    }
+
+    return picker;
+}
+
+
+window.addEventListener('DOMContentLoaded', async event => {
+    canvas = document.getElementById("renderCanvas"); // Get the canvas element
+
     const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
-    var scene = new BABYLON.Scene(engine);
-    var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    scene = new BABYLON.Scene(engine);
+    advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     const TOP_FACTOR = 0.8;
-    var camera = null;
     var root = null;
     const template = document.querySelector("#suka-template");
     const sukaList = document.querySelector("#sukas-list");
     const dropdown = document.querySelector(".dropdown-menu");
-    var currentSuka = null;
     var node;
-    var microLedger = {};
     var isIPFSReady = false;
     function enableSave() {
         // document.getElementById("ipfs-save").disabled = false;
@@ -109,12 +305,10 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
         sukaList.appendChild(clone);
     })
-    var picker = null;
-    var pickerTitle = null;
+
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Edit Color", "assets/img/rightClick.png");
     var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Explore 360", "assets/img/leftClick.png");
     var button = BABYLON.GUI.Button.CreateImageButton("Save", "Save to disk", "assets/img/save.png");
-    var gltf = null;
     function guideLocation() {
         const GUIDE_WIDTH = 150, GUIDE_HEIGHT = 100;
         rightClick.width = `${GUIDE_WIDTH}px`;
@@ -138,165 +332,15 @@ window.addEventListener('DOMContentLoaded', async event => {
         advancedTexture.addControl(leftClick);
 
     }
-    function getPicker(mesh) {
-        const PICKER_HEIGHT = 200, PICKER_WIDTH = 200;
 
-        if (picker == null) {
-            pickerTitle = new BABYLON.GUI.TextBlock();
-            pickerTitle.text = "";
-            pickerTitle.height = "30px";
-            pickerTitle.isVisible = false;
-            pickerTitle.color = "white";
-
-            picker = new BABYLON.GUI.ColorPicker();
-            //picker.value = skullMaterial.diffuseColor;
-            picker.height = `${PICKER_HEIGHT}px`;
-            picker.width = `${PICKER_WIDTH}px`;
-            picker.isVisible = false;
-
-            advancedTexture.addControl(picker);
-            //advancedTexture.addControl(pickerTitle);
-
-        }
-        picker.top = - (canvas.height / 2) + (PICKER_HEIGHT * 1.2);
-        picker.left = (canvas.width / 2) - (PICKER_WIDTH / 2) - 20;
-        pickerTitle.top = `${window.innerHeight / 2 - ((PICKER_HEIGHT * 2.6))}px`;
-
-        picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-        picker.onValueChangedObservable.clear();
-        if (mesh != null) {
-            pickerTitle.text = mesh.material.name;
-
-            picker.value = mesh.material.albedoColor;
-            picker.onValueChangedObservable.add(function (value) { // value is a color3
-                document.getElementById("remote-save").disabled = false;
-
-                mesh.material.albedoColor.copyFrom(value);
-                gltf.materials.forEach(material => {
-                    if (material.name == mesh.material.name) {
-                        material.pbrMetallicRoughness.baseColorFactor[0] = value.r;
-                        material.pbrMetallicRoughness.baseColorFactor[1] = value.g;
-                        material.pbrMetallicRoughness.baseColorFactor[2] = value.b;
-
-                    }
-                });
-            });
-        }
-
-        return picker;
-    }
-
-
-    function showPicker(mesh) {
-        getPicker(mesh).isVisible = true;
-        pickerTitle.isVisible = true;
-    }
-
-    function hidePicker(mesh) {
-        getPicker(mesh).isVisible = false;
-        pickerTitle.isVisible = false;
-    }
 
 
     function resize() {
         guideLocation();
         getPicker();
     }
-    let parent = null;
-
-    async function importMesh(suka, historyItem) {
-        for (let i = 0; i < scene.meshes.length; i++) {
-            scene.meshes[i].dispose();
-        }
-        if (parent != null) {
-            parent.dispose();
-        }
-        hidePicker();
-        var gltfData = null;
-        var gltfString = null;
-        if (historyItem == null) {                      // Get the latest from the IPFS or Local
-            if (localStorage.getItem(suka.name) == null) {
-                gltf = await (await fetch(suka.gltf)).json();
-                gltfString = JSON.stringify(gltf);
-            } else {
-                const latestCID = localStorage.getItem(suka.name);
-                const latestLedger = await getFromIPFS(latestCID);
-                const latest = JSON.parse(latestLedger);
-                gltfString = await getFromIPFS(latest.cid)
-                gltf = JSON.parse(gltfString);
-                currentSuka = suka;
-
-            }
-        } else {
-            const sukaURL = `https://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
-            gltf = await (await fetch(sukaURL)).json();
-            gltfString = JSON.stringify(gltf);
-        }
-
-        gltfData = `data:${gltfString}`;
-
-        var result = await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
-            maxRadius = 0;
-            max = null;
-            min = null;
-            biggestMesh = null;
-            minMesh = null;
-            parent = new BABYLON.Mesh("parent", scene);
-            newMeshes.forEach(mesh => {
-                meshBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
-                if (max == null) {
-                    max = new BABYLON.Vector3(meshBox.x, meshBox.y, meshBox.z);
-                }
-                if (max.x < meshBox.x) {
-                    max.x = meshBox.x;
-                }
-                if (max.y < meshBox.y) {
-                    max.y = meshBox.y;
-                }
-                if (max.z < meshBox.z) {
-                    max.z = meshBox.z;
-                }
-                minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
-                if (min == null) {
-                    min = new BABYLON.Vector3(minBox.x, minBox.y, minBox.z);
-                }
-                if (min.x > minBox.x) {
-                    min.x = minBox.x;
-                }
-                if (min.y > minBox.y) {
-                    min.y = minBox.y;
-                }
-                if (min.z > minBox.z) {
-                    min.z = minBox.z;
-                }
 
 
-                if (mesh.name == "__root__") {
-                    root = mesh;
-                    // mesh.position.z -=1;
-                }
-                // console.log(mesh.getBoundingInfo().boundingBox);
-                //mesh.showBoundingBox = true;
-            })
-
-            // console.log(max + " : " + min);
-
-            // console.log(minLowestPoint + ":" + maxHighestPoint);
-
-            parent.setBoundingInfo(new BABYLON.BoundingInfo(new BABYLON.Vector3(min.x, min.y, min.z), new BABYLON.Vector3(max.x, max.y, max.z)));
-            // //parent.setBoundingInfo(minMesh, biggestMesh);
-            var zoomFactor = 1.4;
-            camera.lowerRadiusLimit = (max.y - min.y) * zoomFactor;
-            camera.upperRadiusLimit = (max.y - min.y) * zoomFactor;
-            console.log(min.y)
-            console.log(max.y - min.y);
-            root.position.y -= min.y;
-            root.position.y -= ((max.y - min.y) / 2);
-            // parent.showBoundingBox = true;  
-            // parent.showBoundingBox = true;
-        });
-
-    }
     async function createScene() {
 
         var environment = scene.createDefaultEnvironment({
@@ -366,140 +410,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
         return cids;
     }
-    async function remoteMicroLedgerToList(cid) {
-        const historyItems = await (await fetch(`/api/microledger/${cid}`)).json();
-        return historyItems;
-    }
-    async function updateHistoryList() {
-        var historyList = [];
 
-        while (dropdown.getElementsByClassName("item-history").length > 0) {
-            dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
-        }
-        const latestCID = await getLatest(currentSuka.name);
-        if (latestCID != null) {
-            historyList = await remoteMicroLedgerToList(latestCID);
-        }
-        // if (localStorage.getItem(currentSuka.name) != null) {
-        //     historyList = await microLedgerToList(localStorage.getItem(currentSuka.name));
-        // };
-
-        historyList.forEach(historyItem => {
-            const para = document.createElement("p");
-            const node = document.createTextNode(historyItem.ts);
-            para.appendChild(node);
-            para.classList.add("dropdown-item");
-            para.classList.add("item-history");
-            para.style.marginBottom = "0rem";
-            para.onclick = async function () {
-                console.log(historyItem);
-                await importMesh(null, historyItem)
-            }
-            dropdown.appendChild(para);
-        });
-    }
-    async function cacheToIPFS() {
-        sukas.forEach(async suka => {
-            fetch(suka.gltf)
-                .then(res => res.json())
-                .then(async gltf => {
-                    const results = await node.add(JSON.stringify(gltf));
-                    const cid = results.path
-                    // localStorage.setItem(currentSuka.name, cid);
-
-                    microLedger = {
-                        prev: localStorage.getItem(suka.name),
-                        ts: new Date(new Date().getTime()).toLocaleString(),
-                        cid: cid
-                    };
-
-                    const updateLedger = await node.add(JSON.stringify(microLedger));
-
-                    console.log('CID created via ipfs.add:', updateLedger.path)
-                    localStorage.setItem(suka.name, updateLedger.path);
-                })
-
-
-        })
-
-    }
-    async function saveToIPFS() {
-        const results = await node.add(JSON.stringify(gltf));
-        const cid = results.path
-        // localStorage.setItem(currentSuka.name, cid);
-
-        microLedger = {
-            prev: localStorage.getItem(currentSuka.name),
-            ts: new Date(new Date().getTime()).toLocaleString(),
-            cid: cid
-        };
-        const updateLedger = await node.add(JSON.stringify(microLedger));
-
-        console.log('CID created via ipfs.add:', cid)
-        localStorage.setItem(currentSuka.name, updateLedger.path);
-        //document.getElementById("ipfs-save").disabled = true;
-
-        updateHistoryList();
-
-    }
-
-    async function saveToRemoteIPFS(data) {
-        document.getElementById("remote-save").disabled = true;
-
-        const response = await fetch(`/api/push-ipfs`, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            referrerPolicy: 'no-referrer',
-            body: data
-        });
-        const res = await response.json();
-
-        return res;
-    }
-    async function updateContract(name, cid) {
-        const response = await fetch(`/api/update-contract`, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-                name: name,
-                cid: cid
-            })
-        });
-        updateHistoryList();
-
-        // return await response.json();
-    }
-    async function getLatest(name) {
-        const response = await (await fetch(`/api/latest-ipfs/${name}`)).json();
-        return response.cid;
-    }
-    async function saveLedgerToRemoteIPFS() {
-        let response = await saveToRemoteIPFS(JSON.stringify(gltf));
-        let cid = response["/"];
-        let latestCID = await getLatest(currentSuka.name)
-        microLedger = {
-            prev: latestCID,
-            ts: new Date(new Date().getTime()).toLocaleString(),
-            cid: cid
-        };
-        let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
-        console.log('CID created via ipfs.add:', ledgerCID)
-        updateContract(currentSuka.name, ledgerCID["/"]);
-    }
-    document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
-    // document.getElementById("ipfs-save").onclick = saveToIPFS;
-    document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
 
     // Watch for browser/canvas resize events
     window.addEventListener("resize", function () {
@@ -599,4 +510,15 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     document.querySelector("#prepare").style.display = "block";
     document.querySelector("#connected").style.display = "none";
+
+
+    /**
+     *  Editor Menu
+     */
+
+    document.getElementById("btn-save").onclick = saveToDisk; // Get the canvas element
+    // document.getElementById("ipfs-save").onclick = saveToIPFS;
+    document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
+
+
 });

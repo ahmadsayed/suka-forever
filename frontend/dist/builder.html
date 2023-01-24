@@ -7,7 +7,9 @@
         <meta name="author" content="" />
         <title>SUKA Verse</title>
         <script src="js/builder.js"></script>
-        <script src="js/blockchain.js"></script>
+        <script src="js/blockchain/blockchain.js"></script>
+        <script src="js/ipfs/remote-ipfs.js"></script>
+        <script src="js/ipfs/browser-ipfs.js"></script>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
@@ -33,20 +35,27 @@
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark px-4">
-            <img src="assets/img/logo.svg" style="width: 15vw" />
-            <button class="btn btn-primary" id="notification" style="width: 15vw; margin-left: 23vw; display: none" disabled><a>Loading</a></button>
+            <a href="index.html"><img src="assets/img/logo.svg" style="width: 15vw" /></a>
+            <button class="btn btn-primary" id="notification" type="button" data-toggle="modal" data-target="#myModal" style="width: 15vw; margin-left: 23vw; display: none"><a>No active shareable Item</a></button>
             <div class="div" style="margin-right: revert; margin-left: auto">
                 <a class="navbar-brand text-uppercase fw-bold d-lg-none" href="index.html">SUKA Verse</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mx-auto">
-                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
+                        <li class="nav-item px-lg-4">
+                            <div id="publish-div">
+                                <button class="btn btn-primary" id="publish" type="button" style="display: none">
+                                    <img src="assets/img/share.png" style="width: 25px" />
+                                    <a>Publish</a>
+                                </button>
+                            </div>
+                        </li>
                         <li class="nav-item px-lg-4">
                             <div id="save-history">
                                 <div class="btn-group">
                                     <button class="btn btn-primary" id="remote-save" type="button">
                                         <img src="assets/img/save.png" style="width: 25px" />
-                                        <a>Save remotely</a>
+                                        <a>Save</a>
                                     </button>
                                     <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="ipfs-drop" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleHistory();">
                                         <div class="dropdown-menu">
@@ -69,7 +78,7 @@
                             <div id="prepare">
                                 <button class="btn btn-primary" id="btn-connect">
                                     <svg class="bi bi-wallet2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 20 20"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path></svg>
-                                    <a>Login</a>
+                                    <a>Login&nbsp;&nbsp;</a>
                                 </button>
                             </div>
                             <div id="connected" style="display: none">
@@ -80,6 +89,29 @@
                             </div>
                         </li>
                     </ul>
+                </div>
+            </div>
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header"><h4 class="modal-title">Mint a sharable item</h4></div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="projectName">Project name</label>
+                                <input class="form-control" id="projectName" aria-describedby="projectHelp" placeholder="Enter a uniq project name" />
+                                <small class="form-text text-muted" id="projectHelp">Choose the name of this project</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="teams">Teams wallets</label>
+                                <textarea class="form-control" id="teams" aria-describedby="teamHelp" placeholder="Enter comman sperated address of your team"></textarea>
+                                <small class="form-text text-muted" id="teamHelp">This will be the list of team member who can edit and see your changes and history</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" id="confirm" type="button" data-dismiss="modal">Confirm</button>
+                            <button class="btn btn-primary" id="cancel" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>

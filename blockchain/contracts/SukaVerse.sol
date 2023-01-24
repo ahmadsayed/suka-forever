@@ -34,17 +34,17 @@ contract SukaVerse is ERC721Enumerable {
      * 3- Only Owner can Burn
      * 4- Only Owner can add/remove team Memebr
      * 5- Only Owner or Editor can update the URI
-     * 6- TODO: Viewer only mode can comments 
+     * 6- TODO: Viewer only mode can comments
      * 7- TODO: Retention policy for older version will use Filecoin deals
      * 8- TODO: Delegate Team Memeber as Admin
      * 9- TODO: Expose who made which change
      */
     constructor() ERC721("SukaVerse", "SUKA") {}
 
-    function mintNFT(
-        string memory _tokenURI,
-        uint256 tokenId
-    ) public returns (uint256) {
+    function mintNFT(string memory _tokenURI, uint256 tokenId)
+        public
+        returns (uint256)
+    {
         require(!_exists(tokenId), "ERC721URIStorage: tokenId already created");
 
         _tokenCounts.increment();
@@ -52,6 +52,8 @@ contract SukaVerse is ERC721Enumerable {
         uint256 newItemId = tokenId;
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
+        members[tokenId].push(msg.sender);
+
         return newItemId;
     }
 
@@ -99,7 +101,7 @@ contract SukaVerse is ERC721Enumerable {
             "ERC721URIStorage: URI set of nonexistent token"
         );
         require(
-            _isTokenEditor(tokenId, msg.sender), 
+            _isTokenEditor(tokenId, msg.sender),
             "SUKAVerse: Only owner or Editor can Update the token"
         );
         _tokenURIs[tokenId] = _tokenURI;
@@ -137,8 +139,8 @@ contract SukaVerse is ERC721Enumerable {
     }
 
     function _isTokenEditor(uint256 tokenId, address sender)
-        view 
         internal
+        view
         returns (bool)
     {
         bool isTeamMember = false;
@@ -166,9 +168,9 @@ contract SukaVerse is ERC721Enumerable {
             "ERC721URIStorage: Add editor nonexistent token"
         );
         require(
-            _ownerOf(tokenId) == msg.sender, 
+            _ownerOf(tokenId) == msg.sender,
             "SUKAVerse: Only token owner can add memeber"
-            );
+        );
         members[tokenId].push(editor);
     }
 

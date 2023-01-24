@@ -1,22 +1,26 @@
 // Navigation
 nav.navbar.navbar-expand-lg.navbar-dark.px-4
-    img(src='assets/img/logo.svg' style="width: 15vw;")
-    button.btn.btn-primary(id='notification', style="width: 15vw;margin-left: 23vw;display: none", disabled) 
-            a Loading    
+    a(href='index.html')
+        img(src='assets/img/logo.svg' style="width: 15vw;")
+    button#notification.btn.btn-primary(type='button'  data-toggle='modal' data-target='#myModal' style="width: 15vw;margin-left: 23vw;display: none") 
+        a No active shareable Item    
     .div(style="margin-right:revert; margin-left:auto;")
         a.navbar-brand.text-uppercase.fw-bold.d-lg-none(href='index.html') SUKA Verse
         button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
             span.navbar-toggler-icon
         #navbarSupportedContent.collapse.navbar-collapse
-            ul.navbar-nav.mx-auto            
+            ul.navbar-nav.mx-auto
                 li.nav-item.px-lg-4
-                    a.nav-link.text-uppercase(href='index.html') Home      
+                    div(id="publish-div")
+                        button#publish.btn.btn-primary(type='button' style="display:none;") 
+                            img(src="assets/img/share.png" style="width:25px")
+                            a Publish
                 li.nav-item.px-lg-4
                     div(id="save-history")
                         .btn-group
                             button#remote-save.btn.btn-primary(type='button') 
                                 img(src="assets/img/save.png" style="width:25px")
-                                a Save remotely       
+                                a Save       
                             button#ipfs-drop.btn.btn-primary.dropdown-toggle.dropdown-toggle-split(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onclick='toggleHistory();' )
                                 .dropdown-menu
                                     a.dropdown-item(onclick="clearAll()") Clear all                                       
@@ -38,15 +42,15 @@ nav.navbar.navbar-expand-lg.navbar-dark.px-4
                             //- svg.bi.bi-wallet2(xmlns='http://www.w3.org/2000/svg' width='25' height='25' fill='currentColor' viewBox='0 0 20 20')
                             //-     path(d='M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z')                        
                             a Download
-
                 li.nav-item.px-lg-4
                     div(id="prepare")
                         button.btn.btn-primary(id='btn-connect') 
-                            svg.bi.bi-wallet2(xmlns='http://www.w3.org/2000/svg', width='25', height='25', fill='currentColor', viewBox='0 0 20 20')
+                            svg.bi.bi-wallet2(xmlns='http://www.w3.org/2000/svg' width='25' height='25' fill='currentColor' viewBox='0 0 20 20')
                                 path(d='M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z')                        
-                            a Login
+                            a Login&nbsp;&nbsp;
                     div(id="connected" style="display: none")
                         button.btn.btn-primary(id='btn-disconnect')
-                            svg.bi.bi-wallet2(xmlns='http://www.w3.org/2000/svg', width='25', height='25', fill='currentColor', viewBox='0 0 20 20')
+                            svg.bi.bi-wallet2(xmlns='http://www.w3.org/2000/svg' width='25' height='25' fill='currentColor' viewBox='0 0 20 20')
                                 path(d='M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z')
-                            a  Logout   
+                            a  Logout
+    include publish
