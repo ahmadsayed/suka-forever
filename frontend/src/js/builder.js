@@ -4,7 +4,7 @@ var gltf = null;
 var currentSuka = null;
 var microLedger = {};
 var scene = null;
-
+var engine = null;
 let parent = null;
 
 var picker = null;
@@ -21,6 +21,15 @@ function showPicker(mesh) {
 function hidePicker(mesh) {
     getPicker(mesh).isVisible = false;
     pickerTitle.isVisible = false;
+}
+
+function screenshot () {
+    return new Promise((resolve, reject) => {
+        BABYLON.Tools.CreateScreenshot(engine, camera, { width: 600, height: 600 },
+            function (data) {
+                resolve (data);
+            });      
+    })
 }
 
 
@@ -55,6 +64,11 @@ async function updateHistoryList() {
     });
 }
 
+async function getFromRemoteIPFS(cid) {
+    const sukaURL = `https://ipfs.sukaverse.club/ipfs/${cid}`
+    gltf = await (await fetch(sukaURL)).json();
+    return gltf;
+}
 
 async function importMesh(suka, historyItem) {
     for (let i = 0; i < scene.meshes.length; i++) {
@@ -66,22 +80,22 @@ async function importMesh(suka, historyItem) {
     hidePicker();
     var gltfData = null;
     var gltfString = null;
-    if (historyItem == null) {                      // Get the latest from the IPFS or Local
+    console.log(historyItem);
+    if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
         if (localStorage.getItem(suka.name) == null) {
             gltf = await (await fetch(suka.gltf)).json();
             gltfString = JSON.stringify(gltf);
         } else {
             const latestCID = localStorage.getItem(suka.name);
-            const latestLedger = await getFromIPFS(latestCID);
-            const latest = JSON.parse(latestLedger);
-            gltfString = await getFromIPFS(latest.cid)
-            gltf = JSON.parse(gltfString);
+            const latestLedger = await getFromRemoteIPFS(latestCID);
+            //const latest = JSON.parse(latestLedger);
+            gltf = await getFromRemoteIPFS(latestLedger.cid)
+            gltfString = JSON.stringify(gltf);
             currentSuka = suka;
 
         }
     } else {
-        const sukaURL = `https://ipfs.sukaverse.club/ipfs/${historyItem.cid}`
-        gltf = await (await fetch(sukaURL)).json();
+        gltf = await getFromRemoteIPFS(historyItem.cid);
         gltfString = JSON.stringify(gltf);
     }
 
@@ -202,7 +216,7 @@ function getPicker(mesh) {
 window.addEventListener('DOMContentLoaded', async event => {
     canvas = document.getElementById("renderCanvas"); // Get the canvas element
 
-    const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+    engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     scene = new BABYLON.Scene(engine);
     advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
     const TOP_FACTOR = 0.8;
@@ -262,33 +276,36 @@ window.addEventListener('DOMContentLoaded', async event => {
             },
         });
         // localStorage.removeItem(currentSuka.name);
+        localStorage.removeItem(currentSuka.name);
         importMesh(currentSuka);
         updateHistoryList();
         document.getElementById("remote-save").disabled = !isIPFSReady;
 
     };  
 
+    // Retrieve this list from smart Contract public projects
+
     const sukas = [
         {
             name: "howdy",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
+            image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            gltf: "https://ipfs.io/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
             name: "laith",
-            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
+            image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
+            gltf: "https://ipfs.io/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
         // {
         //     name: "muka",
-        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
+        //     image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+        //     gltf: "https://ipfs.io/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
         // },
         // {
         //     name: "tota",
-        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
+        //     image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+        //     gltf: "https://ipfs.io/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
         // },
 
     ]
@@ -356,7 +373,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.lowerRadiusLimit = 9;
         camera.upperRadiusLimit = 9;
         camera.panningSensibility = 0;
-        //importMesh("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
+        //importMesh("https://ipfs.io/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
         console.log(camera.fov);

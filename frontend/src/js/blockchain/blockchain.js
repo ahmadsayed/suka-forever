@@ -72,7 +72,7 @@ async function fetchAccountData() {
     web3 = new Web3(provider);
     switchToFileCoin();
     const tokenContract = "0xD6177dd28FD4F8e661E5A4a1b46e15b41d030E43";
-    const tokenURIABI =  (await (await fetch('/js/blockchain/abi.json')).json()).output.abi;
+    const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json()).output.abi;
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
 
@@ -84,13 +84,53 @@ async function fetchAccountData() {
 
     const totalSupply = await contract.methods.totalSupply().call();
     console.log(totalSupply);
+    listAllTokensbyAddress(selectedAccount);
 
 }
 
+async function listAllTokensbyAddress(address) {
+    const template = document.querySelector("#suka-template");
+    const sukaList = document.querySelector("#sukas-list");
+
+    const balance = await contract.methods.balanceOf(address).call();
+    for (let i = 0; i < balance; i++) {
+        const token = await contract.methods.tokenOfOwnerByIndex(address, i).call();
+        let cid = await contract.methods.tokenURI(token).call();
+        try {
+            const metadata = await getFromRemoteIPFS(cid);
+
+            if (metadata.hasOwnProperty("img")) {
+                const imageData = await getFromRemoteIPFS(metadata.img);
+                const clone = template.content.cloneNode(true);
+                clone.querySelector(".my-suka").src = imageData.image;
+                clone.querySelector(".my-suka").onclick = async function () {
+
+                }
+                sukaList.appendChild(clone);
+
+            }
+            // sukas.forEach(suka => {
+            //     const clone = template.content.cloneNode(true);
+            //     clone.querySelector(".my-suka").src = suka.image;
+            //     clone.querySelector(".my-suka").onclick = async function () {
+            //         currentSuka = suka;
+
+            //         importMesh(suka);
+            //         updateHistoryList();
+
+            //     }
+            //     sukaList.appendChild(clone);
+            // })
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}
 function checkIfAddressOwnThisNTF(address, name) {
     const balance = contract.method.balanceOf(address).call();
     let owner = false;
-    for (let i =0; i < balance; i++) {
+    for (let i = 0; i < balance; i++) {
         const token = contract.method.tokenOfOwnerByIndex(address, i).call();
         if (token == name) {
             owner = true;
@@ -99,38 +139,38 @@ function checkIfAddressOwnThisNTF(address, name) {
     }
     return owner;
 }
-function createNewProject(cid, name) {
-    contract.methods.mintNFT(cid, name).send({
+function mintNFT(cid, tokenID) {
+    contract.methods.mintNFT(cid, tokenID).send({
         from: selectedAccount
-    }).on('transactionHash', function(hash){
+    }).on('transactionHash', function (hash) {
         console.log(`tx hash: ${hash}`);
     })
-    .on('confirmation', function(confirmationNumber, receipt){
-        console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
-    })
-    .on('receipt', function(receipt){
-        console.log(`receipt: ${JSON.stringify(receipt)}`);
-    })
-    .on('error', function(error, receipt) { 
-        console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-    });
+        .on('confirmation', function (confirmationNumber, receipt) {
+            console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('receipt', function (receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('error', function (error, receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+        });
 }
 
-function updateProject() {
-    contract.methods.updateTokenURI(1,"helooo").send({
+function updateProject(cid, tokenID) {
+    contract.methods.updateTokenURI(tokenID, cid).send({
         from: selectedAccount
-    }).on('transactionHash', function(hash){
+    }).on('transactionHash', function (hash) {
         console.log(`tx hash: ${hash}`);
     })
-    .on('confirmation', function(confirmationNumber, receipt){
-        console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
-    })
-    .on('receipt', function(receipt){
-        console.log(`receipt: ${JSON.stringify(receipt)}`);
-    })
-    .on('error', function(error, receipt) { 
-        console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-    });
+        .on('confirmation', function (confirmationNumber, receipt) {
+            console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('receipt', function (receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('error', function (error, receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+        });
 }
 
 /**
@@ -227,10 +267,13 @@ async function onDisconnect() {
 
 }
 
-function publish() {
+async function publish() {
     console.log("Publish");
     const activeProject = localStorage.getItem("active-project");
-    console.log(`Update the URI for ${activeProject }`);
+    let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    let cid = localStorage.getItem(currentSuka.name);
+    //updateProject(cid, tokenId);
+    console.log(`Update the URI for ${activeProject}`);
     //TODO: Update the URI for this specific Item 
 
 }
@@ -239,6 +282,22 @@ function openDialog() {
     document.querySelector("#myModal").classList.add("show");
 }
 
+function converStringToNumber(data) {
+    var hex = "";
+    for (let i = 0; i < data.length; i++) {
+        hex += data.charCodeAt(i).toString(16);
+    }
+    return hex;
+}
+
+function convertNumberToString(number) {
+    var hex = number.toString(16);
+    var str = "";
+    for (let i = 0; i < hex.length; i += 2) {
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    }
+    return str;
+}
 
 function confirm() {
     const activeProject = document.getElementById("projectName").value;
@@ -246,13 +305,23 @@ function confirm() {
     document.getElementById("notification").textContent = `Active project -> ${activeProject}`
 
     console.log(`Set active project -> ${activeProject}`);
-
+    // Create new project using activeProject and currentSuka 
+    let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    let cid = localStorage.getItem(currentSuka.name);
+    console.log(`tokenID= ${tokenId}, cid= ${cid}`);
+    mintNFT(cid, tokenId);
     //TODO: Call Mint NFT
     //TODO: Add Member if needed
 }
 function cancel() {
     console.log("Cancelled");
 }
+
+function listMyToken() {
+
+}
+
+
 window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("publish").onclick = publish;
     document.getElementById("notification").onclick = openDialog;
@@ -265,3 +334,5 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
 });
+
+

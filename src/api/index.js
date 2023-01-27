@@ -22,6 +22,7 @@ const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS
 const ASSETS_IPFS = process.env.ASSETS_IPFS
 
 import authenticate from "./authentication.js";
+import { captureRejectionSymbol } from 'events';
 export default () => {
     let api = Router();
     // perhaps expose some API metadata at the root
@@ -33,7 +34,7 @@ export default () => {
     api.get('/download', async (req, res) => {
         //let addressx = await web3.eth.accounts.recover(req.body.message ,req.body.signature);
         //console.log(addressx);
-        let zipURL = `https://cloudflare-ipfs.com/ipfs/${ASSETS_IPFS}/${res.locals.tokenID}.zip`;
+        let zipURL = `https://ipfs.io/ipfs/${ASSETS_IPFS}/${res.locals.tokenID}.zip`;
         console.log(`Address ${res.locals.userAddress} downloaded the assets from ${zipURL}`);
         request(zipURL).pipe(res);
     });
