@@ -104,24 +104,21 @@ async function listAllTokensbyAddress(address) {
                 const clone = template.content.cloneNode(true);
                 clone.querySelector(".my-suka").src = imageData.image;
                 clone.querySelector(".my-suka").onclick = async function () {
+                    currentSuka = {
+                        name: token,
+                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`            
+                    }
+                    importMesh(currentSuka);
+                    updateHistoryList();
+                    var activeProject = convertNumberToString(BigInt(token));
+                    localStorage.setItem("active-project", activeProject);
+                    document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+
 
                 }
                 sukaList.appendChild(clone);
 
             }
-            // sukas.forEach(suka => {
-            //     const clone = template.content.cloneNode(true);
-            //     clone.querySelector(".my-suka").src = suka.image;
-            //     clone.querySelector(".my-suka").onclick = async function () {
-            //         currentSuka = suka;
-
-            //         importMesh(suka);
-            //         updateHistoryList();
-
-            //     }
-            //     sukaList.appendChild(clone);
-            // })
-
         } catch (error) {
             console.error(error);
         }
@@ -274,6 +271,7 @@ async function publish() {
     let cid = localStorage.getItem(currentSuka.name);
     //updateProject(cid, tokenId);
     console.log(`Update the URI for ${activeProject}`);
+    screendownload();
     //TODO: Update the URI for this specific Item 
 
 }

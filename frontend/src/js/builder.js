@@ -23,9 +23,12 @@ function hidePicker(mesh) {
     pickerTitle.isVisible = false;
 }
 
+function screendownload() {
+    BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera, 512);
+}
 function screenshot () {
     return new Promise((resolve, reject) => {
-        BABYLON.Tools.CreateScreenshot(engine, camera, { width: 600, height: 600 },
+        BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera, 512,
             function (data) {
                 resolve (data);
             });      
