@@ -1,7 +1,7 @@
 async function saveLedgerToRemoteIPFS() {
     let response = await saveToRemoteIPFS(JSON.stringify(gltf));
     let cid = response["/"];
-    let latestCID = await getLatest(currentSuka.name);
+    let latestCID = localStorage.getItem(currentSuka.name);
     const snapshot = await screenshot();
     let img = await saveToRemoteIPFS(JSON.stringify({
         image: snapshot
@@ -15,9 +15,11 @@ async function saveLedgerToRemoteIPFS() {
     };
     let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
     console.log('CID created via ipfs.add:', ledgerCID)
-    updateContract(currentSuka.name, ledgerCID["/"]);
+
     // Save to localStorage till user decide to publish 
     localStorage.setItem(currentSuka.name, ledgerCID["/"]);
+    updateHistoryList();
+
 }
 
 
@@ -48,24 +50,4 @@ async function saveToRemoteIPFS(data) {
     const res = await response.json();
 
     return res;
-}
-
-async function updateContract(name, cid) {
-    const response = await fetch(`/api/update-contract`, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify({
-            name: name,
-            cid: cid
-        })
-    });
-    updateHistoryList();
-
-    // return await response.json();
 }

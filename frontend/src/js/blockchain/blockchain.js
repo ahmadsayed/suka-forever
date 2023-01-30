@@ -16,6 +16,7 @@ let evmChains;
 
 const chainID = 3141;
 
+let activeProject = null;
 /**
  * Setup the orchestra
  */
@@ -71,8 +72,8 @@ async function fetchAccountData() {
     // Get a Web3 instance for the wallet
     web3 = new Web3(provider);
     switchToFileCoin();
-    const tokenContract = "0xD6177dd28FD4F8e661E5A4a1b46e15b41d030E43";
-    const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json()).output.abi;
+    const tokenContract = "0xD1a9bB0F4a41c62ed2cd040795A4d94917888f82";
+    const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json());
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
 
@@ -89,8 +90,16 @@ async function fetchAccountData() {
 }
 
 async function listAllTokensbyAddress(address) {
+
+    
     const template = document.querySelector("#suka-template");
     const sukaList = document.querySelector("#sukas-list");
+    while (sukaList.getElementsByClassName("my-suka").length > 0) {
+        d = sukaList.getElementsByClassName("my-suka")[0];
+        d.parentNode.removeChild(d);
+    }
+
+    initSamples();
 
     const balance = await contract.methods.balanceOf(address).call();
     for (let i = 0; i < balance; i++) {
@@ -106,12 +115,15 @@ async function listAllTokensbyAddress(address) {
                 clone.querySelector(".my-suka").onclick = async function () {
                     currentSuka = {
                         name: token,
-                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`            
+                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
                     }
                     importMesh(currentSuka);
+                    localStorage.setItem(currentSuka.name, cid);
+
                     updateHistoryList();
-                    var activeProject = convertNumberToString(BigInt(token));
-                    localStorage.setItem("active-project", activeProject);
+                    activeProject = convertNumberToString(BigInt(token));
+                    document.getElementById("publish").disabled = false;
+
                     document.getElementById("notification").textContent = `Active project -> ${activeProject}`
 
 
@@ -147,6 +159,9 @@ function mintNFT(cid, tokenID) {
         })
         .on('receipt', function (receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
+            document.getElementById("publish").disabled = false;
+
+
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
@@ -170,6 +185,25 @@ function updateProject(cid, tokenID) {
         });
 }
 
+
+//    function addEditor(uint256 tokenId, address[] memory editor) public {
+
+function addEditorList(tokenid, addressList) {
+    contract.methods.addEditor(tokenid, addressList).send({
+        from: selectedAccount
+    }).on('transactionHash', function (hash) {
+        console.log(`tx hash: ${hash}`);
+    })
+        .on('confirmation', function (confirmationNumber, receipt) {
+            console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('receipt', function (receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('error', function (error, receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+        });
+}
 /**
  * Fetch account data for UI when
  * - User switches accounts in wallet
@@ -266,13 +300,15 @@ async function onDisconnect() {
 
 async function publish() {
     console.log("Publish");
-    const activeProject = localStorage.getItem("active-project");
-    let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    let tokenID = BigInt(`0x${converStringToNumber(activeProject)}`);
+    await saveLedgerToRemoteIPFS();
     let cid = localStorage.getItem(currentSuka.name);
     //updateProject(cid, tokenId);
+
     console.log(`Update the URI for ${activeProject}`);
-    screendownload();
     //TODO: Update the URI for this specific Item 
+     updateProject(cid, tokenID);
+
 
 }
 
@@ -297,17 +333,36 @@ function convertNumberToString(number) {
     return str;
 }
 
-function confirm() {
-    const activeProject = document.getElementById("projectName").value;
-    localStorage.setItem("active-project", activeProject);
+async function confirm() {
+    activeProject = document.getElementById("projectName").value;
+    let teams = document.getElementById("teams").value;
     document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+
 
     console.log(`Set active project -> ${activeProject}`);
     // Create new project using activeProject and currentSuka 
     let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    await saveLedgerToRemoteIPFS();
+    teams = teams.split(" ").join(",");
+    teams = teams.split("\n").join(",");
+    let finalteams = [];
+    let teamlist = teams.split(","); // Split by CSV
+    teamlist.forEach(address => {
+        console.log(address);
+        if (web3.utils.isAddress(address)) {
+            finalteams.push(address);
+        }
+    })
+    console.log(`teams: ${finalteams}`);
+
     let cid = localStorage.getItem(currentSuka.name);
     console.log(`tokenID= ${tokenId}, cid= ${cid}`);
-    mintNFT(cid, tokenId);
+    if (finalteams.length > 0) {
+        mintNFT(cid, tokenId, finalteams);
+    } else {
+        mintNFT(cid, tokenId);
+    }
+
     //TODO: Call Mint NFT
     //TODO: Add Member if needed
 }
@@ -322,10 +377,10 @@ function listMyToken() {
 
 window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("publish").onclick = publish;
+    document.getElementById("publish").disabled = true;
     document.getElementById("notification").onclick = openDialog;
     document.getElementById("confirm").onclick = confirm;
     document.getElementById("cancel").onclick = cancel;
-    const activeProject = localStorage.getItem("active-project");
     if (activeProject != null) {
         document.getElementById("notification").textContent = `Active project -> ${activeProject}`
     }

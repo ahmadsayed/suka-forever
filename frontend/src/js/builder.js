@@ -44,7 +44,7 @@ async function updateHistoryList() {
     while (dropdown.getElementsByClassName("item-history").length > 0) {
         dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
     }
-    const latestCID = await getLatest(currentSuka.name);
+    const latestCID = localStorage.getItem(currentSuka.name);
     if (latestCID != null) {
         historyList = await remoteMicroLedgerToList(latestCID);
     }
@@ -214,80 +214,11 @@ function getPicker(mesh) {
 
     return picker;
 }
-
-
-window.addEventListener('DOMContentLoaded', async event => {
-    canvas = document.getElementById("renderCanvas"); // Get the canvas element
-
-    engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
-    scene = new BABYLON.Scene(engine);
-    advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    const TOP_FACTOR = 0.8;
-    var root = null;
-    const template = document.querySelector("#suka-template");
-    const sukaList = document.querySelector("#sukas-list");
-    const dropdown = document.querySelector(".dropdown-menu");
-    var node;
-    var isIPFSReady = false;
-    function enableSave() {
-        // document.getElementById("ipfs-save").disabled = false;
-        // document.getElementById("ipfs-drop").disabled = false;
-    }
-
-    function disableSave() {
-        // document.getElementById("ipfs-save").disabled = true;
-        // document.getElementById("ipfs-drop").disabled = true;
-
-    }
-
-
-        // disableSave();
-        // Ipfs.create(
-        //     {
-        //         config: {
-        //             Discovery: {
-        //                 MDNS: {
-        //                     Enabled: true
-        //                 },
-        //                 webRTCStar: {
-        //                     Enabled: true
-        //                 }
-        //             }
-        //         },
-        //         preload: {
-        //             enabled: false
-        //         }
-        //     }
-        // ).then(data => {
-        //     node = data;
-        //     isIPFSReady = true;
-        //     enableSave();
-
-
-        //     //        cacheToIPFS();
-        // });
-
-    clearAll = async function () {
-
-        const response = await fetch(`/api/update-contract/${currentSuka.name}`, {
-            method: 'DELETE',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        // localStorage.removeItem(currentSuka.name);
-        localStorage.removeItem(currentSuka.name);
-        importMesh(currentSuka);
-        updateHistoryList();
-        document.getElementById("remote-save").disabled = !isIPFSReady;
-
-    };  
-
     // Retrieve this list from smart Contract public projects
 
+function initSamples() {
+    const template = document.querySelector("#suka-template");
+    const sukaList = document.querySelector("#sukas-list");
     const sukas = [
         {
             name: "howdy",
@@ -325,6 +256,69 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
         sukaList.appendChild(clone);
     })
+}
+
+
+window.addEventListener('DOMContentLoaded', async event => {
+    canvas = document.getElementById("renderCanvas"); // Get the canvas element
+
+    engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+    scene = new BABYLON.Scene(engine);
+    advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    const TOP_FACTOR = 0.8;
+    var root = null;
+    const dropdown = document.querySelector(".dropdown-menu");
+
+    var node;
+    var isIPFSReady = false;
+    function enableSave() {
+        // document.getElementById("ipfs-save").disabled = false;
+        // document.getElementById("ipfs-drop").disabled = false;
+    }
+
+    function disableSave() {
+        // document.getElementById("ipfs-save").disabled = true;
+        // document.getElementById("ipfs-drop").disabled = true;
+
+    }
+
+    initSamples();
+        // disableSave();
+        // Ipfs.create(
+        //     {
+        //         config: {
+        //             Discovery: {
+        //                 MDNS: {
+        //                     Enabled: true
+        //                 },
+        //                 webRTCStar: {
+        //                     Enabled: true
+        //                 }
+        //             }
+        //         },
+        //         preload: {
+        //             enabled: false
+        //         }
+        //     }
+        // ).then(data => {
+        //     node = data;
+        //     isIPFSReady = true;
+        //     enableSave();
+
+
+        //     //        cacheToIPFS();
+        // });
+
+    clearAll = async function () {
+
+        // localStorage.removeItem(currentSuka.name);
+        localStorage.removeItem(currentSuka.name);
+        importMesh(currentSuka);
+        updateHistoryList();
+        document.getElementById("remote-save").disabled = !isIPFSReady;
+
+    };  
+
 
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Edit Color", "assets/img/rightClick.png");
     var leftClick = BABYLON.GUI.Button.CreateImageButton("leftClick", "Explore 360", "assets/img/leftClick.png");
