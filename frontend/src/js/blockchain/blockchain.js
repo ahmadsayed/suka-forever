@@ -57,7 +57,7 @@ async function switchToFileCoin() {
                             chainName: "Filecoin - Hyperspace testnet",
                             chainId: web3.utils.toHex(chainID),
                             nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
-                            rpcUrls: [urls]//https://api.hyperspace.node.glif.io/rpc/v0']
+                            rpcUrls: [urls]//https://api.hyperspace.node.glif.io/rpc/v1']
                         }
                     ]
                 });
@@ -72,7 +72,7 @@ async function fetchAccountData() {
     // Get a Web3 instance for the wallet
     web3 = new Web3(provider);
     switchToFileCoin();
-    const tokenContract = "0xD1a9bB0F4a41c62ed2cd040795A4d94917888f82";
+    const tokenContract = "0xd2c5268649f44aEcc5897Fe975A575dd389F6cd2";
     const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json());
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
@@ -107,35 +107,54 @@ async function listAllTokensbyAddress(address) {
         let cid = await contract.methods.tokenURI(token).call();
         try {
             const metadata = await getFromRemoteIPFS(cid);
-
-            if (metadata.hasOwnProperty("img")) {
-                const imageData = await getFromRemoteIPFS(metadata.img);
-                const clone = template.content.cloneNode(true);
-                clone.querySelector(".my-suka").src = imageData.image;
-                clone.querySelector(".my-suka").onclick = async function () {
-                    currentSuka = {
-                        name: token,
-                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
-                    }
-                    importMesh(currentSuka);
-                    localStorage.setItem(currentSuka.name, cid);
-
-                    updateHistoryList();
-                    activeProject = convertNumberToString(BigInt(token));
-                    document.getElementById("publish").disabled = false;
-
-                    document.getElementById("notification").textContent = `Active project -> ${activeProject}`
-
-
-                }
-                sukaList.appendChild(clone);
-
-            }
+            loadMeshList(metadata, token, cid);
+ 
         } catch (error) {
             console.error(error);
         }
     }
+    const tokenIds = await contract.methods.listTokens(address).call();
+    tokenIds.forEach(async (tokenId) => {
+        let cid = await contract.methods.tokenURI(tokenId).call();
+        console.log(`CID: ${cid}, Token: ${tokenId}`);
+        try {
+            const metadata = await getFromRemoteIPFS(cid);
+            loadMeshList(metadata, token, cid);
+
+        } catch (error) {
+            console.error(error);
+        }        
+    });
+
+    async function loadMeshList(metadata, token, cid) {
+        if (metadata.hasOwnProperty("img")) {
+            const imageData = await getFromRemoteIPFS(metadata.img);
+            const clone = template.content.cloneNode(true);
+            clone.querySelector(".my-suka").src = imageData.image;
+            clone.querySelector(".my-suka").onclick = async function () {
+                currentSuka = {
+                    name: token,
+                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
+                }
+                importMesh(currentSuka);
+                localStorage.setItem(currentSuka.name, cid);
+
+                updateHistoryList();
+                activeProject = convertNumberToString(BigInt(token));
+                document.getElementById("publish").disabled = false;
+
+                document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+
+
+            }
+            sukaList.appendChild(clone);
+
+        }
+    }
+
 }
+
+
 function checkIfAddressOwnThisNTF(address, name) {
     const balance = contract.method.balanceOf(address).call();
     let owner = false;
@@ -150,6 +169,26 @@ function checkIfAddressOwnThisNTF(address, name) {
 }
 function mintNFT(cid, tokenID) {
     contract.methods.mintNFT(cid, tokenID).send({
+        from: selectedAccount
+    }).on('transactionHash', function (hash) {
+        console.log(`tx hash: ${hash}`);
+    })
+        .on('confirmation', function (confirmationNumber, receipt) {
+            console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+        })
+        .on('receipt', function (receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}`);
+            document.getElementById("publish").disabled = false;
+
+
+        })
+        .on('error', function (error, receipt) {
+            console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+        });
+}
+
+function mintNFT(cid, tokenID, finalteams) {
+    contract.methods.mintNFT(cid, tokenID, finalteams).send({
         from: selectedAccount
     }).on('transactionHash', function (hash) {
         console.log(`tx hash: ${hash}`);
@@ -365,9 +404,14 @@ async function confirm() {
 
     //TODO: Call Mint NFT
     //TODO: Add Member if needed
+    document.querySelector("#myModal").classList.remove("show");
+
+    
 }
 function cancel() {
     console.log("Cancelled");
+    document.querySelector("#myModal").classList.remove("show");
+
 }
 
 function listMyToken() {

@@ -7,6 +7,10 @@ import fs from 'fs';
 
 import { create } from 'ipfs-http-client'
 
+import {  LotusRPC } from '@filecoin-shipyard/lotus-client-rpc'
+import { mainnet } from '@filecoin-shipyard/lotus-client-schema'
+import { NodejsProvider } from '@filecoin-shipyard/lotus-client-provider-nodejs'
+
 
 const ipfs = create(new URL('http://ipfs.sukaverse.club:5001'))
 
@@ -17,9 +21,14 @@ dotenv.config({
     path: __dirname + '/../../blockchain/.env'
 })
 
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 
-const ASSETS_IPFS = process.env.ASSETS_IPFS
+const ASSETS_IPFS = process.env.ASSETS_IPFS;
+
+const endpointUrl = 'ws://139.162.132.130:1234/rpc/v0';
+const provider = new NodejsProvider(endpointUrl);
+let client = new LotusRPC(provider, { schema: mainnet.fullNode });
+
 
 import authenticate from "./authentication.js";
 import { captureRejectionSymbol } from 'events';
@@ -102,6 +111,13 @@ export default () => {
     }
     api.get('/microledger/:cid', async (req, res) => {
         res.send(JSON.stringify(await microLedgerToList(req.params.cid)));
+    });
+
+    api.get('/store', async (req, res) => {
+        const head = await client.chainHead();
+        const cid = await client.dealsList();
+        res.send(head);
+
     });
 
     return api;

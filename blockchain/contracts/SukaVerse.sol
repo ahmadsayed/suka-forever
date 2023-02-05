@@ -57,6 +57,25 @@ contract SukaVerse is ERC721Enumerable {
         return newItemId;
     }
 
+    function mintNFT(string memory _tokenURI, uint256 tokenId, address[] memory editor)
+        public
+        returns (uint256)
+    {
+        require(!_exists(tokenId), "ERC721URIStorage: tokenId already created");
+
+        _tokenCounts.increment();
+
+        uint256 newItemId = tokenId;
+        _mint(msg.sender, newItemId);
+        _setTokenURI(newItemId, _tokenURI);
+        members[tokenId].push(msg.sender);
+        for (uint256 i = 0; i < editor.length; i++) {
+            members[tokenId].push(editor[i]);
+        }
+
+        return newItemId;
+    }
+
     function totalSupply() public view override returns (uint256 supply) {
         return _tokenCounts.current();
     }
@@ -173,6 +192,29 @@ contract SukaVerse is ERC721Enumerable {
         );
         members[tokenId].push(editor);
     }
+
+    /**
+     * @dev add new address to NFT editors`.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     * - `member` Wallet address of the new member
+     *
+     */
+    function addEditor(uint256 tokenId, address[] memory editor) public {
+        require(
+            _exists(tokenId),
+            "ERC721URIStorage: Add editor nonexistent token"
+        );
+        require(
+            _ownerOf(tokenId) == msg.sender,
+            "SUKAVerse: Only token owner can add memeber"
+        );
+        for (uint256 i = 0; i < editor.length; i++) {
+            members[tokenId].push(editor[i]);
+        }
+    }    
 
     /**
      * @dev Return value

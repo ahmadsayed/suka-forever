@@ -35,6 +35,14 @@ function screenshot () {
     })
 }
 
+function modal(){
+    $('.modal').modal('show');
+    setTimeout(function () {
+        console.log('hejsan');
+        $('.modal').modal('hide');
+    }, 3000);
+ }
+
 
 async function updateHistoryList() {
     const dropdown = document.querySelector(".dropdown-menu");
@@ -74,6 +82,8 @@ async function getFromRemoteIPFS(cid) {
 }
 
 async function importMesh(suka, historyItem) {
+    $('.modal').modal('show');
+
     for (let i = 0; i < scene.meshes.length; i++) {
         scene.meshes[i].dispose();
     }
@@ -164,6 +174,8 @@ async function importMesh(suka, historyItem) {
         // parent.showBoundingBox = true;  
         // parent.showBoundingBox = true;
     });
+    $('.modal').modal('hide');
+
 
 }
 
@@ -222,24 +234,24 @@ function initSamples() {
     const sukas = [
         {
             name: "howdy",
-            image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            gltf: "https://ipfs.io/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
             name: "laith",
-            image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://ipfs.io/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
+            image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
+            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
         // {
         //     name: "muka",
-        //     image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-        //     gltf: "https://ipfs.io/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
+        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
         // },
         // {
         //     name: "tota",
-        //     image: "https://ipfs.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-        //     gltf: "https://ipfs.io/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
+        //     image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+        //     gltf: "https://cloudflare-ipfs.com/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
         // },
 
     ]
@@ -370,7 +382,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.lowerRadiusLimit = 9;
         camera.upperRadiusLimit = 9;
         camera.panningSensibility = 0;
-        //importMesh("https://ipfs.io/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
+        //importMesh("https://cloudflare-ipfs.com/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
         console.log(camera.fov);

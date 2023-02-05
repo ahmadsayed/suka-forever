@@ -1,4 +1,5 @@
 async function saveLedgerToRemoteIPFS() {
+    $('.modal').modal('show');
     let response = await saveToRemoteIPFS(JSON.stringify(gltf));
     let cid = response["/"];
     let latestCID = localStorage.getItem(currentSuka.name);
@@ -19,6 +20,7 @@ async function saveLedgerToRemoteIPFS() {
     // Save to localStorage till user decide to publish 
     localStorage.setItem(currentSuka.name, ledgerCID["/"]);
     updateHistoryList();
+    $('.modal').modal('hide');
 
 }
 
@@ -34,6 +36,7 @@ async function getLatest(name) {
 }
 
 async function saveToRemoteIPFS(data) {
+
     document.getElementById("remote-save").disabled = true;
 
     const response = await fetch(`/api/push-ipfs`, {
