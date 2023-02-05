@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', event => {
             story: "She has a strong-willed and nurturing aura, Reema is an extraordinary mother, a caring sister, and a Fearless daughter."
         },
         {
-            brief: "A story from the India",
+            brief: "A story from India",
             name: "Muka",
             image: "https://cloudflare-ipfs.com/ipfs/QmfRJ2Hq45CtDMhku1MvByLvHTQS5oaUA7CNpz2gkwzQr5?filename=muka600x900_BG1.jpg",
             story: "Muka specializes in all forms of relaxation, She is friendly, funny, and spiritually connected."
