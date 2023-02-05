@@ -7,13 +7,23 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
+import {MarketAPI} from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
+
+import {CommonTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import {MarketTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
 
 /**
+import "./types/MarketTypes.sol";
+import "./cbor/MarketCbor.sol";
+import "./cbor/BytesCbor.sol";
+import "./types/CommonTypes.sol";
+import "./utils/Misc.sol";
+import "./utils/Actor.sol";
  * @title SukaVerse
  * @dev Store & retrieve value in a variable
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
-contract SukaVerse is ERC721Enumerable {
+contract SukaVerse is ERC721Enumerable, Ownable {
     /**
      * NFT  ERC721 state
      */
@@ -26,6 +36,8 @@ contract SukaVerse is ERC721Enumerable {
      * Addresses of Users who can edit this token
      */
     mapping(uint256 => address[]) public members;
+
+    mapping(address => uint256[]) public tokensIParticipate;
 
     /**
      * ERC721 characteristics
@@ -40,6 +52,12 @@ contract SukaVerse is ERC721Enumerable {
      * 9- TODO: Expose who made which change
      */
     constructor() ERC721("SukaVerse", "SUKA") {}
+
+    mapping(address => uint256) public addressToAmountFunded;
+
+    function fund() public payable {
+        addressToAmountFunded[msg.sender] += msg.value;
+    }
 
     function mintNFT(string memory _tokenURI, uint256 tokenId)
         public
@@ -57,10 +75,11 @@ contract SukaVerse is ERC721Enumerable {
         return newItemId;
     }
 
-    function mintNFT(string memory _tokenURI, uint256 tokenId, address[] memory editor)
-        public
-        returns (uint256)
-    {
+    function mintNFT(
+        string memory _tokenURI,
+        uint256 tokenId,
+        address[] memory editor
+    ) public returns (uint256) {
         require(!_exists(tokenId), "ERC721URIStorage: tokenId already created");
 
         _tokenCounts.increment();
@@ -71,6 +90,7 @@ contract SukaVerse is ERC721Enumerable {
         members[tokenId].push(msg.sender);
         for (uint256 i = 0; i < editor.length; i++) {
             members[tokenId].push(editor[i]);
+            tokensIParticipate[editor[i]].push(tokenId);
         }
 
         return newItemId;
@@ -191,6 +211,8 @@ contract SukaVerse is ERC721Enumerable {
             "SUKAVerse: Only token owner can add memeber"
         );
         members[tokenId].push(editor);
+        tokensIParticipate[editor].push(tokenId);
+
     }
 
     /**
@@ -214,7 +236,7 @@ contract SukaVerse is ERC721Enumerable {
         for (uint256 i = 0; i < editor.length; i++) {
             members[tokenId].push(editor[i]);
         }
-    }    
+    }
 
     /**
      * @dev Return value
@@ -226,5 +248,67 @@ contract SukaVerse is ERC721Enumerable {
         returns (address[] memory)
     {
         return members[tokenId];
+    }
+
+    function listTokens(address  editor) public view returns (uint256 [] memory) {
+        return tokensIParticipate[editor];
+    }
+
+
+    function bytesToString(bytes memory _bytes)
+        public
+        pure
+        returns (string memory)
+    {
+        uint8 i = 0;
+        while (i < 64 && _bytes[i] != 0) {
+            i++;
+        }
+        bytes memory bytesArray = new bytes(i);
+        for (i = 0; i < 32 && _bytes[i] != 0; i++) {
+            bytesArray[i] = _bytes[i];
+        }
+        return string(bytesArray);
+    }
+
+
+    function compareStrings(string memory a, string memory b)
+        internal
+        view
+        returns (bool)
+    {
+        return (keccak256(abi.encodePacked((a))) ==
+            keccak256(abi.encodePacked((b))));
+    }
+
+    event warningComparison(string warning);
+
+    function confirmStoringInFileCoin(
+        uint64 deal_id,
+        uint256 tokenId,
+        uint256 cost,
+        address _to
+    ) public onlyOwner {
+        require(
+            _exists(tokenId),
+            "ERC721URIStorage: Add editor nonexistent token"
+        );
+
+        require(
+            addressToAmountFunded[_ownerOf(tokenId)] >= cost,
+            "ERC721URIStorage: Token owner does not have enough funds"
+        );
+        string memory _tokenURI = _tokenURIs[tokenId];
+
+        MarketTypes.GetDealDataCommitmentReturn memory commitmentRet = MarketAPI
+            .getDealDataCommitment(deal_id);
+        string memory _cidraw = bytesToString(commitmentRet.data);
+        if (compareStrings(_tokenURI, _cidraw)) {
+            emit warningComparison("WARNING: Using Mock deal this check is dummy");
+        }
+
+        payable(_to).transfer(cost);
+        // Check if the users has enough fund
+        //
     }
 }
