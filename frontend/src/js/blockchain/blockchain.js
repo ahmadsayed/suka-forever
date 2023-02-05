@@ -192,7 +192,7 @@ function mintNFT(cid, tokenID) {
         });
 }
 
-function mintNFT(cid, tokenID, finalteams) {
+function mintNFTWithTeams(cid, tokenID, finalteams) {
     contract.methods.mintNFT(cid, tokenID, finalteams).send({
         from: selectedAccount
     }).on('transactionHash', function (hash) {
@@ -408,7 +408,7 @@ async function confirm() {
     let cid = localStorage.getItem(currentSuka.name);
     console.log(`tokenID= ${tokenId}, cid= ${cid}`);
     if (finalteams.length > 0) {
-        mintNFT(cid, tokenId, finalteams);
+        mintNFTWithTeams(cid, tokenId, finalteams);
     } else {
         mintNFT(cid, tokenId);
     }

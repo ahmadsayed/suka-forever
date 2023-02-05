@@ -77,7 +77,7 @@ async function updateHistoryList() {
 
 async function getFromRemoteIPFS(cid) {
     const sukaURL = `https://ipfs.sukaverse.club/ipfs/${cid}`
-    gltf = await (await fetch(sukaURL)).json();
+    const gltf = await (await fetch(sukaURL)).json();
     return gltf;
 }
 
