@@ -101,6 +101,10 @@ async function listAllTokensbyAddress(address) {
 
     initSamples();
 
+    if (address == null) {
+        return;
+    }
+
     const balance = await contract.methods.balanceOf(address).call();
     for (let i = 0; i < balance; i++) {
         const token = await contract.methods.tokenOfOwnerByIndex(address, i).call();
@@ -125,7 +129,7 @@ async function listAllTokensbyAddress(address) {
             console.error(error);
         }        
     });
-
+    
     async function loadMeshList(metadata, token, cid) {
         if (metadata.hasOwnProperty("img")) {
             const imageData = await getFromRemoteIPFS(metadata.img);
@@ -180,6 +184,7 @@ function mintNFT(cid, tokenID) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
             document.getElementById("publish").disabled = false;
 
+            listAllTokensbyAddress(selectedAccount);
 
         })
         .on('error', function (error, receipt) {
@@ -200,6 +205,7 @@ function mintNFT(cid, tokenID, finalteams) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
             document.getElementById("publish").disabled = false;
 
+            listAllTokensbyAddress(selectedAccount);
 
         })
         .on('error', function (error, receipt) {
@@ -218,6 +224,8 @@ function updateProject(cid, tokenID) {
         })
         .on('receipt', function (receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
+            listAllTokensbyAddress(selectedAccount);
+
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
@@ -238,6 +246,7 @@ function addEditorList(tokenid, addressList) {
         })
         .on('receipt', function (receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
+            
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
@@ -333,6 +342,8 @@ async function onDisconnect() {
     document.querySelector("#connected").style.display = "none";
     document.querySelector("#publish").style.display = "none";
     document.querySelector("#notification").style.display = "none";
+    listAllTokensbyAddress(null);
+
 
 
 }
