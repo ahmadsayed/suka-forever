@@ -118,9 +118,9 @@ async function listAllTokensbyAddress(address) {
         }
     }
     const tokenIds = await contract.methods.listTokens(address).call();
-    tokenIds.forEach(async (tokenId) => {
-        let cid = await contract.methods.tokenURI(tokenId).call();
-        console.log(`CID: ${cid}, Token: ${tokenId}`);
+    tokenIds.forEach(async (token) => {
+        let cid = await contract.methods.tokenURI(token).call();
+        console.log(`CID: ${cid}, Token: ${token}`);
         try {
             const metadata = await getFromRemoteIPFS(cid);
             loadMeshList(metadata, token, cid);
