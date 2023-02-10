@@ -140,6 +140,7 @@ async function listAllTokensbyAddress(address) {
                     name: token,
                     gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
                 }
+                switchToView();
                 importMesh(currentSuka);
                 localStorage.setItem(currentSuka.name, cid);
 

@@ -128,8 +128,15 @@
                     </div>
                     <div id="separator"></div>
                     <div id="second">
+                        <div class="drag-area rounded-xl" style="height: 550px; width: 100%">
+                            <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <header>Drag &amp; Drop to Upload File or Select from Sidebar</header>
+                            <span>OR</span>
+                            <button>Browse File</button>
+                            <input type="file" hidden="" />
+                        </div>
                         <div class="container-gltf">
-                            <div class="intro"><canvas class="intro-img mx-auto d-flex rounded-m img-fluid mb-3 mb-lg-0" id="renderCanvas" style="height: 550px; width: 100%"></canvas></div>
+                            <div class="intro" style="display: none"><canvas class="intro-img mx-auto d-flex rounded-m img-fluid mb-3 mb-lg-0" id="renderCanvas" style="height: 550px; width: 100%"></canvas></div>
                         </div>
                     </div>
                 </div>

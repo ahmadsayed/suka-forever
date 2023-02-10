@@ -10,8 +10,14 @@ let parent = null;
 var picker = null;
 var pickerTitle = null;
 var advancedTexture = null;
-var  canvas = null;
+var canvas = null;
 var camera = null;
+var dropArea = null;
+var containerGltf = null;
+
+
+
+
 
 function showPicker(mesh) {
     getPicker(mesh).isVisible = true;
@@ -26,22 +32,22 @@ function hidePicker(mesh) {
 function screendownload() {
     BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera, 512);
 }
-function screenshot () {
+function screenshot() {
     return new Promise((resolve, reject) => {
         BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, camera, 512,
             function (data) {
-                resolve (data);
-            });      
+                resolve(data);
+            });
     })
 }
 
-function modal(){
+function modal() {
     $('.modal').modal('show');
     setTimeout(function () {
         console.log('hejsan');
         $('.modal').modal('hide');
     }, 3000);
- }
+}
 
 
 async function updateHistoryList() {
@@ -226,7 +232,7 @@ function getPicker(mesh) {
 
     return picker;
 }
-    // Retrieve this list from smart Contract public projects
+// Retrieve this list from smart Contract public projects
 
 function initSamples() {
     const template = document.querySelector("#suka-template");
@@ -261,6 +267,7 @@ function initSamples() {
         clone.querySelector(".my-suka").src = suka.image;
         clone.querySelector(".my-suka").onclick = async function () {
             currentSuka = suka;
+            switchToView();
 
             importMesh(suka);
             updateHistoryList();
@@ -270,9 +277,85 @@ function initSamples() {
     })
 }
 
+function switchToView() {
+    dropArea.style.display = "none";
+
+    containerGltf.style.display = "block";
+    engine.resize();
+    resize()
+}
+
 
 window.addEventListener('DOMContentLoaded', async event => {
+
+    function supportDragAndDrop(area) {
+        //If user Drag File Over DropArea
+        area.addEventListener("dragover", (event) => {
+            event.preventDefault(); //preventing from default behaviour
+            area.classList.add("active");
+            dragText.textContent = "Release to Upload File";
+        });
+        //If user leave dragged File from DropArea
+        area.addEventListener("dragleave", () => {
+            area.classList.remove("active");
+            dragText.textContent = "Drag & Drop to Upload File";
+        });
+        //If user drop File on DropArea
+        area.addEventListener("drop", (event) => {
+            event.preventDefault(); //preventing from default behaviour
+            //getting user select file and [0] this means if user select multiple files then we'll select only the first one
+            file = event.dataTransfer.files[0];
+            showFile(); //calling function
+        });
+    }
+
+    //selecting all required elements
+    dropArea = document.querySelector(".drag-area");
+    containerGltf = document.querySelector(".intro");
+    dragText = dropArea.querySelector("header");
+    button = dropArea.querySelector("button");
+    input = dropArea.querySelector("input");
     canvas = document.getElementById("renderCanvas"); // Get the canvas element
+
+    let file; //this is a global variable and we'll use it inside multiple functions
+    button.onclick = () => {
+        input.click(); //if user click on the button then the input also clicked
+    }
+    input.addEventListener("change", function () {
+        //getting user select file and [0] this means if user select multiple files then we'll select only the first one
+        file = this.files[0];
+        dropArea.classList.add("active");
+        showFile(); //calling function
+    });
+
+    supportDragAndDrop(dropArea);
+    supportDragAndDrop(canvas);
+
+    function showFile() {
+        let fileType = file.type; //getting selected file type
+        let validExtensions = ["gltf"]; //adding some valid image extensions in array
+        let fileExtention = file.name.split(".")[1];
+        console.log(fileExtention);
+        if (validExtensions.includes(fileExtention)) { //if user selected file is an image file
+            let fileReader = new FileReader(); //creating new FileReader object
+            fileReader.onload = () => {
+                let fileURL = fileReader.result; //passing user file source in fileURL variable
+                switchToView();
+                suka = {
+                    name: file.name.split(".")[0],
+                    gltf: fileURL
+                };
+                importMesh(suka);
+            }
+            const dataURL = fileReader.readAsDataURL(file);
+            console.log(dataURL);
+        } else {
+            alert("This is not a GLTF file, only GLTF file supported!");
+            dropArea.classList.remove("active");
+            dragText.textContent = "Drag & Drop to Upload File";
+        }
+    }
+
 
     engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
     scene = new BABYLON.Scene(engine);
@@ -295,31 +378,31 @@ window.addEventListener('DOMContentLoaded', async event => {
     }
 
     initSamples();
-        // disableSave();
-        // Ipfs.create(
-        //     {
-        //         config: {
-        //             Discovery: {
-        //                 MDNS: {
-        //                     Enabled: true
-        //                 },
-        //                 webRTCStar: {
-        //                     Enabled: true
-        //                 }
-        //             }
-        //         },
-        //         preload: {
-        //             enabled: false
-        //         }
-        //     }
-        // ).then(data => {
-        //     node = data;
-        //     isIPFSReady = true;
-        //     enableSave();
+    // disableSave();
+    // Ipfs.create(
+    //     {
+    //         config: {
+    //             Discovery: {
+    //                 MDNS: {
+    //                     Enabled: true
+    //                 },
+    //                 webRTCStar: {
+    //                     Enabled: true
+    //                 }
+    //             }
+    //         },
+    //         preload: {
+    //             enabled: false
+    //         }
+    //     }
+    // ).then(data => {
+    //     node = data;
+    //     isIPFSReady = true;
+    //     enableSave();
 
 
-        //     //        cacheToIPFS();
-        // });
+    //     //        cacheToIPFS();
+    // });
 
     clearAll = async function () {
 
@@ -329,7 +412,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         updateHistoryList();
         document.getElementById("remote-save").disabled = !isIPFSReady;
 
-    };  
+    };
 
 
     var rightClick = BABYLON.GUI.Button.CreateImageButton("rightClick", "Edit Color", "assets/img/rightClick.png");
@@ -361,7 +444,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
 
-    function resize() {
+    resize = function () {
         guideLocation();
         getPicker();
     }
