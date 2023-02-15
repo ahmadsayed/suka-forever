@@ -286,7 +286,20 @@ function switchToView() {
 }
 
 
+function importMeshFromURL () {
+    const searchParams=new URLSearchParams(window.location.search);
+    console.log(searchParams);
+    if (searchParams.has('cid')) {
+        const urlCID = searchParams.get('cid')
+        switchToView();
+        importMesh({
+            name: 'blender',
+            gltf: `https://ipfs.sukaverse.club/ipfs/${urlCID}`
+        })
+    }
+}
 window.addEventListener('DOMContentLoaded', async event => {
+
 
     function supportDragAndDrop(area) {
         //If user Drag File Over DropArea
@@ -629,5 +642,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     // document.getElementById("ipfs-save").onclick = saveToIPFS;
     document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
 
+
+    importMeshFromURL () ;
 
 });
