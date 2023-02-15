@@ -292,10 +292,12 @@ function importMeshFromURL () {
     if (searchParams.has('cid')) {
         const urlCID = searchParams.get('cid')
         switchToView();
-        importMesh({
+        currentSuka = {
             name: 'blender',
             gltf: `https://ipfs.sukaverse.club/ipfs/${urlCID}`
-        })
+        };
+
+        importMesh(currentSuka);
     }
 }
 window.addEventListener('DOMContentLoaded', async event => {

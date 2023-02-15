@@ -393,6 +393,7 @@ async function confirm() {
     console.log(`Set active project -> ${activeProject}`);
     // Create new project using activeProject and currentSuka 
     let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    
     await saveLedgerToRemoteIPFS();
     teams = teams.split(" ").join(",");
     teams = teams.split("\n").join(",");
