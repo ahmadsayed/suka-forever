@@ -1,0 +1,9 @@
+# This is the list of glTF-Blender-IO authors for copyright purposes.
+# To see the full list of contributors, see the revision history in
+# source control.
+
+The Khronos Group Inc.
+Julien Duroure
+Scurest
+UX3D GmbH
+Sketchfab
