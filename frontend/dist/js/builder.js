@@ -284,7 +284,7 @@ function switchToView() {
     engine.resize();
     resize()
 }
-
+// https://sukaverse.club/builder.html?cid=QmZ7vPBBN18bvnyeTfVmGRgzFGEzqTAo53FXfymKGyZRyx&name=untitled&token=rffrfrfrfr
 
 function importMeshFromURL () {
     const searchParams=new URLSearchParams(window.location.search);
@@ -293,9 +293,10 @@ function importMeshFromURL () {
         const urlCID = searchParams.get('cid')
         switchToView();
         currentSuka = {
-            name: 'blender',
+            name: searchParams.has('name')? searchParams.get('name') : 'blender',
             gltf: `https://ipfs.sukaverse.club/ipfs/${urlCID}`
         };
+        localStorage.removeItem(currentSuka.name);
 
         importMesh(currentSuka);
     }
