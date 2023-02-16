@@ -87,7 +87,7 @@ async function getFromRemoteIPFS(cid) {
     return gltf;
 }
 
-async function importMesh(suka, historyItem) {
+async function importMesh(suka, historyItem, latest=false) {
     $('.modal').modal('show');
 
     for (let i = 0; i < scene.meshes.length; i++) {
@@ -101,7 +101,7 @@ async function importMesh(suka, historyItem) {
     var gltfString = null;
     console.log(historyItem);
     if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
-        if (localStorage.getItem(suka.name) == null) {
+        if (!latest || localStorage.getItem(suka.name) == null) {
             gltf = await (await fetch(suka.gltf)).json();
             gltfString = JSON.stringify(gltf);
         } else {
@@ -296,9 +296,10 @@ function importMeshFromURL () {
             name: searchParams.has('name')? searchParams.get('name') : 'blender',
             gltf: `https://ipfs.sukaverse.club/ipfs/${urlCID}`
         };
-        localStorage.removeItem(currentSuka.name);
+        //localStorage.removeItem(currentSuka.name);
 
         importMesh(currentSuka);
+        updateHistoryList();
     }
 }
 window.addEventListener('DOMContentLoaded', async event => {

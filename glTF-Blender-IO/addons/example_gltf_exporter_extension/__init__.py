@@ -163,10 +163,8 @@ def push_to_blockchain(ts, filename, token_id):
     x = requests.post(url, json = data)
     model_name = filename.split('/')[-1].split('.')[0]
     cid = (x.json())["/"]
-
-    print("https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id))
-
-   # webbrowser.open("https://sukaverse.club/builder.html?cid={cid}".format(cid=cid), new=0)
+    target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)
+    webbrowser.open(target_url, new=0)
 
 def glTF2_post_export_callback(settings):
     print("POST SAVE CALLBACK")
@@ -174,3 +172,4 @@ def glTF2_post_export_callback(settings):
     filepath = settings['gltf_filepath']
     p = Process(target=push_to_blockchain, args=(now, filepath, token_id))
     p.start()
+ 
