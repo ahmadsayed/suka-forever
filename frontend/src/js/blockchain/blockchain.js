@@ -161,6 +161,7 @@ async function listAllTokensbyAddress(address) {
                     console.log(decoded);
                 })
             }
+            
             sukaList.appendChild(clone);
 
         }
