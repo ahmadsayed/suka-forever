@@ -149,8 +149,17 @@ async function listAllTokensbyAddress(address) {
                 document.getElementById("publish").disabled = false;
 
                 document.getElementById("notification").textContent = `Active project -> ${activeProject}`
-
-
+                const form = new FormData();
+                form.append('data', currentSuka.name);
+                const client = IpfsHttpClient.create({ url: "http://ipfs.sukaverse.club:5001/api/v0" });
+                await client.pubsub.subscribe(activeProject, (result)=>{
+                    var textDecoder = new TextDecoder("utf-8");
+                    decoded = textDecoder.decode(result.data);
+                    currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;
+                    importMesh(currentSuka);
+                    console.log(result);
+                    console.log(decoded);
+                })
             }
             sukaList.appendChild(clone);
 

@@ -38,8 +38,8 @@ class ExampleExtensionProperties(bpy.types.PropertyGroup):
         default=True
         )
     string_property: bpy.props.StringProperty(
-        name='Sample StringProperty',
-        description='This is an example of a StringProperty used by a UserExtension.',
+        name='TokenID StringProperty',
+        description='Token ID a globally unique identifier for specific object',
         default=""
         )
 
@@ -163,8 +163,27 @@ def push_to_blockchain(ts, filename, token_id):
     x = requests.post(url, json = data)
     model_name = filename.split('/')[-1].split('.')[0]
     cid = (x.json())["/"]
-    target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)
-    webbrowser.open(target_url, new=0)
+
+    files = {
+        'data': (None, token_id),
+    }
+
+    response = requests.post('http://ipfs.sukaverse.club:5001/api/v0/multibase/encode', files=files)
+    topic = response.content.decode("utf-8")
+    print("Publish to topic {topic_name}, mutlibase {multibase}".format(topic_name=token_id, multibase=topic))
+    params = {
+    'arg': topic,
+    }
+
+    files = {
+        'data': (None, cid),
+    }
+
+    response = requests.post('http://ipfs.sukaverse.club:5001/api/v0/pubsub/pub', params=params, files=files)
+
+    
+    # target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)
+    # webbrowser.open(target_url, new=0)
 
 def glTF2_post_export_callback(settings):
     print("POST SAVE CALLBACK")
