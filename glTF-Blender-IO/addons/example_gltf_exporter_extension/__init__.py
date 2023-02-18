@@ -158,11 +158,16 @@ def push_to_blockchain(ts, filename, token_id):
     # a dictionary
     data = json.load(f)
 
-    url = 'https://sukaverse.club/api/push-ipfs'
+    files = {
+        'file': open(filename, 'rb'),
+    }
 
-    x = requests.post(url, json = data)
-    model_name = filename.split('/')[-1].split('.')[0]
-    cid = (x.json())["/"]
+    response = requests.post(
+        'https://{IPFS_HOST_NAME}/api/v0/add?quiet=true&pin=true'.format(IPFS_HOST_NAME=IPFS_HOST_NAME),
+        files=files,
+    )
+
+    cid = (response.json()['Hash'])
 
     files = {
         'data': (None, token_id),

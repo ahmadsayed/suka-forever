@@ -12,7 +12,7 @@ import { mainnet } from '@filecoin-shipyard/lotus-client-schema'
 import { NodejsProvider } from '@filecoin-shipyard/lotus-client-provider-nodejs'
 
 
-const ipfs = create(new URL('http://ipfs.sukaverse.club:5001'))
+const ipfs = create(new URL('https://ipfs.sukaverse.club'))
 
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
