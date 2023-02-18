@@ -24,7 +24,7 @@ bl_info = {
 # See: https://github.com/KhronosGroup/glTF/tree/main/extensions#about-gltf-extensions
 # also: https://github.com/KhronosGroup/glTF/blob/main/extensions/Prefixes.md
 glTF_extension_name = "EXT_web3_extension"
-
+IPFS_HOST_NAME= "ipfs.sukaverse.club"
 # Support for an extension is "required" if a typical glTF viewer cannot be expected
 # to load a given model without understanding the contents of the extension.
 # For example, a compression scheme or new image format (with no fallback included)
@@ -168,9 +168,9 @@ def push_to_blockchain(ts, filename, token_id):
         'data': (None, token_id),
     }
 
-    response = requests.post('http://ipfs.sukaverse.club:5001/api/v0/multibase/encode', files=files)
+    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/multibase/encode'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), files=files)
     topic = response.content.decode("utf-8")
-    print("Publish to topic {topic_name}, mutlibase {multibase}".format(topic_name=token_id, multibase=topic))
+    print("Publish to topic {topic_name}, mutlibase {multibase}".format(topic_name=token_id, multibase=topic    ))
     params = {
     'arg': topic,
     }
@@ -179,7 +179,7 @@ def push_to_blockchain(ts, filename, token_id):
         'data': (None, cid),
     }
 
-    response = requests.post('http://ipfs.sukaverse.club:5001/api/v0/pubsub/pub', params=params, files=files)
+    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/pubsub/pub'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), params=params, files=files)
 
     
     # target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)

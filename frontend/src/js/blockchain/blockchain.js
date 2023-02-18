@@ -151,7 +151,7 @@ async function listAllTokensbyAddress(address) {
                 document.getElementById("notification").textContent = `Active project -> ${activeProject}`
                 const form = new FormData();
                 form.append('data', currentSuka.name);
-                const client = IpfsHttpClient.create({ url: "http://ipfs.sukaverse.club:5001/api/v0" });
+                const client = IpfsHttpClient.create({ url: "https://ipfs.sukaverse.club/api/v0" });
                 await client.pubsub.subscribe(activeProject, (result)=>{
                     var textDecoder = new TextDecoder("utf-8");
                     decoded = textDecoder.decode(result.data);
@@ -161,7 +161,7 @@ async function listAllTokensbyAddress(address) {
                     console.log(decoded);
                 })
             }
-            
+
             sukaList.appendChild(clone);
 
         }
