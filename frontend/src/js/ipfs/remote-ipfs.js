@@ -1,13 +1,13 @@
+
 async function saveLedgerToRemoteIPFS() {
     $('.modal').modal('show');
     let response = await saveToRemoteIPFS(JSON.stringify(gltf));
-    let cid = response["/"];
+    let cid = response;
     let latestCID = localStorage.getItem(currentSuka.name);
     const snapshot = await screenshot();
     let img = await saveToRemoteIPFS(JSON.stringify({
         image: snapshot
     }));
-    img = img["/"];
     microLedger = {
         prev: latestCID,
         ts: new Date(new Date().getTime()).toLocaleString(),
@@ -18,11 +18,12 @@ async function saveLedgerToRemoteIPFS() {
     console.log('CID created via ipfs.add:', ledgerCID)
 
     // Save to localStorage till user decide to publish 
-    localStorage.setItem(currentSuka.name, ledgerCID["/"]);
+    localStorage.setItem(currentSuka.name, ledgerCID);
     updateHistoryList();
     $('.modal').modal('hide');
 
 }
+
 
 
 async function remoteMicroLedgerToList(cid) {
@@ -38,19 +39,23 @@ async function getLatest(name) {
 async function saveToRemoteIPFS(data) {
 
     document.getElementById("remote-save").disabled = true;
-
-    const response = await fetch(`/api/push-ipfs`, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
+    let { cid } = await client.add(data, {
         headers: {
-            'Content-Type': 'application/json'
-        },
-        referrerPolicy: 'no-referrer',
-        body: data
+            "authorization": `Bearer ${authToken}`
+        }
     });
-    const res = await response.json();
+    // const response = await fetch(`/api/push-ipfs`, {
+    //     method: 'POST',
+    //     mode: 'cors',
+    //     cache: 'no-cache',
+    //     credentials: 'same-origin',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     referrerPolicy: 'no-referrer',
+    //     body: data
+    // });
+    // const res = await response.json();
 
-    return res;
+    return cid.toString();
 }

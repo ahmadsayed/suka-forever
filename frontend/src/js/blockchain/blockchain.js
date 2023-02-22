@@ -14,9 +14,14 @@ let web3;
 
 let evmChains;
 
-const chainID = 3141;
+const chainID = 80001;
 
 let activeProject = null;
+
+let authToken = null;
+
+
+let  client = null;
 /**
  * Setup the orchestra
  */
@@ -40,12 +45,12 @@ async function init() {
 }
 
 
-async function switchToFileCoin() {
+async function switchToBlockchain() {
     if (window.ethereum.networkVersion !== chainID) {
         try {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: web3.utils.toHex(3141) }]
+                params: [{ chainId: web3.utils.toHex(chainID) }]
             });
         } catch (err) {
             // This error code indicates that the chain has not been added to MetaMask
@@ -54,10 +59,10 @@ async function switchToFileCoin() {
                     method: 'wallet_addEthereumChain',
                     params: [
                         {
-                            chainName: "Filecoin - Hyperspace testnet",
+                            chainName: "Polygon (Matic) Mumbai",
                             chainId: web3.utils.toHex(chainID),
-                            nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
-                            rpcUrls: [urls]//https://api.hyperspace.node.glif.io/rpc/v1']
+                            nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+                            rpcUrls: [urls]//https://polygon-mumbai.blockpi.network/v1/rpc/public]
                         }
                     ]
                 });
@@ -66,13 +71,13 @@ async function switchToFileCoin() {
     }
 }
 let contract = null;
+const tokenContract = "0xcAe233860dFaE1e0EC46037c95fc002c087cB443";
 
 async function fetchAccountData() {
 
     // Get a Web3 instance for the wallet
     web3 = new Web3(provider);
-    switchToFileCoin();
-    const tokenContract = "0xd2c5268649f44aEcc5897Fe975A575dd389F6cd2";
+    switchToBlockchain();
     const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json());
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
@@ -129,13 +134,26 @@ async function listAllTokensbyAddress(address) {
             console.error(error);
         }        
     });
+
+    async function generateAuthToken(tokenid, contract) {
+        let message = `${tokenid}:${tokenContract}`
+        const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
+        let base64message = btoa(message);
+        let base64Signature = btoa(signature);
+        let authToken = `${base64message}.${base64Signature}`
+        return authToken;
+    }
     
     async function loadMeshList(metadata, token, cid) {
+
+
         if (metadata.hasOwnProperty("img")) {
             const imageData = await getFromRemoteIPFS(metadata.img);
             const clone = template.content.cloneNode(true);
             clone.querySelector(".my-suka").src = imageData.image;
             clone.querySelector(".my-suka").onclick = async function () {
+                authToken = await generateAuthToken(token, tokenContract);
+                document.querySelector("#apikey").style.display = "block";
                 currentSuka = {
                     name: token,
                     gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
@@ -151,7 +169,6 @@ async function listAllTokensbyAddress(address) {
                 document.getElementById("notification").textContent = `Active project -> ${activeProject}`
                 const form = new FormData();
                 form.append('data', currentSuka.name);
-                const client = IpfsHttpClient.create({ url: "https://ipfs.sukaverse.club/api/v0" });
                 await client.pubsub.subscribe(activeProject, (result)=>{
                     var textDecoder = new TextDecoder("utf-8");
                     decoded = textDecoder.decode(result.data);
@@ -240,7 +257,8 @@ function updateProject(cid, tokenID) {
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-        });
+        });    document.querySelector("#apikey").style.display = "block";
+
 }
 
 
@@ -323,8 +341,7 @@ async function onConnect() {
     document.querySelector("#connected").style.display = "block";
     document.querySelector("#publish").style.display = "block";
     document.querySelector("#notification").style.display = "block";
-
-
+    //document.querySelector("#apikey").style.display = "block";
 }
 
 /**
@@ -353,6 +370,8 @@ async function onDisconnect() {
     document.querySelector("#connected").style.display = "none";
     document.querySelector("#publish").style.display = "none";
     document.querySelector("#notification").style.display = "none";
+    document.querySelector("#apikey").style.display = "none";
+
     listAllTokensbyAddress(null);
 
 
@@ -428,7 +447,7 @@ async function confirm() {
     //TODO: Call Mint NFT
     //TODO: Add Member if needed
     document.querySelector("#myModal").classList.remove("show");
-
+    document.querySelector("#apikey").style.display = "block";
     
 }
 function cancel() {
@@ -441,17 +460,24 @@ function listMyToken() {
 
 }
 
-
+function copyKeyToClipboard(){
+    // Copy the text inside the text field
+  navigator.clipboard.writeText(authToken);
+  // Alert the copied text
+  alert(`Signed Key copied to clipboard use it to reference the project in Blender Web 3 Plugin`);
+}
 window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("publish").onclick = publish;
     document.getElementById("publish").disabled = true;
     document.getElementById("notification").onclick = openDialog;
     document.getElementById("confirm").onclick = confirm;
     document.getElementById("cancel").onclick = cancel;
+    document.getElementById("apikey").onclick = copyKeyToClipboard;
+    client = IpfsHttpClient.create({ url: "https://ipfs.sukaverse.club/api/v0" });
+
     if (activeProject != null) {
         document.getElementById("notification").textContent = `Active project -> ${activeProject}`
     }
-
 
 });
 

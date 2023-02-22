@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
 //style="display: block; margin-top:2.4rem
 function toggleHistory() {
-  var element = document.querySelector(".btn-group");
+  var element = document.querySelector("#history-group");
   if (element.classList.contains("open")) {
     document.querySelector(".dropdown-menu").style.display = "none";
     

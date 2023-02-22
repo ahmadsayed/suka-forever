@@ -2,8 +2,13 @@
 nav.navbar.navbar-expand-lg.navbar-dark.px-4
     a(href='index.html')
         img(src='assets/img/logo.svg' style="width: 15vw;")
-    button#notification.btn.btn-primary(type='button'  data-toggle='modal' data-target='#myModal' style="width: 15vw;margin-left: 23vw;display: none") 
-        a No active shareable Item    
+    #project-group.btn-group
+        button#notification.btn.btn-primary(type='button'  data-toggle='modal' data-target='#myModal' style="width: 15vw;margin-left: 23vw;display: none") 
+            a No active shareable Item    
+        button#apikey.btn.btn-primary(type='button' style="display: none") 
+            svg.bi.bi-key(xmlns='http://www.w3.org/2000/svg', width='25', height='25', fill='currentColor', viewBox='0 0 16 16')
+                path(d='M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z')
+                path(d='M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z')     
     .div(style="margin-right:revert; margin-left:auto;")
         a.navbar-brand.text-uppercase.fw-bold.d-lg-none(href='index.html') SUKA Verse
         button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
@@ -17,7 +22,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.px-4
                             a Publish
                 li.nav-item.px-lg-4
                     div(id="save-history")
-                        .btn-group
+                        #history-group.btn-group
                             button#remote-save.btn.btn-primary(type='button') 
                                 img(src="assets/img/save.png" style="width:25px")
                                 a Save       

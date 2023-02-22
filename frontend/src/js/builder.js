@@ -59,7 +59,7 @@ async function updateHistoryList() {
         dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
     }
     const latestCID = localStorage.getItem(currentSuka.name);
-    if (latestCID != null) {
+    if (latestCID != null && typeof latestCID != 'undefined') {
         historyList = await remoteMicroLedgerToList(latestCID);
     }
     // if (localStorage.getItem(currentSuka.name) != null) {
@@ -246,7 +246,7 @@ function initSamples() {
         {
             name: "laith",
             image: "https://cloudflare-ipfs.com/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://cloudflare-ipfs.com/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
+            gltf: "https://bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y.ipfs.w3s.link/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
         // {
