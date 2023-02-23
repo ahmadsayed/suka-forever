@@ -40,9 +40,7 @@ async function saveToRemoteIPFS(data) {
 
     document.getElementById("remote-save").disabled = true;
     let { cid } = await client.add(data, {
-        headers: {
-            "authorization": `Bearer ${authToken}`
-        }
+        "authorization":  `Bearer ${authToken}`
     });
     // const response = await fetch(`/api/push-ipfs`, {
     //     method: 'POST',

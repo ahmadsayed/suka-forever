@@ -14,7 +14,7 @@ let web3;
 
 let evmChains;
 
-const chainID = 80001;
+const chainID = 338;
 
 let activeProject = null;
 
@@ -59,10 +59,10 @@ async function switchToBlockchain() {
                     method: 'wallet_addEthereumChain',
                     params: [
                         {
-                            chainName: "Polygon (Matic) Mumbai",
+                            chainName: "Cronos Testnet",
                             chainId: web3.utils.toHex(chainID),
-                            nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
-                            rpcUrls: [urls]//https://polygon-mumbai.blockpi.network/v1/rpc/public]
+                            nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
+                            rpcUrls: [urls]//https://evm-t3.cronos.org]
                         }
                     ]
                 });
@@ -71,7 +71,7 @@ async function switchToBlockchain() {
     }
 }
 let contract = null;
-const tokenContract = "0xcAe233860dFaE1e0EC46037c95fc002c087cB443";
+const tokenContract = "0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE";
 
 async function fetchAccountData() {
 
@@ -169,7 +169,7 @@ async function listAllTokensbyAddress(address) {
                 document.getElementById("notification").textContent = `Active project -> ${activeProject}`
                 const form = new FormData();
                 form.append('data', currentSuka.name);
-                await client.pubsub.subscribe(activeProject, (result)=>{
+                await client.pubsub.subscribe(authToken, (result)=>{
                     var textDecoder = new TextDecoder("utf-8");
                     decoded = textDecoder.decode(result.data);
                     currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;

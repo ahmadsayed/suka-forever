@@ -145,6 +145,7 @@ def creation_date(path_to_file):
             return stat.st_mtime
 
 def push_to_blockchain(ts, filename, token_id):
+
     while True:
         time.sleep(1)
         check_file = os.path.isfile(filename)
@@ -153,7 +154,7 @@ def push_to_blockchain(ts, filename, token_id):
     print("File Found wihth correct Timestamp")
     # Opening JSON file
     f = open(filename)
-    
+    headers = ('authorization: Bearer ' + token_id)
     # returns JSON object as 
     # a dictionary
     data = json.load(f)
@@ -164,7 +165,7 @@ def push_to_blockchain(ts, filename, token_id):
 
     response = requests.post(
         'https://{IPFS_HOST_NAME}/api/v0/add?quiet=true&pin=true'.format(IPFS_HOST_NAME=IPFS_HOST_NAME),
-        files=files,
+        files=files, headers=headers
     )
 
     cid = (response.json()['Hash'])
@@ -173,7 +174,8 @@ def push_to_blockchain(ts, filename, token_id):
         'data': (None, token_id),
     }
 
-    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/multibase/encode'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), files=files)
+    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/multibase/encode'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), 
+        files=files, headers=headers)
     topic = response.content.decode("utf-8")
     print("Publish to topic {topic_name}, mutlibase {multibase}".format(topic_name=token_id, multibase=topic    ))
     params = {
@@ -184,7 +186,8 @@ def push_to_blockchain(ts, filename, token_id):
         'data': (None, cid),
     }
 
-    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/pubsub/pub'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), params=params, files=files)
+    response = requests.post('https://{IPFS_HOST_NAME}/api/v0/pubsub/pub'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), params=params
+        , files=files, headers=headers)
 
     
     # target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)
