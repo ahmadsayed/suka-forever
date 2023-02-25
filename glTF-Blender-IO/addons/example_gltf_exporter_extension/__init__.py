@@ -165,7 +165,7 @@ def push_to_blockchain(ts, filename, token_id):
 
     response = requests.post(
         'https://{IPFS_HOST_NAME}/api/v0/add?quiet=true&pin=true'.format(IPFS_HOST_NAME=IPFS_HOST_NAME),
-        files=files, headers=headers
+        files=files
     )
 
     cid = (response.json()['Hash'])
@@ -175,7 +175,7 @@ def push_to_blockchain(ts, filename, token_id):
     }
 
     response = requests.post('https://{IPFS_HOST_NAME}/api/v0/multibase/encode'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), 
-        files=files, headers=headers)
+        files=files)
     topic = response.content.decode("utf-8")
     print("Publish to topic {topic_name}, mutlibase {multibase}".format(topic_name=token_id, multibase=topic    ))
     params = {
@@ -187,7 +187,7 @@ def push_to_blockchain(ts, filename, token_id):
     }
 
     response = requests.post('https://{IPFS_HOST_NAME}/api/v0/pubsub/pub'.format(IPFS_HOST_NAME=IPFS_HOST_NAME), params=params
-        , files=files, headers=headers)
+        , files=files)
 
     
     # target_url = "https://sukaverse.club/builder.html?cid={cid}&name={model_name}&token={token_id}".format(cid=cid, model_name=model_name, token_id=token_id)

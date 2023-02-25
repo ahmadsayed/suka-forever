@@ -3,7 +3,7 @@ async function saveLedgerToRemoteIPFS() {
     $('.modal').modal('show');
     let response = await saveToRemoteIPFS(JSON.stringify(gltf));
     let cid = response;
-    let latestCID = localStorage.getItem(currentSuka.name);
+    let latestCID = currentSuka != null ? localStorage.getItem(currentSuka.name) : null;
     const snapshot = await screenshot();
     let img = await saveToRemoteIPFS(JSON.stringify({
         image: snapshot

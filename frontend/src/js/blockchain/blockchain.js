@@ -21,7 +21,7 @@ let activeProject = null;
 let authToken = null;
 
 
-let  client = null;
+let client = null;
 /**
  * Setup the orchestra
  */
@@ -94,9 +94,19 @@ async function fetchAccountData() {
 
 }
 
+async function generateAuthToken(tokenid) {
+    let message = `${tokenid}:${tokenContract}`
+    const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
+    let base64message = btoa(message);
+    let base64Signature = btoa(signature);
+    let authToken = `${base64message}.${base64Signature}`
+    return authToken;
+}
+
+
 async function listAllTokensbyAddress(address) {
 
-    
+
     const template = document.querySelector("#suka-template");
     const sukaList = document.querySelector("#sukas-list");
     while (sukaList.getElementsByClassName("my-suka").length > 0) {
@@ -117,7 +127,7 @@ async function listAllTokensbyAddress(address) {
         try {
             const metadata = await getFromRemoteIPFS(cid);
             loadMeshList(metadata, token, cid);
- 
+
         } catch (error) {
             console.error(error);
         }
@@ -132,18 +142,10 @@ async function listAllTokensbyAddress(address) {
 
         } catch (error) {
             console.error(error);
-        }        
+        }
     });
 
-    async function generateAuthToken(tokenid, contract) {
-        let message = `${tokenid}:${tokenContract}`
-        const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
-        let base64message = btoa(message);
-        let base64Signature = btoa(signature);
-        let authToken = `${base64message}.${base64Signature}`
-        return authToken;
-    }
-    
+
     async function loadMeshList(metadata, token, cid) {
 
 
@@ -152,7 +154,7 @@ async function listAllTokensbyAddress(address) {
             const clone = template.content.cloneNode(true);
             clone.querySelector(".my-suka").src = imageData.image;
             clone.querySelector(".my-suka").onclick = async function () {
-                authToken = await generateAuthToken(token, tokenContract);
+                authToken = await generateAuthToken(token);
                 document.querySelector("#apikey").style.display = "block";
                 currentSuka = {
                     name: token,
@@ -169,14 +171,22 @@ async function listAllTokensbyAddress(address) {
                 document.getElementById("notification").textContent = `Active project -> ${activeProject}`
                 const form = new FormData();
                 form.append('data', currentSuka.name);
-                await client.pubsub.subscribe(authToken, (result)=>{
-                    var textDecoder = new TextDecoder("utf-8");
-                    decoded = textDecoder.decode(result.data);
-                    currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;
-                    importMesh(currentSuka);
-                    console.log(result);
-                    console.log(decoded);
-                })
+                async function subscribe() {
+                    await client.pubsub.unsubscribe(authToken);
+                    await client.pubsub.subscribe(authToken, (result) => {
+                        var textDecoder = new TextDecoder("utf-8");
+                        decoded = textDecoder.decode(result.data);
+                        currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;
+                        importMesh(currentSuka);
+                        console.log(result);
+                        console.log(decoded);
+                    })
+                }
+                subscribe();
+                const interval = setInterval(async function () {
+                    subscribe();
+                }, 60000);
+
             }
 
             sukaList.appendChild(clone);
@@ -257,7 +267,7 @@ function updateProject(cid, tokenID) {
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-        });    document.querySelector("#apikey").style.display = "block";
+        }); document.querySelector("#apikey").style.display = "block";
 
 }
 
@@ -275,7 +285,7 @@ function addEditorList(tokenid, addressList) {
         })
         .on('receipt', function (receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}`);
-            
+
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
@@ -387,7 +397,7 @@ async function publish() {
 
     console.log(`Update the URI for ${activeProject}`);
     //TODO: Update the URI for this specific Item 
-     updateProject(cid, tokenID);
+    updateProject(cid, tokenID);
 
 
 }
@@ -422,7 +432,7 @@ async function confirm() {
     console.log(`Set active project -> ${activeProject}`);
     // Create new project using activeProject and currentSuka 
     let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
-    
+
     await saveLedgerToRemoteIPFS();
     teams = teams.split(" ").join(",");
     teams = teams.split("\n").join(",");
@@ -443,12 +453,13 @@ async function confirm() {
     } else {
         mintNFT(cid, tokenId);
     }
+    authToken = await generateAuthToken(tokenId);
 
     //TODO: Call Mint NFT
     //TODO: Add Member if needed
     document.querySelector("#myModal").classList.remove("show");
     document.querySelector("#apikey").style.display = "block";
-    
+
 }
 function cancel() {
     console.log("Cancelled");
@@ -460,11 +471,11 @@ function listMyToken() {
 
 }
 
-function copyKeyToClipboard(){
+function copyKeyToClipboard() {
     // Copy the text inside the text field
-  navigator.clipboard.writeText(authToken);
-  // Alert the copied text
-  alert(`Signed Key copied to clipboard use it to reference the project in Blender Web 3 Plugin`);
+    navigator.clipboard.writeText(authToken);
+    // Alert the copied text
+    alert(`Signed Key copied to clipboard use it to reference the project in Blender Web 3 Plugin`);
 }
 window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("publish").onclick = publish;

@@ -358,11 +358,11 @@ window.addEventListener('DOMContentLoaded', async event => {
             fileReader.onload = () => {
                 let fileURL = fileReader.result; //passing user file source in fileURL variable
                 switchToView();
-                suka = {
+                currentSuka = {
                     name: file.name.split(".")[0],
                     gltf: fileURL
                 };
-                importMesh(suka);
+                importMesh(currentSuka);
             }
             const dataURL = fileReader.readAsDataURL(file);
             console.log(dataURL);
