@@ -240,24 +240,24 @@ function initSamples() {
     const sukas = [
         {
             name: "howdy",
-            image: "https://https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            gltf: "https://https://ipfs.filebase.io/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
+            image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            gltf: "https://ipfs.filebase.io/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
             name: "laith",
-            image: "https://https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
+            image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
             gltf: "https://bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y.ipfs.w3s.link/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
         // {
         //     name: "muka",
-        //     image: "https://https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
-        //     gltf: "https://https://ipfs.filebase.io/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
+        //     image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/muka/images/300x300.jpg",
+        //     gltf: "https://ipfs.filebase.io/ipfs/bafybeicnj5rimppcis7cx4npppm4udvy472u7ur2r75thux7y4sgcbrbeq/muka.gltf"
         // },
         // {
         //     name: "tota",
-        //     image: "https://https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
-        //     gltf: "https://https://ipfs.filebase.io/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
+        //     image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+        //     gltf: "https://ipfs.filebase.io/ipfs/bafybeigmxe4gjjmkhmwesihscc25arx3e7wczxaywstvd4nmwa4qg4byzu/tota.gltf"
         // },
 
     ]
@@ -482,7 +482,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.lowerRadiusLimit = 9;
         camera.upperRadiusLimit = 9;
         camera.panningSensibility = 0;
-        //importMesh("https://https://ipfs.filebase.io/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
+        //importMesh("https://ipfs.filebase.io/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
         console.log(camera.fov);
