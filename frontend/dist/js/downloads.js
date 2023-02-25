@@ -257,11 +257,11 @@ async function fetchAccountData() {
     for (let i = 1; i <= totalSupply; i++) {
         //List all Token
         contract.methods.tokenURI(i).call().then(tokenURI => {
-            fetch(`https://cloudflare-ipfs.com/ipfs/${tokenURI.slice(7)}`)
+            fetch(`https://https://ipfs.filebase.io/ipfs/${tokenURI.slice(7)}`)
                 .then(res => res.json())
                 .then(async (metadata) => {
                     const imgCID = metadata.image;
-                    const imageURL = `https://cloudflare-ipfs.com/ipfs/${imgCID.slice(7)}`;
+                    const imageURL = `https://https://ipfs.filebase.io/ipfs/${imgCID.slice(7)}`;
                     const ownerAddress = await contract.methods.ownerOf(i).call();
                     createCatalog(imageURL, metadata.name, selectedAccount == ownerAddress, i, tokenContract);
                 });
