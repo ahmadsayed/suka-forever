@@ -6,13 +6,13 @@ window.addEventListener('DOMContentLoaded', event => {
         {
             role: "Artist",
             name: "Khulood Radi",
-            image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
+            image: "https://ipfs.sukaverse.club/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/tota/images/300x300.jpg",
             description: "3D artist, specialized in 3D animation and modeling, building optimized real-time 3D assets used in games, and 3D interactive websites."
         },
         {
             role: "Developer",
             name: "Ahmed Hassan",
-            image: "https://ipfs.filebase.io/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
+            image: "https://ipfs.sukaverse.club/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
             description: "Developer, System Engineer, and Cloud architect exploring how to leverage Web 3.0 in contents creation collaboration and monetization."
         },
     ]
