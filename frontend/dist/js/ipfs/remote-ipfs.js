@@ -1,4 +1,10 @@
 
+async function getFromRemoteIPFS(cid) {
+    const sukaURL = `https://ipfs.sukaverse.club/ipfs/${cid}`
+    const json = await (await fetch(sukaURL)).json();
+    return json;
+}
+
 async function saveLedgerToRemoteIPFS() {
     $('.modal').modal('show');
     let response = await saveToRemoteIPFS(JSON.stringify(gltf));
@@ -26,11 +32,20 @@ async function saveLedgerToRemoteIPFS() {
 
 
 
-async function remoteMicroLedgerToList(cid) {
-    const historyItems = await (await fetch(`/api/microledger/${cid}`)).json();
-    return historyItems;
-}
+// async function remoteMicroLedgerToList(cid) {
+//     const historyItems = await (await fetch(`/api/microledger/${cid}`)).json();
+//     return historyItems;
+// }
 
+
+async function remoteMicroLedgerToList(cid, cids = []) {
+    const data = await getFromRemoteIPFS(cid);
+    cids.push(data);
+    if (data.prev != null) {
+        await remoteMicroLedgerToList(data.prev, cids);
+    }
+    return cids;
+}
 async function getLatest(name) {
     const response = await (await fetch(`/api/latest-ipfs/${name}`)).json();
     return response.cid;
