@@ -62,7 +62,7 @@ async function switchToBlockchain() {
                             chainName: "Cronos Testnet",
                             chainId: web3.utils.toHex(chainID),
                             nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
-                            rpcUrls: [urls]//https://evm-t3.cronos.org]
+                            rpcUrls: ['https://evm-t3.cronos.org']
                         }
                     ]
                 });
