@@ -237,12 +237,12 @@ function initSamples() {
         {
             name: "howdy",
             image: "https://ipfs.sukaverse.club/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/howdy/images/300x300.jpg",
-            gltf: "https://bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4.ipfs.w3s.link/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
+            gltf: "https://ipfs.sukaverse.club/ipfs/bafybeigugzrqjel5vpcj3h3s5bxgodslgt3tlushdpierdqpcjeqrhe5b4/howdy.gltf"
         },
         {
             name: "laith",
             image: "https://ipfs.sukaverse.club/ipfs/QmbF3HDrbbJFEwLLuNsLGdmXeiKSsQ13VvdXgtNivwXK1n/laith/images/300x300.jpg",
-            gltf: "https://bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y.ipfs.w3s.link/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
+            gltf: "https://ipfs.sukaverse.club/ipfs/bafybeicujgm5buwdqsimy4hcusu452tzcochimmjwdxmtviid3krccei2y/laith.gltf"
 
         },
         // {
@@ -354,8 +354,9 @@ window.addEventListener('DOMContentLoaded', async event => {
             fileReader.onload = () => {
                 let fileURL = fileReader.result; //passing user file source in fileURL variable
                 switchToView();
+                 
                 currentSuka = {
-                    name: file.name.split(".")[0],
+                    name: currentSuka == null ? file.name.split(".")[0]: currentSuka.name,
                     gltf: fileURL
                 };
                 importMesh(currentSuka);
