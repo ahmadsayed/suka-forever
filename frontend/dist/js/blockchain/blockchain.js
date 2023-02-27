@@ -14,7 +14,7 @@ let web3;
 
 let evmChains;
 
-const chainID = 338;
+const chainID = 3141;
 
 let activeProject = null;
 
@@ -59,10 +59,10 @@ async function switchToBlockchain() {
                     method: 'wallet_addEthereumChain',
                     params: [
                         {
-                            chainName: "Cronos Testnet",
+                            chainName: "Filecoin - Hyperspace testnet",
                             chainId: web3.utils.toHex(chainID),
-                            nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
-                            rpcUrls: ['https://evm-t3.cronos.org']
+                            nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
+                            rpcUrls: ['https://api.hyperspace.node.glif.io/rpc/v1']
                         }
                     ]
                 });
@@ -71,7 +71,8 @@ async function switchToBlockchain() {
     }
 }
 let contract = null;
-const tokenContract = "0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE";
+//const tokenContract = "0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE"; //Cronos
+const tokenContract = "0x9A76f80b91865DF24C3B60Cc89872A087031C72c"; // FEVM
 
 async function fetchAccountData() {
 
