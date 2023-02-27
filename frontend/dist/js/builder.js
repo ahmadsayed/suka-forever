@@ -81,11 +81,7 @@ async function updateHistoryList() {
     });
 }
 
-async function getFromRemoteIPFS(cid) {
-    const sukaURL = `https://ipfs.sukaverse.club/ipfs/${cid}`
-    const gltf = await (await fetch(sukaURL)).json();
-    return gltf;
-}
+
 
 async function importMesh(suka, historyItem, latest=false) {
     $('.modal').modal('show');
