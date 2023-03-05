@@ -32,7 +32,7 @@ networks.set('FileCoin Testnet', {
     params: [
         {
             chainName: "Filecoin - Hyperspace testnet",
-            chainId: 3141,
+            chainId: `0x${(3141).toString(16)}`,
             nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
             rpcUrls: ['https://api.hyperspace.node.glif.io/rpc/v1']
         }
@@ -43,7 +43,7 @@ networks.set('Cronos Testnet', {
     params: [
         {
             chainName: "Cronos Testnet",
-            chainId: 338,
+            chainId: `0x${(338).toString(16)}`,
             nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
             rpcUrls: ['https://evm-t3.cronos.org']
         }
