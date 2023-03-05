@@ -1,0 +1,11 @@
+[Unit]
+Description=IPFS cluster daemon
+After=network.target
+
+[Service]
+### Uncomment the following line for custom ipfs datastore location
+ExecStart=/usr/local/bin/ipfs-cluster-service daemon
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
