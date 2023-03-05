@@ -1,0 +1,12 @@
+[Unit]
+Description=Auth Daemon
+After=network.target
+
+[Service]
+### Uncomment the following line for custom ipfs datastore location
+# Environment=IPFS_PATH=/path/to/desired/location/of/datastore
+ExecStart=/usr/bin/node /root/auth/auth.js
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

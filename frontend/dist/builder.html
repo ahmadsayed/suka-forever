@@ -67,7 +67,7 @@
                                         <a>Save</a>
                                     </button>
                                     <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="ipfs-drop" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleHistory();">
-                                        <div class="dropdown-menu">
+                                        <div class="dropdown-menu" id="drop-ipfs">
                                             <a class="dropdown-item" onclick="clearAll()">Clear all</a>
                                             <div class="dropdown-divider"></div>
                                         </div>
@@ -85,10 +85,13 @@
                         </li>
                         <li class="nav-item px-lg-4">
                             <div id="prepare">
-                                <button class="btn btn-primary" id="btn-connect">
-                                    <svg class="bi bi-wallet2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 20 20"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path></svg>
-                                    <a>Login&nbsp;&nbsp;</a>
-                                </button>
+                                <div class="btn-group" id="network-group">
+                                    <button class="btn btn-primary" id="btn-connect">
+                                        <svg class="bi bi-wallet2" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 20 20"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path></svg>
+                                        <a>Login&nbsp;&nbsp;</a>
+                                    </button>
+                                    <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" id="network-drop" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleNetworks();"><div class="dropdown-menu" id="drop-network"></div></button>
+                                </div>
                             </div>
                             <div id="connected" style="display: none">
                                 <button class="btn btn-primary" id="btn-disconnect">

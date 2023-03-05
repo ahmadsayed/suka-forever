@@ -51,7 +51,7 @@ function modal() {
 
 
 async function updateHistoryList() {
-    const dropdown = document.querySelector(".dropdown-menu");
+    const dropdown = document.querySelector("#drop-ipfs");
 
     var historyList = [];
 

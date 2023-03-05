@@ -14,7 +14,9 @@ let web3;
 
 let evmChains;
 
-const chainID = 3141;
+// Default FVM
+//const chainID = 3141;
+//const tokenContract = "0x9A76f80b91865DF24C3B60Cc89872A087031C72c"; // FEVM
 
 let activeProject = null;
 
@@ -22,6 +24,69 @@ let authToken = null;
 
 
 let client = null;
+
+const networks = new Map();
+
+networks.set('FileCoin Testnet', {
+    contract: '0x9A76f80b91865DF24C3B60Cc89872A087031C72c',
+    params: [
+        {
+            chainName: "Filecoin - Hyperspace testnet",
+            chainId: 3141,
+            nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
+            rpcUrls: ['https://api.hyperspace.node.glif.io/rpc/v1']
+        }
+    ]
+});
+networks.set('Cronos Testnet', {
+    contract: '0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE',
+    params: [
+        {
+            chainName: "Cronos Testnet",
+            chainId: 338,
+            nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
+            rpcUrls: ['https://evm-t3.cronos.org']
+        }
+    ]
+});
+
+let selectedNetwork = networks.get('FileCoin Testnet');
+
+let currentChainId = null;
+
+function populateNetwork() {
+    const dropdown = document.querySelector("#drop-network");
+
+    while (dropdown.getElementsByClassName("item-history").length > 0) {
+        dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
+    }
+    for (let [key, value] of networks) {
+        console.log(key + " = " + JSON.stringify(value));
+        const param = document.createElement("p");
+        param.classList.add("dropdown-item");
+        param.style.marginBottom = "0rem";
+        const node = document.createTextNode(key);
+        param.appendChild(node);
+        param.onclick =  () => {
+            selectedNetwork = networks.get(key);
+        }
+        dropdown.appendChild(param);
+
+    }
+    // historyList.forEach(historyItem => {
+        // const para = document.createElement("p");
+        // const node = document.createTextNode(historyItem.ts);
+        // para.appendChild(node);
+        // para.classList.add("dropdown-item");
+        // para.classList.add("item-history");
+        // para.style.marginBottom = "0rem";
+        // para.onclick = async function () {
+        //     console.log(historyItem);
+        //     await importMesh(null, historyItem)
+        // }
+        // dropdown.appendChild(para);
+    // });
+}
 /**
  * Setup the orchestra
  */
@@ -46,39 +111,31 @@ async function init() {
 
 
 async function switchToBlockchain() {
-    if (window.ethereum.networkVersion !== chainID) {
+    if (window.ethereum.networkVersion !== selectedNetwork.params[0].chainId) {
         try {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: web3.utils.toHex(chainID) }]
+                params: [{ chainId: web3.utils.toHex(selectedNetwork.params[0].chainId) }]
             });
+            fetchAccountData();
+
         } catch (err) {
             // This error code indicates that the chain has not been added to MetaMask
             if (err.code === 4902) {
                 await window.ethereum.request({
                     method: 'wallet_addEthereumChain',
-                    params: [
-                        {
-                            chainName: "Filecoin - Hyperspace testnet",
-                            chainId: web3.utils.toHex(chainID),
-                            nativeCurrency: { name: 'tFIL', decimals: 18, symbol: 'tFIL' },
-                            rpcUrls: ['https://api.hyperspace.node.glif.io/rpc/v1']
-                        }
-                    ]
+                    params: selectedNetwork.params
                 });
             }
         }
     }
 }
 let contract = null;
-//const tokenContract = "0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE"; //Cronos
-const tokenContract = "0x9A76f80b91865DF24C3B60Cc89872A087031C72c"; // FEVM
 
+//const tokenContract = "0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE"; //Cronos
 async function fetchAccountData() {
 
     // Get a Web3 instance for the wallet
-    web3 = new Web3(provider);
-    switchToBlockchain();
     const tokenURIABI = (await (await fetch('/js/blockchain/abi.json')).json());
     // Get list of accounts of the connected wallet
     const accounts = await web3.eth.getAccounts();
@@ -87,7 +144,7 @@ async function fetchAccountData() {
     console.log("Got accounts", accounts);
     selectedAccount = accounts[0];
 
-    contract = new web3.eth.Contract(tokenURIABI, tokenContract);
+    contract = new web3.eth.Contract(tokenURIABI, selectedNetwork.contract);
 
     const totalSupply = await contract.methods.totalSupply().call();
     console.log(totalSupply);
@@ -96,7 +153,7 @@ async function fetchAccountData() {
 }
 
 async function generateAuthToken(tokenid) {
-    let message = `${tokenid}:${tokenContract}`
+    let message = `${tokenid}:${selectedNetwork.contract}`
     const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
     let base64message = btoa(message);
     let base64Signature = btoa(signature);
@@ -126,8 +183,10 @@ async function listAllTokensbyAddress(address) {
         const token = await contract.methods.tokenOfOwnerByIndex(address, i).call();
         let cid = await contract.methods.tokenURI(token).call();
         try {
-            const metadata = await getFromRemoteIPFS(cid);
-            loadMeshList(metadata, token, cid);
+            //const metadata = await getFromRemoteIPFS(cid);
+            getFromRemoteIPFS(cid).then(metadata=> {
+                loadMeshList(metadata, token, cid);
+            })
 
         } catch (error) {
             console.error(error);
@@ -311,7 +370,7 @@ async function refreshAccountData() {
     // with Ethereum node via JSON-RPC and loads chain data
     // over an API call.
     document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
-    await fetchAccountData(provider);
+    //await fetchAccountData(provider);
     document.querySelector("#btn-connect").removeAttribute("disabled")
 }
 
@@ -324,7 +383,11 @@ async function onConnect() {
     console.log("Opening a dialog", web3Modal);
     // Check if Web3 has been injected by the browser (Mist/MetaMask).  
     try {
-        provider = await web3Modal.connect();
+        provider = await web3Modal.connect();    
+        web3 = new Web3(provider);
+        switchToBlockchain();
+
+
     } catch (e) {
         console.log("Could not get a wallet connection", e);
         alert("Could not get a wallet connection");
@@ -334,17 +397,22 @@ async function onConnect() {
 
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
+        console.log(accounts);
         fetchAccountData();
     });
 
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId) => {
-        fetchAccountData();
+        if (chainId !=  currentChainId) {
+        //    fetchAccountData();
+            currentChainId = chainId;
+        }
     });
 
     // Subscribe to networkId change
     provider.on("networkChanged", (networkId) => {
-        fetchAccountData();
+        console.log(networkId);
+       // fetchAccountData();
     });
 
     await refreshAccountData();    // Set the UI back to the initial state
@@ -490,6 +558,16 @@ window.addEventListener('DOMContentLoaded', async event => {
     if (activeProject != null) {
         document.getElementById("notification").textContent = `Active project -> ${activeProject}`
     }
+    populateNetwork();
+
+    /**
+     *  Wallet Connection Button 
+     */
+    document.querySelector("#btn-connect").addEventListener("click", onConnect);
+    document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
+
+    document.querySelector("#prepare").style.display = "block";
+    document.querySelector("#connected").style.display = "none";    
 
 });
 
