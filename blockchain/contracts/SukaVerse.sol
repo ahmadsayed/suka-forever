@@ -7,18 +7,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
-import {MarketAPI} from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-
-import {CommonTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import {MarketTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
 
 /**
-import "./types/MarketTypes.sol";
-import "./cbor/MarketCbor.sol";
-import "./cbor/BytesCbor.sol";
-import "./types/CommonTypes.sol";
-import "./utils/Misc.sol";
-import "./utils/Actor.sol";
  * @title SukaVerse
  * @dev Store & retrieve value in a variable
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
@@ -89,8 +79,7 @@ contract SukaVerse is ERC721Enumerable, Ownable {
         _setTokenURI(newItemId, _tokenURI);
         members[tokenId].push(msg.sender);
         for (uint256 i = 0; i < editor.length; i++) {
-            members[tokenId].push(editor[i]);
-            tokensIParticipate[editor[i]].push(tokenId);
+            _addEditor(tokenId, editor[i]);
         }
 
         return newItemId;
@@ -164,6 +153,32 @@ contract SukaVerse is ERC721Enumerable, Ownable {
         _tokenURIs[tokenId] = _tokenURI;
     }
 
+    function burn(uint256 tokenId) public {
+        require(
+            _ownerOf(tokenId) == msg.sender,
+            "SUKAVerse: Only token owner can burn token"
+        );
+        require(
+            members[tokenId].length <= 1,
+            "SUKAVerse: Ensure removing all members before brun"
+        );
+        _burn(tokenId);
+    }
+
+    function burn(uint256 tokenId, address[] memory editor) public {
+        require(
+            _ownerOf(tokenId) == msg.sender,
+            "SUKAVerse: Only token owner can burn token"
+        );
+        for (uint256 i = 0; i < editor.length; i++) {
+            _removeEditor(tokenId, editor[i]);
+        }
+        require(
+            members[tokenId].length <= 1,
+            "SUKAVerse: Ensure removing all members before brun"
+        );        
+        _burn(tokenId);
+    }
     /**
      * @dev See {ERC721-_burn}. This override additionally checks to see if a
      * token-specific URI was set for the token, and if so, it deletes the token URI from
@@ -174,6 +189,7 @@ contract SukaVerse is ERC721Enumerable, Ownable {
 
         if (bytes(_tokenURIs[tokenId]).length != 0) {
             delete _tokenURIs[tokenId];
+            delete members[tokenId];
         }
     }
 
@@ -210,8 +226,7 @@ contract SukaVerse is ERC721Enumerable, Ownable {
             _ownerOf(tokenId) == msg.sender,
             "SUKAVerse: Only token owner can add memeber"
         );
-        members[tokenId].push(editor);
-        tokensIParticipate[editor].push(tokenId);
+        _addEditor(tokenId, editor);
 
     }
 
@@ -234,9 +249,77 @@ contract SukaVerse is ERC721Enumerable, Ownable {
             "SUKAVerse: Only token owner can add memeber"
         );
         for (uint256 i = 0; i < editor.length; i++) {
-            members[tokenId].push(editor[i]);
+            _addEditor(tokenId, editor[i]);
         }
     }
+
+
+    function removeEditor(uint256 tokenId, address[] memory editor) public {
+        require(
+            _exists(tokenId),
+            "ERC721URIStorage: Add editor nonexistent token"
+        );
+        require(
+            _ownerOf(tokenId) == msg.sender,
+            "SUKAVerse: Only token owner can add memeber"
+        );
+        for (uint256 i = 0; i < editor.length; i++) {
+            _removeEditor(tokenId, editor[i]);
+        }
+    }
+    function removeEditor(uint256 tokenId, address editor) public {
+        require(
+            _exists(tokenId),
+            "ERC721URIStorage: Add editor nonexistent token"
+        );
+        require(
+            _ownerOf(tokenId) == msg.sender,
+            "SUKAVerse: Only token owner can remove memeber"
+        );
+        _removeEditor(tokenId, editor);
+
+    }
+
+
+    function _addEditor(uint256 tokenId, address editor) internal {
+        members[tokenId].push(editor);
+        tokensIParticipate[editor].push(tokenId);
+    }
+
+    function _removeEditor(uint256 tokenId, address editor) internal {
+
+        // Remove member Address from members map
+        int256 memberIdx = -1;
+        for (uint256 i = 0; i < members[tokenId].length; i++) {
+            if (members[tokenId][i] == editor) {
+                memberIdx = int256(i);
+            }
+        }
+        if (memberIdx != -1) {
+            address temp = members[tokenId][members[tokenId].length-1];
+            members[tokenId][members[tokenId].length-1] = members[tokenId][uint256(memberIdx)];
+            members[tokenId][uint256(memberIdx)] = temp;
+            members[tokenId].pop();
+
+        }
+
+        // Remove token from from participaant
+
+        int256 participantIdx = -1;
+        for (uint256 i = 0; i < tokensIParticipate[editor].length; i++) {
+            if (tokensIParticipate[editor][i] == tokenId) {
+                participantIdx = int256(i);
+            }
+        }
+        if (participantIdx != -1) {
+            uint256 temp = tokensIParticipate[editor][tokensIParticipate[editor].length-1];
+            tokensIParticipate[editor][tokensIParticipate[editor].length-1] = tokensIParticipate[editor][uint256(participantIdx)];
+            tokensIParticipate[editor][uint256(participantIdx)] = temp;
+            tokensIParticipate[editor].pop();
+        }
+    }
+
+
 
     /**
      * @dev Return value
@@ -254,61 +337,4 @@ contract SukaVerse is ERC721Enumerable, Ownable {
         return tokensIParticipate[editor];
     }
 
-
-    function bytesToString(bytes memory _bytes)
-        public
-        pure
-        returns (string memory)
-    {
-        uint8 i = 0;
-        while (i < 64 && _bytes[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes[i] != 0; i++) {
-            bytesArray[i] = _bytes[i];
-        }
-        return string(bytesArray);
-    }
-
-
-    function compareStrings(string memory a, string memory b)
-        internal
-        view
-        returns (bool)
-    {
-        return (keccak256(abi.encodePacked((a))) ==
-            keccak256(abi.encodePacked((b))));
-    }
-
-    event warningComparison(string warning);
-
-    function confirmStoringInFileCoin(
-        uint64 deal_id,
-        uint256 tokenId,
-        uint256 cost,
-        address _to
-    ) public onlyOwner {
-        require(
-            _exists(tokenId),
-            "ERC721URIStorage: Add editor nonexistent token"
-        );
-
-        require(
-            addressToAmountFunded[_ownerOf(tokenId)] >= cost,
-            "ERC721URIStorage: Token owner does not have enough funds"
-        );
-        string memory _tokenURI = _tokenURIs[tokenId];
-
-        MarketTypes.GetDealDataCommitmentReturn memory commitmentRet = MarketAPI
-            .getDealDataCommitment(deal_id);
-        string memory _cidraw = bytesToString(commitmentRet.data);
-        if (compareStrings(_tokenURI, _cidraw)) {
-            emit warningComparison("WARNING: Using Mock deal this check is dummy");
-        }
-
-        payable(_to).transfer(cost);
-        // Check if the users has enough fund
-        //
-    }
 }

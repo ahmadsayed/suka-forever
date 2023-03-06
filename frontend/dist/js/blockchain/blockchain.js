@@ -39,7 +39,8 @@ networks.set('FileCoin Testnet', {
     ]
 });
 networks.set('Cronos Testnet', {
-    contract: '0xE25610deb4CbA8ff3155FB3be19BfB1A73e26DaE',
+    //contract: '0x10370a831fb523706879e422b28b8723ef5e0a37',
+    contract: '0x9bC9a5f182B72b6a360CAABd02C499BF0434ab85',
     params: [
         {
             chainName: "Cronos Testnet",
@@ -67,24 +68,24 @@ function populateNetwork() {
         param.style.marginBottom = "0rem";
         const node = document.createTextNode(key);
         param.appendChild(node);
-        param.onclick =  () => {
+        param.onclick = () => {
             selectedNetwork = networks.get(key);
         }
         dropdown.appendChild(param);
 
     }
     // historyList.forEach(historyItem => {
-        // const para = document.createElement("p");
-        // const node = document.createTextNode(historyItem.ts);
-        // para.appendChild(node);
-        // para.classList.add("dropdown-item");
-        // para.classList.add("item-history");
-        // para.style.marginBottom = "0rem";
-        // para.onclick = async function () {
-        //     console.log(historyItem);
-        //     await importMesh(null, historyItem)
-        // }
-        // dropdown.appendChild(para);
+    // const para = document.createElement("p");
+    // const node = document.createTextNode(historyItem.ts);
+    // para.appendChild(node);
+    // para.classList.add("dropdown-item");
+    // para.classList.add("item-history");
+    // para.style.marginBottom = "0rem";
+    // para.onclick = async function () {
+    //     console.log(historyItem);
+    //     await importMesh(null, historyItem)
+    // }
+    // dropdown.appendChild(para);
     // });
 }
 /**
@@ -184,7 +185,7 @@ async function listAllTokensbyAddress(address) {
         let cid = await contract.methods.tokenURI(token).call();
         try {
             //const metadata = await getFromRemoteIPFS(cid);
-            getFromRemoteIPFS(cid).then(metadata=> {
+            getFromRemoteIPFS(cid).then(metadata => {
                 loadMeshList(metadata, token, cid);
             })
 
@@ -295,20 +296,15 @@ function mintNFTWithTeams(cid, tokenID, finalteams) {
         from: selectedAccount
     }).on('transactionHash', function (hash) {
         console.log(`tx hash: ${hash}`);
-    })
-        .on('confirmation', function (confirmationNumber, receipt) {
-            console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
-        })
-        .on('receipt', function (receipt) {
-            console.log(`receipt: ${JSON.stringify(receipt)}`);
-            document.getElementById("publish").disabled = false;
-
-            listAllTokensbyAddress(selectedAccount);
-
-        })
-        .on('error', function (error, receipt) {
-            console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-        });
+    }).on('confirmation', function (confirmationNumber, receipt) {
+        console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+    }).on('receipt', function (receipt) {
+        console.log(`receipt: ${JSON.stringify(receipt)}`);
+        document.getElementById("publish").disabled = false;
+        listAllTokensbyAddress(selectedAccount);
+    }).on('error', function (error, receipt) {
+        console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+    });
 }
 
 function updateProject(cid, tokenID) {
@@ -383,7 +379,7 @@ async function onConnect() {
     console.log("Opening a dialog", web3Modal);
     // Check if Web3 has been injected by the browser (Mist/MetaMask).  
     try {
-        provider = await web3Modal.connect();    
+        provider = await web3Modal.connect();
         web3 = new Web3(provider);
         switchToBlockchain();
 
@@ -403,8 +399,8 @@ async function onConnect() {
 
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId) => {
-        if (chainId !=  currentChainId) {
-        //    fetchAccountData();
+        if (chainId != currentChainId) {
+            //    fetchAccountData();
             currentChainId = chainId;
         }
     });
@@ -412,7 +408,7 @@ async function onConnect() {
     // Subscribe to networkId change
     provider.on("networkChanged", (networkId) => {
         console.log(networkId);
-       // fetchAccountData();
+        // fetchAccountData();
     });
 
     await refreshAccountData();    // Set the UI back to the initial state
@@ -471,8 +467,12 @@ async function publish() {
 
 }
 
-function openDialog() {
+async function openDialog() {
     document.querySelector("#myModal").classList.add("show");
+    document.getElementById("projectName").value = activeProject;
+    let tokenID = BigInt(`0x${converStringToNumber(activeProject)}`);
+    const editors = await contract.methods.listEditors(tokenID).call();
+    document.getElementById("teams").value = editors;
 }
 
 function converStringToNumber(data) {
@@ -493,41 +493,43 @@ function convertNumberToString(number) {
 }
 
 async function confirm() {
-    activeProject = document.getElementById("projectName").value;
-    let teams = document.getElementById("teams").value;
-    document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+    if (activeProject != document.getElementById("projectName").value) {
+        activeProject = document.getElementById("projectName").value;
+        let teams = document.getElementById("teams").value;
+        document.getElementById("notification").textContent = `Active project -> ${activeProject}`
 
 
-    console.log(`Set active project -> ${activeProject}`);
-    // Create new project using activeProject and currentSuka 
-    let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+        console.log(`Set active project -> ${activeProject}`);
+        // Create new project using activeProject and currentSuka 
+        let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
 
-    await saveLedgerToRemoteIPFS();
-    teams = teams.split(" ").join(",");
-    teams = teams.split("\n").join(",");
-    let finalteams = [];
-    let teamlist = teams.split(","); // Split by CSV
-    teamlist.forEach(address => {
-        console.log(address);
-        if (web3.utils.isAddress(address)) {
-            finalteams.push(address);
+        await saveLedgerToRemoteIPFS();
+        teams = teams.split(" ").join(",");
+        teams = teams.split("\n").join(",");
+        let finalteams = [];
+        let teamlist = teams.split(","); // Split by CSV
+        teamlist.forEach(address => {
+            console.log(address);
+            if (web3.utils.isAddress(address)) {
+                finalteams.push(address);
+            }
+        })
+        console.log(`teams: ${finalteams}`);
+
+        let cid = localStorage.getItem(currentSuka.name);
+        console.log(`tokenID= ${tokenId}, cid= ${cid}`);
+        if (finalteams.length > 0) {
+            mintNFTWithTeams(cid, tokenId, finalteams);
+        } else {
+            mintNFT(cid, tokenId);
         }
-    })
-    console.log(`teams: ${finalteams}`);
+        authToken = await generateAuthToken(tokenId);
 
-    let cid = localStorage.getItem(currentSuka.name);
-    console.log(`tokenID= ${tokenId}, cid= ${cid}`);
-    if (finalteams.length > 0) {
-        mintNFTWithTeams(cid, tokenId, finalteams);
-    } else {
-        mintNFT(cid, tokenId);
+        //TODO: Call Mint NFT
+        //TODO: Add Member if needed
+        document.querySelector("#myModal").classList.remove("show");
+        document.querySelector("#apikey").style.display = "block";
     }
-    authToken = await generateAuthToken(tokenId);
-
-    //TODO: Call Mint NFT
-    //TODO: Add Member if needed
-    document.querySelector("#myModal").classList.remove("show");
-    document.querySelector("#apikey").style.display = "block";
 
 }
 function cancel() {
@@ -538,6 +540,27 @@ function cancel() {
 
 function listMyToken() {
 
+}
+
+async function deleteToken() {
+    let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
+    console.log(`Delete Token ${tokenId}`);
+    const editors = await contract.methods.listEditors(tokenId).call();
+    contract.methods.burn(tokenId, editors).send({
+        from: selectedAccount
+    }).on('transactionHash', function (hash) {
+        console.log(`tx hash: ${hash}`);
+    }).on('confirmation', function (confirmationNumber, receipt) {
+        console.log(`confirmation number: ${confirmationNumber}, receipt: ${JSON.stringify(receipt)}`);
+    }).on('receipt', function (receipt) {
+        console.log(`receipt: ${JSON.stringify(receipt)}`);
+        document.getElementById("publish").disabled = false;
+        listAllTokensbyAddress(selectedAccount);
+    }).on('error', function (error, receipt) {
+        console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
+    });
+
+    document.querySelector("#myModal").classList.remove("show");
 }
 
 function copyKeyToClipboard() {
@@ -551,6 +574,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("publish").disabled = true;
     document.getElementById("notification").onclick = openDialog;
     document.getElementById("confirm").onclick = confirm;
+    document.getElementById("delete").onclick = deleteToken;
     document.getElementById("cancel").onclick = cancel;
     document.getElementById("apikey").onclick = copyKeyToClipboard;
     client = IpfsHttpClient.create({ url: "https://ipfs.sukaverse.club/api/v0" });
@@ -567,7 +591,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
 
     document.querySelector("#prepare").style.display = "block";
-    document.querySelector("#connected").style.display = "none";    
+    document.querySelector("#connected").style.display = "none";
 
 });
 
