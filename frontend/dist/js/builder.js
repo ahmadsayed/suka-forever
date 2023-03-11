@@ -98,19 +98,19 @@ async function importMesh(suka, historyItem, latest=false) {
     console.log(historyItem);
     if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
         if (!latest || localStorage.getItem(suka.name) == null) {
-            gltf = await (await fetch(suka.gltf)).json();
+            gltf = await convertToDataURI(await (await fetch(suka.gltf)).json());
             gltfString = JSON.stringify(gltf);
         } else {
             const latestCID = localStorage.getItem(suka.name);
             const latestLedger = await getFromRemoteIPFS(latestCID);
             //const latest = JSON.parse(latestLedger);
-            gltf = await getFromRemoteIPFS(latestLedger.cid)
+            gltf = await convertToDataURI(await getFromRemoteIPFS(latestLedger.cid))
             gltfString = JSON.stringify(gltf);
             currentSuka = suka;
 
         }
     } else {
-        gltf = await getFromRemoteIPFS(historyItem.cid);
+        gltf = await convertToDataURI(await getFromRemoteIPFS(historyItem.cid));
         gltfString = JSON.stringify(gltf);
     }
 
@@ -496,8 +496,8 @@ window.addEventListener('DOMContentLoaded', async event => {
         scene.render();
 
     });
-    function saveToDisk() {
-        var blob = new Blob([JSON.stringify(gltf)]);
+    async function saveToDisk() {
+        var blob = new Blob([await convertToDataURI(JSON.stringify(gltf))]);
         var url = window.URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;

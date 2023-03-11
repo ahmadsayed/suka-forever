@@ -5,12 +5,18 @@ async function getFromRemoteIPFS(cid) {
     return json;
 }
 
+async function getBase64FromRemoteIPFS(cid) {
+    const sukaURL = `https://ipfs.sukaverse.club/ipfs/${cid}`
+    const text = await (await fetch(sukaURL)).text();
+    return text;
+}
 async function saveLedgerToRemoteIPFS() {
     $('.modal').modal('show');
-    let response = await saveToRemoteIPFS(JSON.stringify(gltf));
+    let response = await saveToRemoteIPFS(JSON.stringify(await convertURItoCID(gltf)));
     let cid = response;
     let latestCID = currentSuka != null ? localStorage.getItem(currentSuka.name) : null;
     const snapshot = await screenshot();
+    document.getElementById("remote-save").disabled = true;
     let img = await saveToRemoteIPFS(JSON.stringify({
         image: snapshot
     }));
@@ -52,23 +58,8 @@ async function getLatest(name) {
 }
 
 async function saveToRemoteIPFS(data) {
-
-    document.getElementById("remote-save").disabled = true;
     let { cid } = await client.add(data, {
         "authorization":  `Bearer ${authToken}`
     });
-    // const response = await fetch(`/api/push-ipfs`, {
-    //     method: 'POST',
-    //     mode: 'cors',
-    //     cache: 'no-cache',
-    //     credentials: 'same-origin',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     referrerPolicy: 'no-referrer',
-    //     body: data
-    // });
-    // const res = await response.json();
-
     return cid.toString();
 }
