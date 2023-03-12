@@ -42,23 +42,25 @@ async function convertToDataURI(gltf) {
     cid_prefix = "data:application/cid;base64,";
     for (const buffer of cloned.buffers) {
         current_uri = buffer.uri;
+        let base64_uri = null;
         if (current_uri.startsWith("data:application/cid;base64,")) {
             cid_uri = current_uri.replace(cid_prefix, "");
-            let base64 = await db.cacheCID.get(cid_uri) 
-            ;
-            if (base64 == null) {
+            let base64 = await db.cacheCID.get(cid_uri) ;
+            if (base64)  {
+                base64_uri = base64_prefix + base64.base64;
+            } else {
                 base64 = await getBase64FromRemoteIPFS(cid_uri);
                 try {
-                    localStorage.setItem(cid_uri, base64);
-                    db.cacheCID.Put({
+                    db.cacheCID.put({
                         cid: cid_uri, 
                         base64: base64
                     });
                 } catch(err) {
                     console.error("Unable to store to local cache will clear");
                 }
+                base64_uri = base64_prefix + base64;
+
             }
-            base64_uri = base64_prefix + base64.base64;
 
             buffer.uri = base64_uri;
         } 

@@ -154,11 +154,26 @@ async function fetchAccountData() {
 }
 
 async function generateAuthToken(tokenid) {
-    let message = `${tokenid}:${selectedNetwork.contract}`
-    const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
-    let base64message = btoa(message);
-    let base64Signature = btoa(signature);
-    let authToken = `${base64message}.${base64Signature}`
+//     cachSignature: `
+//     tokenId,
+//     signature
+// `,
+    let authToken = null;
+    let authTokenObject = await db.cachSignature.get(tokenid);
+    if (authTokenObject == null) {
+        let message = `${tokenid}:${selectedNetwork.contract}`
+        const signature = await web3.eth.personal.sign(message, selectedAccount);  // Load chain information over an HTTP API
+        let base64message = btoa(message);
+        let base64Signature = btoa(signature);
+        authToken = `${base64message}.${base64Signature}`
+        db.cachSignature.put({
+            tokenId: tokenid, 
+            signature:authToken
+        });
+    } else {
+        authToken = authTokenObject.signature;
+    }
+
     return authToken;
 }
 

@@ -9,12 +9,24 @@ async function saveToBrowserIPFS(data) {
 
 window.addEventListener('DOMContentLoaded', async event => {
     var init_browser_ipfs = async function (){
-        localNode = await Ipfs.create();
+        localNode = await Ipfs.create({
+            config: {
+              EXPERIMENTAL: {
+                pubsub: false,
+                libp2p: false
+              }              
+            }
+          });
+
     }();
-    db = new Dexie("FriendDatabase");
+    db = new Dexie("sukaDB");
     db.version(1).stores({
         cacheCID: `
           cid,
           base64`,
+        cachSignature: `
+            tokenId,
+            signature
+        `,
       });
 });
