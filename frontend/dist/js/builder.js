@@ -333,7 +333,7 @@ window.addEventListener('DOMContentLoaded', async event => {
     button = dropArea.querySelector("button");
     input = dropArea.querySelector("input");
     canvas = document.getElementById("renderCanvas"); // Get the canvas element
-
+    canvas.addEventListener('wheel', evt => evt.preventDefault());
     let file; //this is a global variable and we'll use it inside multiple functions
     button.onclick = () => {
         input.click(); //if user click on the button then the input also clicked
