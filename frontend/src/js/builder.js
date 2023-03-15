@@ -167,9 +167,13 @@ async function importMesh(suka, historyItem, latest=false) {
         parent.setBoundingInfo(new BABYLON.BoundingInfo(new BABYLON.Vector3(min.x, min.y, min.z), new BABYLON.Vector3(max.x, max.y, max.z)));
         // //parent.setBoundingInfo(minMesh, biggestMesh);
         var zoomFactor = 1.4;
-        camera.lowerRadiusLimit = (max.y - min.y) * zoomFactor;
-        camera.upperRadiusLimit = (max.y - min.y) * zoomFactor;
-        console.log(min.y)
+        camera.setTarget(BABYLON.Vector3.Zero());
+
+        camera.radius =  (max.y - min.y) * zoomFactor;
+        camera.targetScreenOffset.x = 0;
+        camera.targetScreenOffset.y = 0;
+        camera.lowerRadiusLimit = camera.radius / 20;
+        camera.upperRadiusLimit = camera.radius * 3;
         console.log(max.y - min.y);
         root.position.y -= min.y;
         root.position.y -= ((max.y - min.y) / 2);
@@ -476,12 +480,14 @@ window.addEventListener('DOMContentLoaded', async event => {
         });
         camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
-        camera.lowerRadiusLimit = 9;
-        camera.upperRadiusLimit = 9;
-        camera.panningSensibility = 0;
+        //camera.lowerRadiusLimit = 9;
+        //camera.upperRadiusLimit = 9;
+        console.log("Pannning Sensibility: " + camera.panningSensibility);
         //importMesh("https://ipfs.sukaverse.club/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
+        camera.panningSensibility = camera.panningSensibility /2;
+
         console.log(camera.fov);
         // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         scene.clearColor = new BABYLON.Color4(0.03, 0.03, 0.03, 0.5);
