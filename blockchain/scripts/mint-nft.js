@@ -32,8 +32,7 @@ async function mintNFT(uri) {
           if (!err) {
             console.log(
               "The hash of your transaction is: ",
-              hash,
-              "\nCheck Alchemy's Mempool to view the status of your transaction!"
+              hash
             )
           } else {
             console.log(
@@ -55,8 +54,7 @@ async function readURI(tokenid) {
   
 
     const data = await nftContract.methods.tokenURI(tokenid).call();
-    //const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY)
-    console.log(data)
+
   }
  
 async function mintall () {

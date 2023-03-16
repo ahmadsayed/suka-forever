@@ -27,7 +27,6 @@ async function saveLedgerToRemoteIPFS() {
         cid: cid
     };
     let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
-    console.log('CID created via ipfs.add:', ledgerCID)
 
     // Save to localStorage till user decide to publish 
     localStorage.setItem(currentSuka.name, ledgerCID);

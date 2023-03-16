@@ -7,7 +7,6 @@ async function convertURItoCID(gltf) {
         current_uri = buffer.uri;
         if (current_uri.startsWith("data:application/octet-stream;base64,")) {
             base64_data = current_uri.replace(base64_prefix, "");
-            console.log(base64_data);
             let cid = null;
             if (localNode != null) {                
                 cid = await saveToBrowserIPFS(base64_data);

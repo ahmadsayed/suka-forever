@@ -237,7 +237,6 @@ async function fetchAccountData() {
 
     // Get connected chain id from Ethereum node
     const chainId = await web3.eth.getChainId();
-    const message = "Hello World"
     const chainData = evmChains.getChain(chainId);
     //document.querySelector("#network-name").textContent = chainData.name;
 
@@ -245,7 +244,6 @@ async function fetchAccountData() {
     const accounts = await web3.eth.getAccounts();
 
     // MetaMask does not give you all accounts, only the selected account
-    console.log("Got accounts", accounts);
     selectedAccount = accounts[0];
 
     const contract = new web3.eth.Contract(tokenURIABI, tokenContract)
@@ -310,7 +308,6 @@ async function onConnect() {
     try {
         provider = await web3Modal.connect();
     } catch (e) {
-        console.log("Could not get a wallet connection", e);
         alert("Could not get a wallet connection");
 
         return;

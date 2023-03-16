@@ -44,7 +44,6 @@ function screenshot() {
 function modal() {
     $('.modal').modal('show');
     setTimeout(function () {
-        console.log('hejsan');
         $('.modal').modal('hide');
     }, 3000);
 }
@@ -74,7 +73,6 @@ async function updateHistoryList() {
         para.classList.add("item-history");
         para.style.marginBottom = "0rem";
         para.onclick = async function () {
-            console.log(historyItem);
             await importMesh(null, historyItem)
         }
         dropdown.appendChild(para);
@@ -95,7 +93,6 @@ async function importMesh(suka, historyItem, latest=false) {
     hidePicker();
     var gltfData = null;
     var gltfString = null;
-    console.log(historyItem);
     if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
         if (!latest || localStorage.getItem(suka.name) == null) {
             gltf = await convertToDataURI(await (await fetch(suka.gltf)).json());
@@ -154,31 +151,22 @@ async function importMesh(suka, historyItem, latest=false) {
 
             if (mesh.name == "__root__") {
                 root = mesh;
-                // mesh.position.z -=1;
             }
-            // console.log(mesh.getBoundingInfo().boundingBox);
-            //mesh.showBoundingBox = true;
+
         })
 
-        // console.log(max + " : " + min);
-
-        // console.log(minLowestPoint + ":" + maxHighestPoint);
 
         parent.setBoundingInfo(new BABYLON.BoundingInfo(new BABYLON.Vector3(min.x, min.y, min.z), new BABYLON.Vector3(max.x, max.y, max.z)));
-        // //parent.setBoundingInfo(minMesh, biggestMesh);
         var zoomFactor = 1.4;
         camera.setTarget(BABYLON.Vector3.Zero());
-
+        camera.panningSensibility = 1000 / 2;
+        camera.wheelPrecision = 500/camera.radius;
         camera.radius =  (max.y - min.y) * zoomFactor;
         camera.targetScreenOffset.x = 0;
         camera.targetScreenOffset.y = 0;
         camera.lowerRadiusLimit = camera.radius / 20;
         camera.upperRadiusLimit = camera.radius * 3;
-        console.log(max.y - min.y);
-        root.position.y -= min.y;
         root.position.y -= ((max.y - min.y) / 2);
-        // parent.showBoundingBox = true;  
-        // parent.showBoundingBox = true;
     });
     $('.modal').modal('hide');
 
@@ -288,7 +276,6 @@ function switchToView() {
 
 function importMeshFromURL () {
     const searchParams=new URLSearchParams(window.location.search);
-    console.log(searchParams);
     if (searchParams.has('cid')) {
         const urlCID = searchParams.get('cid')
         switchToView();
@@ -352,7 +339,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         let fileType = file.type; //getting selected file type
         let validExtensions = ["gltf"]; //adding some valid image extensions in array
         let fileExtention = file.name.split(".")[1];
-        console.log(fileExtention);
         if (validExtensions.includes(fileExtention)) { //if user selected file is an image file
             let fileReader = new FileReader(); //creating new FileReader object
             fileReader.onload = () => {
@@ -366,7 +352,6 @@ window.addEventListener('DOMContentLoaded', async event => {
                 importMesh(currentSuka);
             }
             const dataURL = fileReader.readAsDataURL(file);
-            console.log(dataURL);
         } else {
             alert("This is not a GLTF file, only GLTF file supported!");
             dropArea.classList.remove("active");
@@ -480,16 +465,9 @@ window.addEventListener('DOMContentLoaded', async event => {
         });
         camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / 2, Math.PI / 2, 5, new BABYLON.Vector3(0, 0, 0), scene);
 
-        //camera.lowerRadiusLimit = 9;
-        //camera.upperRadiusLimit = 9;
-        console.log("Pannning Sensibility: " + camera.panningSensibility);
-        //importMesh("https://ipfs.sukaverse.club/ipfs/bafybeicicnm2sf6udivx6jquvndfw3t4wodhq2b7t6s44svqruykqoz3je/howdy.gltf");
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
-        camera.panningSensibility = camera.panningSensibility /2;
 
-        console.log(camera.fov);
-        // advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         scene.clearColor = new BABYLON.Color4(0.03, 0.03, 0.03, 0.5);
 
         return scene;
@@ -526,7 +504,6 @@ window.addEventListener('DOMContentLoaded', async event => {
             buffer = new Uint16Array(file);
             buffer.forEach(code => {
                 data += String.fromCharCode(code);
-                // console.log(String.fromCharCode)
             });
         }
         return data;
@@ -567,7 +544,6 @@ window.addEventListener('DOMContentLoaded', async event => {
     });
 
     scene.onKeyboardObservable.add((kbInfo) => {
-        console.log(kbInfo.event);
 
         switch (kbInfo.type) {
             case BABYLON.KeyboardEventTypes.KEYUP:
@@ -589,7 +565,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         element.onmousedown = onMouseDown;
 
         function onMouseDown(e) {
-            //console.log("mouse down: " + e.clientX);
             md = {
                 e,
                 offsetLeft: element.offsetLeft,
@@ -600,13 +575,11 @@ window.addEventListener('DOMContentLoaded', async event => {
 
             document.onmousemove = onMouseMove;
             document.onmouseup = () => {
-                //console.log("mouse up");
                 document.onmousemove = document.onmouseup = null;
             }
         }
 
         function onMouseMove(e) {
-            //console.log("mouse move: " + e.clientX);
             var delta = {
                 x: e.clientX - md.e.clientX,
                 y: e.clientY - md.e.clientY

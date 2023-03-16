@@ -62,7 +62,6 @@ function populateNetwork() {
         dropdown.removeChild(dropdown.getElementsByClassName("item-history")[0]);
     }
     for (let [key, value] of networks) {
-        console.log(key + " = " + JSON.stringify(value));
         const param = document.createElement("p");
         param.classList.add("dropdown-item");
         param.style.marginBottom = "0rem";
@@ -338,7 +337,8 @@ function updateProject(cid, tokenID) {
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-        }); document.querySelector("#apikey").style.display = "block";
+        }); 
+        document.querySelector("#apikey").style.display = "block";
 
 }
 
@@ -408,7 +408,6 @@ async function onConnect() {
 
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
-        console.log(accounts);
         fetchAccountData();
     });
 
@@ -439,8 +438,6 @@ async function onConnect() {
  */
 async function onDisconnect() {
 
-    console.log("Killing the wallet connection", provider);
-
     // TODO: Which providers have close method?
     if (provider.close) {
         await provider.close();
@@ -469,14 +466,9 @@ async function onDisconnect() {
 }
 
 async function publish() {
-    console.log("Publish");
     let tokenID = BigInt(`0x${converStringToNumber(activeProject)}`);
     await saveLedgerToRemoteIPFS();
     let cid = localStorage.getItem(currentSuka.name);
-    //updateProject(cid, tokenId);
-
-    console.log(`Update the URI for ${activeProject}`);
-    //TODO: Update the URI for this specific Item 
     updateProject(cid, tokenID);
 
 
@@ -524,7 +516,6 @@ async function confirm() {
         let finalteams = [];
         let teamlist = teams.split(","); // Split by CSV
         teamlist.forEach(address => {
-            console.log(address);
             if (web3.utils.isAddress(address)) {
                 finalteams.push(address);
             }
@@ -532,7 +523,6 @@ async function confirm() {
         console.log(`teams: ${finalteams}`);
 
         let cid = localStorage.getItem(currentSuka.name);
-        console.log(`tokenID= ${tokenId}, cid= ${cid}`);
         if (finalteams.length > 0) {
             mintNFTWithTeams(cid, tokenId, finalteams);
         } else {
@@ -559,7 +549,6 @@ function listMyToken() {
 
 async function deleteToken() {
     let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
-    console.log(`Delete Token ${tokenId}`);
     const editors = await contract.methods.listEditors(tokenId).call();
     contract.methods.burn(tokenId, editors).send({
         from: selectedAccount
