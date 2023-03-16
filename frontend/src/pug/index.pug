@@ -7,7 +7,7 @@ html(lang='en')
         meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
         meta(name='description' content='')
         meta(name='author' content='')
-        script(src='js/home.js')        
+        //- script(src='js/home.js')        
         script(src='js/team.js')
         script(src='js/faq.js')
         title SUKA Verse
@@ -19,19 +19,9 @@ html(lang='en')
     body
 
         include includes/navbar
-
         section.page-section.clearfix.mt-0
-            #loadingScreen.loadingScreen
-                img#suka_verse1(src="assets/img/sukaverse.svg" style="display:none; width: 55vw")
-                img#suka_verse2(src="assets/img/web25.svg" style="display:none ; width: 40vw")
-                img#suka_verse3(src="assets/img/whereMinds.svg" style="display:none")                   
-                //- img#suka_verse4(src="assets/img/wonders.svg" style="display:none")
-                p#sideContent Blooming ...
-
-            .container-gltf
-                .intro
-                    canvas.intro-img.mx-auto.d-flex.rounded-xl.img-fluid.mb-3.mb-lg-0(id='renderCanvas')
-        section.page-section.cta(style="background-color: #545e95")
+            img#intro.gradient-image(src="assets/img/intro.jpeg")
+        section.page-section.cta(style="background-color: #222535; margin-top: 0rem;")
             .container
                 .row
                     .col-xl-9.mx-auto
@@ -42,11 +32,12 @@ html(lang='en')
                             p.mb-0
                                 | Web 3.0 Platform designed to enable 3D creators to design, create and share their 3D assets for real-world use cases and Metaverse..                                
         //- Page main sections
+        div.gradient-team
 
         include includes/teams
+        div.gradient-top
 
         include includes/gallery 
-
         include includes/faq 
 
         //- Footer

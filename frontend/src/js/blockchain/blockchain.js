@@ -186,6 +186,10 @@ async function listAllTokensbyAddress(address) {
         d = sukaList.getElementsByClassName("my-suka")[0];
         d.parentNode.removeChild(d);
     }
+    while (sukaList.getElementsByClassName("suka-div").length > 0) {
+        d = sukaList.getElementsByClassName("suka-div")[0];
+        d.parentNode.removeChild(d);
+    }
 
     initSamples();
 

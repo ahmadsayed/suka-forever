@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <script src="js/home.js"></script>
         <script src="js/team.js"></script>
         <script src="js/faq.js"></script>
         <title>SUKA Verse</title>
@@ -72,18 +71,8 @@
                 </div>
             </div>
         </nav>
-        <section class="page-section clearfix mt-0">
-            <div class="loadingScreen" id="loadingScreen">
-                <img id="suka_verse1" src="assets/img/sukaverse.svg" style="display: none; width: 55vw" />
-                <img id="suka_verse2" src="assets/img/web25.svg" style="display: none; width: 40vw" />
-                <img id="suka_verse3" src="assets/img/whereMinds.svg" style="display: none" />
-                <p id="sideContent">Blooming ...</p>
-            </div>
-            <div class="container-gltf">
-                <div class="intro"><canvas class="intro-img mx-auto d-flex rounded-xl img-fluid mb-3 mb-lg-0" id="renderCanvas"></canvas></div>
-            </div>
-        </section>
-        <section class="page-section cta" style="background-color: #545e95">
+        <section class="page-section clearfix mt-0"><img class="gradient-image" id="intro" src="assets/img/intro.jpeg" /></section>
+        <section class="page-section cta" style="background-color: #222535; margin-top: 0rem">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
@@ -98,12 +87,13 @@
                 </div>
             </div>
         </section>
+        <div class="gradient-team"></div>
         <div class="container mt-4" id="ourteam">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
                         <div class="cta-inner text-center rounded">
-                            <h2 class="section-heading mb-4"><span class="section-heading-lower" style="color: white !important">Our Team</span></h2>
+                            <h2 class="section-heading mb-4" style="position: relative; z-index: 1000"><span class="section-heading-lower" style="color: #7e7e7e !important">Our Team</span></h2>
                         </div>
                     </div>
                 </div>
@@ -125,34 +115,35 @@
                 </template>
             </div>
         </div>
+        <div class="gradient-top"></div>
         <section class="page-section" id="gallery" style="background-color: #1d1d1d">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
                         <div class="cta-inner text-center rounded">
-                            <h2 class="section-heading mt-4"><span class="section-heading-lower" style="color: white !important">GALLERY</span></h2>
+                            <h2 class="section-heading mt-4" style="position: relative; z-index: 1000"><span class="section-heading-lower" style="color: #7e7e7e !important">GALLERY</span></h2>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="container mt-4">
                 <div class="row">
-                    <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                    <div class="col-lg-4 col-md-12 mb-4 mb-lg-0" style="z-index: 1000">
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmfRJ2Hq45CtDMhku1MvByLvHTQS5oaUA7CNpz2gkwzQr5?filename=muka600x900_BG1.jpg" alt="Boat on Calm Water" />
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmNk9RsJMisWM9KDc5zjvK4ZM9ioNUW7sPCcNUgsAUMafj?filename=badran900x900_flipped.jpg" alt="Wintry Mountain Landscape" />
                     </div>
-                    <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="col-lg-4 mb-4 mb-lg-0" style="z-index: 1000">
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmaX3Kej9aqRArnpSmxTpDVkqCLWrKNrGNVqQyJPzJ3FS6?filename=vika900x900.jpg" alt="Mountains in the Clouds" />
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmR6omxqY1JAKq96kVrG8Vz9tku45VyuhmT2fPje9JDsHM?filename=900x600.jpg" alt="Boat on Calm Water" />
                     </div>
-                    <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="col-lg-4 mb-4 mb-lg-0" style="z-index: 1000">
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmVw4GrmA5T9wtXJDtyyuuCVZvkiwQA5QkdYRhCoNC1Lj5?filename=900x600.jpg" alt="Waves at Sea" />
                         <img class="w-100 shadow-1-strong rounded mb-4" src="https://ipfs.sukaverse.club/ipfs/QmaYV9EHX8Wq1zNLVax5d7STpvi4dwHzKtoSTZQSwgpWFM/tota900x900.jpg" alt="Yosemite National Park" />
                     </div>
                 </div>
             </div>
         </section>
-        <section class="page-section bg-faded" id="faq">
+        <section class="page-section bg-faded" id="faq" style="margin-top: 0rem">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-9 mx-auto">

@@ -21,16 +21,16 @@ html(lang='en')
         include includes/editorbar
 
         section.page-section
-            .container
+            .container(style="max-width: 85%; max-height: 100%")
                 div.splitter 
-                    div#first(style="height:550px;  overflow-y: scroll;")
+                    div#first(style="height:92%;  overflow-y: scroll;")
                         div.row#sukas-list
                             template#suka-template
-                                div#sukadiv.col-sm(style="width:250px")
+                                div#sukadiv.col-sm.suka-div(style="width:250px")
                                     img.my-suka.image-location.shadow-1-strong.rounded-m.mb-4(src='assets/img/vika-thumbnail.jpg' style="width:200px; height:200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt='...')
                     div#separator
                     div#second
-                        .drag-area.rounded-xl(style="height:550px; width:100%")
+                        .drag-area.rounded-xl(style="height:100%; width:100%")
                             .icon
                                 i.fas.fa-cloud-upload-alt
                             header Drag &amp; Drop to Upload File or Select from Sidebar
@@ -39,7 +39,7 @@ html(lang='en')
                             input(type='file', hidden='')
                         .container-gltf
                             .intro(style="display: none;")
-                                canvas.intro-img.mx-auto.d-flex.rounded-m.img-fluid.mb-3.mb-lg-0(id='renderCanvas' style="height:550px; width:100%")
+                                canvas.intro-img.mx-auto.d-flex.rounded-m.img-fluid.mb-3.mb-lg-0(id='renderCanvas' style="height:100%; width:100%")
         #spinnerModal.modal.fade.show(tabindex='-1', role='dialog',style='color: white')
             .modal-dialog.modal-dialog-centered.text-center(role='document')
                 span.fa.fa-spinner.fa-spin.fa-3x.w-100

@@ -132,18 +132,18 @@
             </div>
         </nav>
         <section class="page-section">
-            <div class="container">
+            <div class="container" style="max-width: 85%; max-height: 100%">
                 <div class="splitter">
-                    <div id="first" style="height: 550px; overflow-y: scroll">
+                    <div id="first" style="height: 92%; overflow-y: scroll">
                         <div class="row" id="sukas-list">
                             <template id="suka-template">
-                                <div class="col-sm" id="sukadiv" style="width: 250px"><img class="my-suka image-location shadow-1-strong rounded-m mb-4" src="assets/img/vika-thumbnail.jpg" style="width: 200px; height: 200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt="..." /></div>
+                                <div class="col-sm suka-div" id="sukadiv" style="width: 250px"><img class="my-suka image-location shadow-1-strong rounded-m mb-4" src="assets/img/vika-thumbnail.jpg" style="width: 200px; height: 200px" onerror="this.onerror=null; this.src='assets/img/vika-thumbnail.jpg'" alt="..." /></div>
                             </template>
                         </div>
                     </div>
                     <div id="separator"></div>
                     <div id="second">
-                        <div class="drag-area rounded-xl" style="height: 550px; width: 100%">
+                        <div class="drag-area rounded-xl" style="height: 100%; width: 100%">
                             <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
                             <header>Drag &amp; Drop to Upload File or Select from Sidebar</header>
                             <span>OR</span>
@@ -151,7 +151,7 @@
                             <input type="file" hidden="" />
                         </div>
                         <div class="container-gltf">
-                            <div class="intro" style="display: none"><canvas class="intro-img mx-auto d-flex rounded-m img-fluid mb-3 mb-lg-0" id="renderCanvas" style="height: 550px; width: 100%"></canvas></div>
+                            <div class="intro" style="display: none"><canvas class="intro-img mx-auto d-flex rounded-m img-fluid mb-3 mb-lg-0" id="renderCanvas" style="height: 100%; width: 100%"></canvas></div>
                         </div>
                     </div>
                 </div>

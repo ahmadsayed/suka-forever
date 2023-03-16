@@ -468,7 +468,7 @@ window.addEventListener('DOMContentLoaded', async event => {
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.attachControl(canvas, true);
 
-        scene.clearColor = new BABYLON.Color4(0.03, 0.03, 0.03, 0.5);
+        scene.clearColor = new BABYLON.Color4(0.08, 0.08, 0.08, 0.5);
 
         return scene;
     };

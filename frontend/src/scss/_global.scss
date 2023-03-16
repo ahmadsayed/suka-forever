@@ -2,12 +2,54 @@ html {
     scroll-behavior: smooth;
 }
 body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('https://ipfs.sukaverse.club/ipfs/bafybeifr3fpugfxbb2aru7codej5qc2mwx2cghjfpdt22z5mmii7s7zggi/bg.jpg');
+    // background-image: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.0)), url('https://ipfs.sukaverse.club/ipfs/bafybeifr3fpugfxbb2aru7codej5qc2mwx2cghjfpdt22z5mmii7s7zggi/bg.jpg');
+    background-color: #060709;
     background-attachment: fixed;
     background-position: center;
     background-size: cover;
 }
 
+.gradient-top {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#000), to(transparent));
+    background-image: linear-gradient(180deg, #000, transparent);
+}
+
+.gradient-faq {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#1d1d1d), to(transparent));
+    background-image: linear-gradient(180deg, #1d1d1d, transparent);
+}
+.gradient-mission {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#282828), to(transparent));
+    background-image: linear-gradient(180deg, #282828, transparent);
+}
+.gradient-team {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#21253a), to(transparent));
+    background-image: linear-gradient(180deg, #222535, transparent);
+}
+.gradient-image {
+    width: 100%;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#000), to(transparent));
+    background-image: linear-gradient(180deg, #000, transparent);
+}
+
+//
 .loadingScreen {
     position: absolute;
     width: 100%;
@@ -75,7 +117,7 @@ p {
 
 .page-section {
     margin-top: 1rem;
-    margin-bottom: 1rem;
+    // margin-bottom: 1rem;
 }
 
 .section-heading {
@@ -173,7 +215,7 @@ p {
 
 .splitter {
     width: 100%;
-    height: 550px;
+    height: 45rem;
     display: flex;
 }
 
