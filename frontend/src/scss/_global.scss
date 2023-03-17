@@ -14,8 +14,17 @@ body {
     width: 100%;
     height: 400px;
     max-width: 100%;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#000), to(transparent));
-    background-image: linear-gradient(180deg, #000, transparent);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#060709), to(transparent));
+    background-image: linear-gradient(180deg, #060709, transparent);
+}
+
+.gradient-top-nav {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    max-width: 100%;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#060709), to(transparent));
+    background-image: linear-gradient(180deg, #060709, transparent);
 }
 
 .gradient-faq {
