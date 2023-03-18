@@ -37,6 +37,7 @@ async function convertURItoCID(gltf) {
 
 async function convertToDataURI(gltf) {
     let cloned = _.cloneDeep(gltf);
+    console.log(cloned);
     base64_prefix = "data:application/octet-stream;base64,";
     cid_prefix = "data:application/cid;base64,";
     for (const buffer of cloned.buffers) {

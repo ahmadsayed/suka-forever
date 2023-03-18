@@ -481,7 +481,7 @@ window.addEventListener('DOMContentLoaded', async event => {
 
     });
     async function saveToDisk() {
-        var blob = new Blob([await convertToDataURI(JSON.stringify(gltf))]);
+        var blob = new Blob([JSON.stringify(await convertToDataURI(gltf))]);
         var url = window.URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
