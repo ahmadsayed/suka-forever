@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', event => {
         },
         {
             question: "Who is Suka?",
-            answer: "Suka and friends are a small community representing diversity. Each one of them has its persona and energy. These characters come together to build a multicultural atmosphere. They can be a part ofese characters come together to build a multicultural atmosphere. They can be a part of a game or a puzzle. They can also play a role in an animated movie."
+            answer: "Suka and friends are \" Matryoshka\" inspired chracters. They are a small community representing diversity. Each one of them has their persona and energy. These characters come together to build a multicultural loving atmosphere.They can be a part of a game or a puzzle. They can also play a role in an animated movie."
         },
         {
             question: "How can I access the assets files?",
