@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', event => {
     const faqs = [
         {
             question: "What is this website?",
-            answer: "The main goal is to give them a Git-like experience while collaborating with other artists or developers in creating 3D models or 3D environments."
+            answer: "TWe give 3D Artist a Git-like experience while collaborating with other artists or developers in creating 3D models or 3D environments."
         },
         {
             question: "Who is Suka?",
