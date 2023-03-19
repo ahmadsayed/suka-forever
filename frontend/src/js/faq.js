@@ -10,11 +10,7 @@ window.addEventListener('DOMContentLoaded', event => {
         {
             question: "Who is Suka?",
             answer: "Suka and friends are \" Matryoshka\" inspired chracters. They are a small community representing diversity. Each one of them has their persona and energy. These characters come together to build a multicultural loving atmosphere.They can be a part of a game or a puzzle. They can also play a role in an animated movie."
-        },
-        {
-            question: "How can I access the assets files?",
-            answer: "We will sell our assets on Opensea as NFTs; you need to go to Opensea with your Metamask wallet and purchase it from there. With the same wallet, the download button will open for you on the website."
-        },  
+        }, 
         {
             question: "Can I sell or return the SUKA?",
             answer: "You can not return, but you can sell it on Opensea. As soon as the NFT is transferred from your Wallet, you will no longer be able to download the asset from this website and lose the right to use it in future projects."
