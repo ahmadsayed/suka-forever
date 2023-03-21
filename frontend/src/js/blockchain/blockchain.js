@@ -27,6 +27,9 @@ let client = null;
 
 const networks = new Map();
 
+let draggedToken = null;
+
+
 networks.set('FileCoin Testnet', {
     contract: '0x9A76f80b91865DF24C3B60Cc89872A087031C72c',
     params: [
@@ -47,6 +50,18 @@ networks.set('Cronos Testnet', {
             chainId: `0x${(338).toString(16)}`,
             nativeCurrency: { name: 'TCRO', decimals: 18, symbol: 'TCRO' },
             rpcUrls: ['https://evm-t3.cronos.org']
+        }
+    ]
+});
+
+networks.set('Polygon Mumbai', {
+    contract: '0x5C6Cd75f74018B46cd2D8DdC43217dE32e437E24',
+    params: [
+        {
+            chainName: "Polygon (Matic) Mumbai",
+            chainId: `0x${(80001).toString(16)}`,
+            nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+            rpcUrls: ['https://endpoints.omniatech.io/v1/matic/mumbai/public']
         }
     ]
 });
@@ -224,7 +239,6 @@ async function listAllTokensbyAddress(address) {
         }
     });
 
-
     async function loadMeshList(metadata, token, cid) {
 
 
@@ -232,6 +246,13 @@ async function listAllTokensbyAddress(address) {
             const imageData = await getFromRemoteIPFS(metadata.img);
             const clone = template.content.cloneNode(true);
             clone.querySelector(".my-suka").src = imageData.image;
+            clone.querySelector(".my-suka").addEventListener("dragstart", (event) => {
+                // store a ref. on the dragged elem
+                draggedToken = {
+                    name: token,
+                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
+                }
+              });
             clone.querySelector(".my-suka").onclick = async function () {
                 authToken = await generateAuthToken(token);
                 document.querySelector("#apikey").style.display = "block";

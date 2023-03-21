@@ -16,6 +16,7 @@ var dropArea = null;
 var containerGltf = null;
 
 
+var startingPoint;
 
 
 
@@ -79,9 +80,15 @@ async function updateHistoryList() {
     });
 }
 
+async function appendMesh(draggedToken) {
+    gltf = await convertToDataURI(await (await fetch(draggedToken.gltf)).json());
+    gltfString = JSON.stringify(gltf);
+    gltfData = `data:${gltfString}`;
 
+    await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene);
+}
 
-async function importMesh(suka, historyItem, latest=false) {
+async function importMesh(suka, historyItem, latest = false) {
     $('.modal').modal('show');
 
     for (let i = 0; i < scene.meshes.length; i++) {
@@ -160,8 +167,8 @@ async function importMesh(suka, historyItem, latest=false) {
         var zoomFactor = 1.4;
         camera.setTarget(BABYLON.Vector3.Zero());
         camera.panningSensibility = 1000 / 2;
-        camera.wheelPrecision = 500/camera.radius;
-        camera.radius =  (max.y - min.y) * zoomFactor;
+        camera.wheelPrecision = 500 / camera.radius;
+        camera.radius = (max.y - min.y) * zoomFactor;
         camera.targetScreenOffset.x = 0;
         camera.targetScreenOffset.y = 0;
         camera.lowerRadiusLimit = camera.radius / 20;
@@ -253,6 +260,10 @@ function initSamples() {
     sukas.forEach(suka => {
         const clone = template.content.cloneNode(true);
         clone.querySelector(".my-suka").src = suka.image;
+        clone.querySelector(".my-suka").addEventListener("dragstart", (event) => {
+            // store a ref. on the dragged elem
+            draggedToken = suka.name;
+          });
         clone.querySelector(".my-suka").onclick = async function () {
             currentSuka = suka;
             switchToView();
@@ -274,13 +285,13 @@ function switchToView() {
 }
 // https://sukaverse.club/builder.html?cid=QmZ7vPBBN18bvnyeTfVmGRgzFGEzqTAo53FXfymKGyZRyx&name=untitled&token=rffrfrfrfr
 
-function importMeshFromURL () {
-    const searchParams=new URLSearchParams(window.location.search);
+function importMeshFromURL() {
+    const searchParams = new URLSearchParams(window.location.search);
     if (searchParams.has('cid')) {
         const urlCID = searchParams.get('cid')
         switchToView();
         currentSuka = {
-            name: searchParams.has('name')? searchParams.get('name') : 'blender',
+            name: searchParams.has('name') ? searchParams.get('name') : 'blender',
             gltf: `https://ipfs.sukaverse.club/ipfs/${urlCID}`
         };
         //localStorage.removeItem(currentSuka.name);
@@ -306,10 +317,21 @@ window.addEventListener('DOMContentLoaded', async event => {
         });
         //If user drop File on DropArea
         area.addEventListener("drop", (event) => {
+            console.log(event);
             event.preventDefault(); //preventing from default behaviour
             //getting user select file and [0] this means if user select multiple files then we'll select only the first one
-            file = event.dataTransfer.files[0];
-            showFile(); //calling function
+            if (event != null && event.dataTransfer != null) {
+                file = event.dataTransfer.files[0];
+                if (file != null) {
+                    showFile(); //calling function
+                }
+            }
+            if (draggedToken != null) {
+                console.log(draggedToken);
+                appendMesh(draggedToken);
+
+            }
+
         });
     }
 
@@ -344,9 +366,9 @@ window.addEventListener('DOMContentLoaded', async event => {
             fileReader.onload = () => {
                 let fileURL = fileReader.result; //passing user file source in fileURL variable
                 switchToView();
-                 
+
                 currentSuka = {
-                    name: currentSuka == null ? file.name.split(".")[0]: currentSuka.name,
+                    name: currentSuka == null ? file.name.split(".")[0] : currentSuka.name,
                     gltf: fileURL
                 };
                 importMesh(currentSuka);
@@ -535,14 +557,70 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
     });
 
-    window.addEventListener("click", function () {
-        var pickResult = scene.pick(scene.pointerX, scene.pointerY);
-        // We try to pick an object
-        if (!pickResult.hit) {
-            // getPicker().isVisible = false;
+    var getGroundPosition = function () {
+        var pickinfo = scene.pick(scene.pointerX, scene.pointerY);
+        if (pickinfo.pickedMesh) {
+            console.log(pickinfo.pickedMesh.name);
+            return pickinfo.pickedPoint;
+        }   
+        return null;
+    }
+
+    var pointerDown = function (mesh) {
+        currentMesh = mesh;
+        while(currentMesh && !currentMesh.name.endsWith("Ctrl")) {
+            currentMesh = currentMesh.parent;
+        }
+        if (currentMesh  && currentMesh.name.endsWith("Ctrl")) {
+            console.log("Mesh name : " + mesh.name + " Parent Name: " + mesh.parent.name);
+            startingPoint = getGroundPosition();
+            if (startingPoint) { // we need to disconnect camera from canvas
+                setTimeout(function () {
+                    camera.detachControl(canvas);
+                }, 0);
+            }
+        }
+
+    }
+
+    var pointerMove = function (poinrtInfo) {
+        if (!startingPoint) {
+            return;
+        }
+        //var diff = current.subtract();
+        if (currentMesh) {
+            // Factor Scene Size to enhace dragging experience
+            let delta = camera.radius / 1200;
+            currentMesh.position.addInPlace(new BABYLON.Vector3( poinrtInfo.event.movementX*delta ,poinrtInfo.event.movementY*-delta,0));
+
+        }
+
+ //       startingPoint = current;
+
+    }
+    var pointerUp = function () {
+        if (startingPoint) {
+            camera.attachControl(canvas, true);
+            startingPoint = null;
+            return;
+        }
+    }
+    scene.onPointerObservable.add((pointerInfo) => {
+        switch (pointerInfo.type) {
+            case BABYLON.PointerEventTypes.POINTERDOWN:
+             //   if (pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh != ground) {
+                pointerDown(pointerInfo.pickInfo.pickedMesh)
+               // }
+                break;
+            case BABYLON.PointerEventTypes.POINTERUP:
+                pointerUp();
+                break;
+            case BABYLON.PointerEventTypes.POINTERMOVE:
+                //console.log(pointerInfo.event.movementX);
+                pointerMove(pointerInfo);
+                break;
         }
     });
-
     scene.onKeyboardObservable.add((kbInfo) => {
 
         switch (kbInfo.type) {
@@ -623,6 +701,6 @@ window.addEventListener('DOMContentLoaded', async event => {
     document.getElementById("remote-save").onclick = saveLedgerToRemoteIPFS;
 
 
-    importMeshFromURL () ;
+    importMeshFromURL();
 
 });
