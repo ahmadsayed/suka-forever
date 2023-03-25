@@ -252,13 +252,23 @@ async function listAllTokensbyAddress(address) {
                     name: token,
                     gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
                 }
-              });
+                if (!metadata.location) {
+                    draggedToken.location = {
+                        x: 0,
+                        y: 0,
+                        z: 0
+                    }
+                }                
+            });
+
+
             clone.querySelector(".my-suka").onclick = async function () {
                 authToken = await generateAuthToken(token);
                 document.querySelector("#apikey").style.display = "block";
                 currentSuka = {
                     name: token,
-                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
+                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`,
+                    tokens: metadata.tokens
                 }
                 switchToView();
                 importMesh(currentSuka);
@@ -492,8 +502,7 @@ async function onDisconnect() {
 
 async function publish() {
     let tokenID = BigInt(`0x${converStringToNumber(activeProject)}`);
-    await saveLedgerToRemoteIPFS();
-    let cid = localStorage.getItem(currentSuka.name);
+    let cid = await saveLedgerToRemoteIPFS(tokens);
     updateProject(cid, tokenID);
 
 
@@ -535,7 +544,7 @@ async function confirm() {
         // Create new project using activeProject and currentSuka 
         let tokenId = BigInt(`0x${converStringToNumber(activeProject)}`);
 
-        await saveLedgerToRemoteIPFS();
+        let cid = await saveLedgerToRemoteIPFS(tokens);
         teams = teams.split(" ").join(",");
         teams = teams.split("\n").join(",");
         let finalteams = [];
@@ -547,7 +556,6 @@ async function confirm() {
         })
         console.log(`teams: ${finalteams}`);
 
-        let cid = localStorage.getItem(currentSuka.name);
         if (finalteams.length > 0) {
             mintNFTWithTeams(cid, tokenId, finalteams);
         } else {

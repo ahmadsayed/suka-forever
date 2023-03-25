@@ -10,7 +10,12 @@ async function getBase64FromRemoteIPFS(cid) {
     const text = await (await fetch(sukaURL)).text();
     return text;
 }
-async function saveLedgerToRemoteIPFS() {
+
+async function updateLedger(microLedger) {
+    let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
+    return ledgerCID;
+}
+async function saveLedgerToRemoteIPFS(tokens = []) {
     $('.modal').modal('show');
     let response = await saveToRemoteIPFS(JSON.stringify(await convertURItoCID(gltf)));
     let cid = response;
@@ -24,14 +29,17 @@ async function saveLedgerToRemoteIPFS() {
         prev: latestCID,
         ts: new Date(new Date().getTime()).toLocaleString(),
         img: img,
-        cid: cid
+        cid: cid,
+        tokens: tokens
     };
-    let ledgerCID = await saveToRemoteIPFS(JSON.stringify(microLedger));
+    let ledgerCID = await updateLedger(microLedger);
 
     // Save to localStorage till user decide to publish 
     localStorage.setItem(currentSuka.name, ledgerCID);
     updateHistoryList();
     $('.modal').modal('hide');
+
+    return ledgerCID;
 
 }
 

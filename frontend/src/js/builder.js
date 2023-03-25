@@ -79,51 +79,124 @@ async function updateHistoryList() {
         dropdown.appendChild(para);
     });
 }
-
+var addedObjects = [];
+var tokens = [];
 async function appendMesh(draggedToken) {
-    gltf = await convertToDataURI(await (await fetch(draggedToken.gltf)).json());
-    gltfString = JSON.stringify(gltf);
-    gltfData = `data:${gltfString}`;
-
+    let gltf = await convertToDataURI(await (await fetch(draggedToken.gltf)).json());
+    let gltfString = JSON.stringify(gltf);
+    let gltfData = `data:${gltfString}`;
+    tokens.push(draggedToken);
     await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
-        newMeshes.forEach(mesh => {
-            console.log(mesh.name)
+
+            newMeshes.forEach(mesh => {
+            addedObjects.push(mesh);
+            maxRadius = 0;
+            max = null;
+            min = null;
+            biggestMesh = null;
+            minMesh = null;     
+            newMeshes.forEach(mesh => {
+                meshBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
+                if (max == null) {
+                    max = new BABYLON.Vector3(meshBox.x, meshBox.y, meshBox.z);
+                }
+                if (max.x < meshBox.x) {
+                    max.x = meshBox.x;
+                }
+                if (max.y < meshBox.y) {
+                    max.y = meshBox.y;
+                }
+                if (max.z < meshBox.z) {
+                    max.z = meshBox.z;
+                }
+                minBox = mesh.getBoundingInfo().boundingBox.minimumWorld;
+                if (min == null) {
+                    min = new BABYLON.Vector3(minBox.x, minBox.y, minBox.z);
+                }
+                if (min.x > minBox.x) {
+                    min.x = minBox.x;
+                }
+                if (min.y > minBox.y) {
+                    min.y = minBox.y;
+                }
+                if (min.z > minBox.z) {
+                    min.z = minBox.z;
+                }
+    
+    
+                if (mesh.name == "__root__") {
+                    root = mesh;
+                }
+    
+            })
+
             if (mesh.name == "__root__") {
+
+                mesh.position = (new BABYLON.Vector3(draggedToken.location.x, draggedToken.location.y - ((max.y - min.y) / 2), draggedToken.location.z));
                 var boundingBox = BABYLON.BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(mesh)
 
-                var utilLayer = new BABYLON.UtilityLayerRenderer(scene)
-                utilLayer.utilityLayerScene.autoClearDepthAndStencil = false;
                 var gizmo = new BABYLON.BoundingBoxGizmo(BABYLON.Color3.FromHexString("#0984e3"), utilLayer)
                 gizmo.rotationSphereSize = 0.3;
                 gizmo.scaleBoxSize = 0.3;
-                
-
                 gizmo.attachedMesh = boundingBox;
-                // // Create behaviors to drag and scale with pointers in VR
+                gizmo.onRotationSphereDragObservable.add((event) => {
+                    console.log(gizmo._tmpQuaternion);
+
+                });
+                // Create behaviors to drag and scale with pointers in VR
                 var sixDofDragBehavior = new BABYLON.SixDofDragBehavior()
                 boundingBox.addBehavior(sixDofDragBehavior)
                 var multiPointerScaleBehavior = new BABYLON.MultiPointerScaleBehavior()
-                boundingBox.addBehavior(multiPointerScaleBehavior)            
+                boundingBox.addBehavior(multiPointerScaleBehavior)
+                // Optionally, add some events to listen to drag events
+                sixDofDragBehavior.onDragStartObservable.add((event) => {
+                    console.log("dragStart");
+                    console.log(event);
+                });
+                sixDofDragBehavior.onDragObservable.add((event) => {
+                    console.log("drag");
+                    draggedToken.location.x = event.position.x;
+                    draggedToken.location.y = event.position.y   ;
+                    draggedToken.location.z = event.position.z;
+                    console.log(draggedToken);
+                });
+                sixDofDragBehavior.onDragEndObservable.add((event) => {
+                    console.log("dragEnd");
+                    console.log(event);
+                });
+
             }
         });
     });
 }
-
+var utilLayer = null;
+let rawGLTF = null;
 async function importMesh(suka, historyItem, latest = false) {
     $('.modal').modal('show');
-
+    for (let i = 0; i < addedObjects.length; i++) {
+        addedObjects[i].dispose();
+    }
     for (let i = 0; i < scene.meshes.length; i++) {
         scene.meshes[i].dispose();
     }
+
     if (parent != null) {
         parent.dispose();
     }
+    if (utilLayer != null) {
+        utilLayer.dispose();
+
+    }
+    tokens = [];
+    utilLayer = new BABYLON.UtilityLayerRenderer(scene)
+    utilLayer.utilityLayerScene.autoClearDepthAndStencil = false;
     hidePicker();
     var gltfData = null;
     var gltfString = null;
     if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
         if (!latest || localStorage.getItem(suka.name) == null) {
-            gltf = await convertToDataURI(await (await fetch(suka.gltf)).json());
+            rawGLTF = await (await fetch(suka.gltf)).json();
+            gltf = await convertToDataURI(rawGLTF);
             gltfString = JSON.stringify(gltf);
         } else {
             const latestCID = localStorage.getItem(suka.name);
@@ -135,6 +208,7 @@ async function importMesh(suka, historyItem, latest = false) {
 
         }
     } else {
+        suka = historyItem;
         gltf = await convertToDataURI(await getFromRemoteIPFS(historyItem.cid));
         gltfString = JSON.stringify(gltf);
     }
@@ -197,21 +271,12 @@ async function importMesh(suka, historyItem, latest = false) {
         camera.lowerRadiusLimit = camera.radius / 20;
         camera.upperRadiusLimit = camera.radius * 3;
         root.position.y -= ((max.y - min.y) / 2);
-
-        // const axis = new BABYLON.AxesViewer(scene, 1);
-        // let axisPos = new BABYLON.Vector3(2, -2, 0);
-
-        // camera.onViewMatrixChangedObservable.add(() => {
-        //     var p = camera.position.clone();
-        //     p.addInPlace(camera.getDirection(new BABYLON.Vector3(0, 0, 9)));
-        //     p.addInPlace(camera.getDirection(new BABYLON.Vector3(0, -3, 0)));
-        //     p.addInPlace(camera.getDirection(new BABYLON.Vector3(6, 0, 0)));
-        //     console.log(p.clone())
-        //     axis.xAxis.position = p.clone();
-        //     axis.yAxis.position = p.clone();
-        //     axis.zAxis.position = p.clone();
-        // });
-
+        console.log(suka);  
+        if (suka.tokens) {
+            suka.tokens.forEach(token => {
+                appendMesh(token);
+            })
+        }
     });
     $('.modal').modal('hide');
 
@@ -300,7 +365,15 @@ function initSamples() {
         clone.querySelector(".my-suka").src = suka.image;
         clone.querySelector(".my-suka").addEventListener("dragstart", (event) => {
             // store a ref. on the dragged elem
-            draggedToken = suka.name;
+            if (!suka.location) {
+                suka.location = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+            }
+            draggedToken = suka;
+
         });
         clone.querySelector(".my-suka").onclick = async function () {
             currentSuka = suka;
@@ -355,7 +428,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         });
         //If user drop File on DropArea
         area.addEventListener("drop", (event) => {
-            console.log(event);
             event.preventDefault(); //preventing from default behaviour
             //getting user select file and [0] this means if user select multiple files then we'll select only the first one
             if (event != null && event.dataTransfer != null) {
@@ -365,7 +437,6 @@ window.addEventListener('DOMContentLoaded', async event => {
                 }
             }
             if (draggedToken != null) {
-                console.log(draggedToken);
                 appendMesh(draggedToken);
 
             }
@@ -574,7 +645,6 @@ window.addEventListener('DOMContentLoaded', async event => {
     var getGroundPosition = function () {
         var pickinfo = scene.pick(scene.pointerX, scene.pointerY);
         if (pickinfo.pickedMesh) {
-            console.log(pickinfo.pickedMesh.name);
             return pickinfo.pickedPoint;
         }
         return null;
@@ -586,7 +656,6 @@ window.addEventListener('DOMContentLoaded', async event => {
             currentMesh = currentMesh.parent;
         }
         if (currentMesh && currentMesh.name.endsWith("Ctrl")) {
-            console.log("Mesh name : " + mesh.name + " Parent Name: " + mesh.parent.name);
             startingPoint = getGroundPosition();
             if (startingPoint) { // we need to disconnect camera from canvas
                 setTimeout(function () {
