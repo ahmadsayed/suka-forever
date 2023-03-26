@@ -191,6 +191,17 @@ async function generateAuthToken(tokenid) {
     return authToken;
 }
 
+async function getTokenGltf(token) {
+    let cid = await contract.methods.tokenURI(token).call();
+    console.log(`CID: ${cid}, Token: ${token}`);
+    try {
+        const metadata = await getFromRemoteIPFS(cid);
+        return `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`;
+    } catch(error){
+        console.log(error);
+    }
+    
+}
 
 async function listAllTokensbyAddress(address) {
 
@@ -228,6 +239,7 @@ async function listAllTokensbyAddress(address) {
     }
     const tokenIds = await contract.methods.listTokens(address).call();
     tokenIds.forEach(async (token) => {
+
         let cid = await contract.methods.tokenURI(token).call();
         console.log(`CID: ${cid}, Token: ${token}`);
         try {
@@ -254,6 +266,11 @@ async function listAllTokensbyAddress(address) {
                 }
                 if (!metadata.location) {
                     draggedToken.location = {
+                        x: 0,
+                        y: 0,
+                        z: 0
+                    };
+                    draggedToken.rotation = {
                         x: 0,
                         y: 0,
                         z: 0

@@ -82,12 +82,22 @@ async function updateHistoryList() {
 var addedObjects = [];
 var tokens = [];
 async function appendMesh(draggedToken) {
-    let gltf = await convertToDataURI(await (await fetch(draggedToken.gltf)).json());
+    const tokeGLTF = await getTokenGltf(draggedToken.name);
+    let gltf = await convertToDataURI(await (await fetch(tokeGLTF)).json());
     let gltfString = JSON.stringify(gltf);
     let gltfData = `data:${gltfString}`;
     tokens.push(draggedToken);
     await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
-
+            newMeshes.forEach(mesh => {
+                console.log(mesh.name);
+                if (mesh.name == "__root__") {
+                    if (draggedToken.scale) {
+                        mesh.scaling.x = draggedToken.scale.x;
+                        mesh.scaling.y = draggedToken.scale.y;
+                        mesh.scaling.z = -1 * draggedToken.scale.z;
+                    }
+                }                
+            })
             newMeshes.forEach(mesh => {
             addedObjects.push(mesh);
             maxRadius = 0;
@@ -132,7 +142,17 @@ async function appendMesh(draggedToken) {
 
             if (mesh.name == "__root__") {
 
-                mesh.position = (new BABYLON.Vector3(draggedToken.location.x, draggedToken.location.y - ((max.y - min.y) / 2), draggedToken.location.z));
+                mesh.position = (new BABYLON.Vector3(
+                    draggedToken.location.x, 
+                    draggedToken.location.y - (((max.y - min.y) *  draggedToken.scale.y) / 2), 
+                    draggedToken.location.z));
+                if (draggedToken.rotation) {
+                    mesh.rotationQuaternion.x = draggedToken.rotation.x;
+                    mesh.rotationQuaternion.y = draggedToken.rotation.y;
+                    mesh.rotationQuaternion.z = draggedToken.rotation.z;
+                    mesh.rotationQuaternion.w =  (draggedToken.rotation.w) ? draggedToken.rotation.w:0;
+
+                }
                 var boundingBox = BABYLON.BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(mesh)
 
                 var gizmo = new BABYLON.BoundingBoxGizmo(BABYLON.Color3.FromHexString("#0984e3"), utilLayer)
@@ -140,8 +160,28 @@ async function appendMesh(draggedToken) {
                 gizmo.scaleBoxSize = 0.3;
                 gizmo.attachedMesh = boundingBox;
                 gizmo.onRotationSphereDragObservable.add((event) => {
-                    console.log(gizmo._tmpQuaternion);
+                    if (!draggedToken.rotation) {
+                        draggedToken.rotation = {x:0, y:0, z:0, w:0};
+                    }
+                    draggedToken.rotation.x = gizmo._tmpQuaternion.x;
+                    draggedToken.rotation.y = gizmo._tmpQuaternion.y;
+                    draggedToken.rotation.z = gizmo._tmpQuaternion.z;   
+                    draggedToken.rotation.w = gizmo._tmpQuaternion.w;
+                });
+                let currentScale = {};
+                currentScale.x = gizmo._existingMeshScale.x;
+                currentScale.y = gizmo._existingMeshScale.y;
 
+                currentScale.z = gizmo._existingMeshScale.z;
+
+                gizmo.onScaleBoxDragObservable.add((event) => {
+                    console.log(gizmo._existingMeshScale);
+                    if (!draggedToken.scale) {
+                        draggedToken.scale = {x:0, y:0, z:0};
+                    }
+                    draggedToken.scale.x =  gizmo._existingMeshScale.x / currentScale.x;
+                    draggedToken.scale.y =  gizmo._existingMeshScale.y / currentScale.y;
+                    draggedToken.scale.z =  gizmo._existingMeshScale.z / currentScale.z;
                 });
                 // Create behaviors to drag and scale with pointers in VR
                 var sixDofDragBehavior = new BABYLON.SixDofDragBehavior()
@@ -149,20 +189,14 @@ async function appendMesh(draggedToken) {
                 var multiPointerScaleBehavior = new BABYLON.MultiPointerScaleBehavior()
                 boundingBox.addBehavior(multiPointerScaleBehavior)
                 // Optionally, add some events to listen to drag events
-                sixDofDragBehavior.onDragStartObservable.add((event) => {
-                    console.log("dragStart");
-                    console.log(event);
-                });
+
                 sixDofDragBehavior.onDragObservable.add((event) => {
-                    console.log("drag");
+                    if (!draggedToken.location) {
+                        draggedToken.location = {x:0, y:0, z:0};
+                    }
                     draggedToken.location.x = event.position.x;
-                    draggedToken.location.y = event.position.y   ;
+                    draggedToken.location.y = event.position.y;
                     draggedToken.location.z = event.position.z;
-                    console.log(draggedToken);
-                });
-                sixDofDragBehavior.onDragEndObservable.add((event) => {
-                    console.log("dragEnd");
-                    console.log(event);
                 });
 
             }
@@ -367,6 +401,11 @@ function initSamples() {
             // store a ref. on the dragged elem
             if (!suka.location) {
                 suka.location = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                };
+                suka.rotation = {
                     x: 0,
                     y: 0,
                     z: 0
