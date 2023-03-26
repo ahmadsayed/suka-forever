@@ -141,10 +141,10 @@ async function appendMesh(draggedToken) {
             })
 
             if (mesh.name == "__root__") {
-
+                let scale = ( draggedToken.scale) ? draggedToken.scale.y : 1;
                 mesh.position = (new BABYLON.Vector3(
                     draggedToken.location.x, 
-                    draggedToken.location.y - (((max.y - min.y) *  draggedToken.scale.y) / 2), 
+                    draggedToken.location.y - (((max.y - min.y) *  scale) / 2), 
                     draggedToken.location.z));
                 if (draggedToken.rotation) {
                     mesh.rotationQuaternion.x = draggedToken.rotation.x;
