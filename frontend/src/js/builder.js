@@ -681,68 +681,6 @@ window.addEventListener('DOMContentLoaded', async event => {
         }
     });
 
-    var getGroundPosition = function () {
-        var pickinfo = scene.pick(scene.pointerX, scene.pointerY);
-        if (pickinfo.pickedMesh) {
-            return pickinfo.pickedPoint;
-        }
-        return null;
-    }
-
-    var pointerDown = function (mesh) {
-        currentMesh = mesh;
-        while (currentMesh && !currentMesh.name.endsWith("Ctrl")) {
-            currentMesh = currentMesh.parent;
-        }
-        if (currentMesh && currentMesh.name.endsWith("Ctrl")) {
-            startingPoint = getGroundPosition();
-            if (startingPoint) { // we need to disconnect camera from canvas
-                setTimeout(function () {
-                    camera.detachControl(canvas);
-                }, 0);
-            }
-        }
-
-    }
-
-    var pointerMove = function (poinrtInfo) {
-        if (!startingPoint) {
-            return;
-        }
-        //var diff = current.subtract();
-        if (currentMesh) {
-            // Factor Scene Size to enhace dragging experience
-            let delta = camera.radius / 1200;
-            currentMesh.position.addInPlace(new BABYLON.Vector3(poinrtInfo.event.movementX * delta, poinrtInfo.event.movementY * -delta, 0));
-
-        }
-
-        //       startingPoint = current;
-
-    }
-    var pointerUp = function () {
-        if (startingPoint) {
-            camera.attachControl(canvas, true);
-            startingPoint = null;
-            return;
-        }
-    }
-    // scene.onPointerObservable.add((pointerInfo) => {
-    //     switch (pointerInfo.type) {
-    //         case BABYLON.PointerEventTypes.POINTERDOWN:
-    //          //   if (pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh != ground) {
-    //             pointerDown(pointerInfo.pickInfo.pickedMesh)
-    //            // }
-    //             break;
-    //         case BABYLON.PointerEventTypes.POINTERUP:
-    //             pointerUp();
-    //             break;
-    //         case BABYLON.PointerEventTypes.POINTERMOVE:
-    //             //console.log(pointerInfo.event.movementX);
-    //             pointerMove(pointerInfo);
-    //             break;
-    //     }
-    // });
     scene.onKeyboardObservable.add((kbInfo) => {
 
         switch (kbInfo.type) {
