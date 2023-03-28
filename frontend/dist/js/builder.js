@@ -169,10 +169,18 @@ async function appendMesh(draggedToken) {
                     draggedToken.rotation.w = gizmo._tmpQuaternion.w;
                 });
                 let currentScale = {};
-                currentScale.x = gizmo._existingMeshScale.x;
-                currentScale.y = gizmo._existingMeshScale.y;
+                if (draggedToken.scale) {
+                    currentScale.x = gizmo._existingMeshScale.x/draggedToken.scale.x;
+                    currentScale.y = gizmo._existingMeshScale.y/draggedToken.scale.y;
+    
+                    currentScale.z = gizmo._existingMeshScale.z/draggedToken.scale.z;
+                } else {
+                    currentScale.x = gizmo._existingMeshScale.x;
+                    currentScale.y = gizmo._existingMeshScale.y;
+    
+                    currentScale.z = gizmo._existingMeshScale.z;
+                }
 
-                currentScale.z = gizmo._existingMeshScale.z;
 
                 gizmo.onScaleBoxDragObservable.add((event) => {
                     console.log(gizmo._existingMeshScale);
@@ -408,7 +416,8 @@ function initSamples() {
                 suka.rotation = {
                     x: 0,
                     y: 0,
-                    z: 0
+                    z: 0,
+                    w: 0
                 }
             }
             draggedToken = suka;
