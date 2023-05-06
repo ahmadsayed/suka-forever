@@ -18,7 +18,9 @@ var containerGltf = null;
 
 var startingPoint;
 
+const DARG_BOX_NAME = "bound_drag_box"
 
+var totalTokens = 0;
 
 function showPicker(mesh) {
     getPicker(mesh).isVisible = true;
@@ -79,32 +81,35 @@ async function updateHistoryList() {
         dropdown.appendChild(para);
     });
 }
-var addedObjects = [];
+var addedObjects = new Map();
 var tokens = [];
-async function appendMesh(draggedToken) {
+
+async function appendMesh(draggedToken, index) {
     const tokeGLTF = await getTokenGltf(draggedToken.name);
     let gltf = await convertToDataURI(await (await fetch(tokeGLTF)).json());
     let gltfString = JSON.stringify(gltf);
     let gltfData = `data:${gltfString}`;
     tokens.push(draggedToken);
+
+    addedObjects.set( `${draggedToken.name}_${index}`,[]);
     await BABYLON.SceneLoader.ImportMesh('', '', gltfData, scene, function (newMeshes) {
-            newMeshes.forEach(mesh => {
-                console.log(mesh.name);
-                if (mesh.name == "__root__") {
-                    if (draggedToken.scale) {
-                        mesh.scaling.x = draggedToken.scale.x;
-                        mesh.scaling.y = draggedToken.scale.y;
-                        mesh.scaling.z = -1 * draggedToken.scale.z;
-                    }
-                }                
-            })
-            newMeshes.forEach(mesh => {
-            addedObjects.push(mesh);
+        newMeshes.forEach(mesh => {
+            console.log(mesh.name);
+            if (mesh.name == "__root__") {
+                if (draggedToken.scale) {
+                    mesh.scaling.x = draggedToken.scale.x;
+                    mesh.scaling.y = draggedToken.scale.y;
+                    mesh.scaling.z = -1 * draggedToken.scale.z;
+                }
+            }
+        })
+        newMeshes.forEach(mesh => {
+            addedObjects.get(`${draggedToken.name}_${index}`).push(mesh);
             maxRadius = 0;
             max = null;
             min = null;
             biggestMesh = null;
-            minMesh = null;     
+            minMesh = null;
             newMeshes.forEach(mesh => {
                 meshBox = mesh.getBoundingInfo().boundingBox.maximumWorld;
                 if (max == null) {
@@ -132,52 +137,52 @@ async function appendMesh(draggedToken) {
                 if (min.z > minBox.z) {
                     min.z = minBox.z;
                 }
-    
-    
+
+
                 if (mesh.name == "__root__") {
                     root = mesh;
                 }
-    
+
             })
 
             if (mesh.name == "__root__") {
-                let scale = ( draggedToken.scale) ? draggedToken.scale.y : 1;
+                let scale = (draggedToken.scale) ? draggedToken.scale.y : 1;
                 mesh.position = (new BABYLON.Vector3(
-                    draggedToken.location.x, 
-                    draggedToken.location.y - (((max.y - min.y) *  scale) / 2), 
+                    draggedToken.location.x,
+                    draggedToken.location.y - (((max.y - min.y) * scale) / 2),
                     draggedToken.location.z));
                 if (draggedToken.rotation) {
                     mesh.rotationQuaternion.x = draggedToken.rotation.x;
                     mesh.rotationQuaternion.y = draggedToken.rotation.y;
                     mesh.rotationQuaternion.z = draggedToken.rotation.z;
-                    mesh.rotationQuaternion.w =  (draggedToken.rotation.w) ? draggedToken.rotation.w:0;
+                    mesh.rotationQuaternion.w = (draggedToken.rotation.w) ? draggedToken.rotation.w : 0;
 
                 }
                 var boundingBox = BABYLON.BoundingBoxGizmo.MakeNotPickableAndWrapInBoundingBox(mesh)
-
+                boundingBox.name = `${DARG_BOX_NAME}_${draggedToken.name}_${index}`;
                 var gizmo = new BABYLON.BoundingBoxGizmo(BABYLON.Color3.FromHexString("#0984e3"), utilLayer)
                 gizmo.rotationSphereSize = 0.3;
                 gizmo.scaleBoxSize = 0.3;
                 gizmo.attachedMesh = boundingBox;
                 gizmo.onRotationSphereDragObservable.add((event) => {
                     if (!draggedToken.rotation) {
-                        draggedToken.rotation = {x:0, y:0, z:0, w:0};
+                        draggedToken.rotation = { x: 0, y: 0, z: 0, w: 0 };
                     }
                     draggedToken.rotation.x = gizmo._tmpQuaternion.x;
                     draggedToken.rotation.y = gizmo._tmpQuaternion.y;
-                    draggedToken.rotation.z = gizmo._tmpQuaternion.z;   
+                    draggedToken.rotation.z = gizmo._tmpQuaternion.z;
                     draggedToken.rotation.w = gizmo._tmpQuaternion.w;
                 });
                 let currentScale = {};
                 if (draggedToken.scale) {
-                    currentScale.x = gizmo._existingMeshScale.x/draggedToken.scale.x;
-                    currentScale.y = gizmo._existingMeshScale.y/draggedToken.scale.y;
-    
-                    currentScale.z = gizmo._existingMeshScale.z/draggedToken.scale.z;
+                    currentScale.x = gizmo._existingMeshScale.x / draggedToken.scale.x;
+                    currentScale.y = gizmo._existingMeshScale.y / draggedToken.scale.y;
+
+                    currentScale.z = gizmo._existingMeshScale.z / draggedToken.scale.z;
                 } else {
                     currentScale.x = gizmo._existingMeshScale.x;
                     currentScale.y = gizmo._existingMeshScale.y;
-    
+
                     currentScale.z = gizmo._existingMeshScale.z;
                 }
 
@@ -185,11 +190,11 @@ async function appendMesh(draggedToken) {
                 gizmo.onScaleBoxDragObservable.add((event) => {
                     console.log(gizmo._existingMeshScale);
                     if (!draggedToken.scale) {
-                        draggedToken.scale = {x:0, y:0, z:0};
+                        draggedToken.scale = { x: 0, y: 0, z: 0 };
                     }
-                    draggedToken.scale.x =  gizmo._existingMeshScale.x / currentScale.x;
-                    draggedToken.scale.y =  gizmo._existingMeshScale.y / currentScale.y;
-                    draggedToken.scale.z =  gizmo._existingMeshScale.z / currentScale.z;
+                    draggedToken.scale.x = gizmo._existingMeshScale.x / currentScale.x;
+                    draggedToken.scale.y = gizmo._existingMeshScale.y / currentScale.y;
+                    draggedToken.scale.z = gizmo._existingMeshScale.z / currentScale.z;
                 });
                 // Create behaviors to drag and scale with pointers in VR
                 var sixDofDragBehavior = new BABYLON.SixDofDragBehavior()
@@ -200,7 +205,7 @@ async function appendMesh(draggedToken) {
 
                 sixDofDragBehavior.onDragObservable.add((event) => {
                     if (!draggedToken.location) {
-                        draggedToken.location = {x:0, y:0, z:0};
+                        draggedToken.location = { x: 0, y: 0, z: 0 };
                     }
                     draggedToken.location.x = event.position.x;
                     draggedToken.location.y = event.position.y;
@@ -215,9 +220,13 @@ var utilLayer = null;
 let rawGLTF = null;
 async function importMesh(suka, historyItem, latest = false) {
     $('.modal').modal('show');
-    for (let i = 0; i < addedObjects.length; i++) {
-        addedObjects[i].dispose();
+    for (const [key, value] of addedObjects.entries()) {
+        for (let i = 0; i < value.length; i++) {
+            value[i].dispose();
+        }    
     }
+    addedObjects.clear();
+
     for (let i = 0; i < scene.meshes.length; i++) {
         scene.meshes[i].dispose();
     }
@@ -235,6 +244,7 @@ async function importMesh(suka, historyItem, latest = false) {
     hidePicker();
     var gltfData = null;
     var gltfString = null;
+    totalTokens = 0;
     if (historyItem == null || typeof historyItem === 'undefined') {                      // Get the latest from the IPFS or Local
         if (!latest || localStorage.getItem(suka.name) == null) {
             rawGLTF = await (await fetch(suka.gltf)).json();
@@ -313,10 +323,10 @@ async function importMesh(suka, historyItem, latest = false) {
         camera.lowerRadiusLimit = camera.radius / 20;
         camera.upperRadiusLimit = camera.radius * 3;
         root.position.y -= ((max.y - min.y) / 2);
-        console.log(suka);  
+        console.log(suka);
         if (suka.tokens) {
             suka.tokens.forEach(token => {
-                appendMesh(token);
+                appendMesh(token, totalTokens++);
             })
         }
     });
@@ -352,6 +362,8 @@ function getPicker(mesh) {
     picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
     picker.onValueChangedObservable.clear();
     if (mesh != null) {
+
+        hideMenu();
         pickerTitle.text = mesh.material.name;
 
         picker.value = mesh.material.albedoColor;
@@ -368,6 +380,7 @@ function getPicker(mesh) {
                 }
             });
         });
+
     }
 
     return picker;
@@ -485,7 +498,7 @@ window.addEventListener('DOMContentLoaded', async event => {
                 }
             }
             if (draggedToken != null) {
-                appendMesh(draggedToken);
+                appendMesh(draggedToken, totalTokens++);
 
             }
 
@@ -684,7 +697,15 @@ window.addEventListener('DOMContentLoaded', async event => {
         // We try to pick an object
         if (pickResult.hit) {
             // pickResult.pickedMesh.name;
-            showPicker(pickResult.pickedMesh);
+            if (pickResult.pickedMesh && pickResult.pickedMesh.name.startsWith(DARG_BOX_NAME)) {
+                const token_name = pickResult.pickedMesh.name.replace(`${DARG_BOX_NAME}_`, '')
+                showMenu(token_name);
+                hidePicker();
+                return null;
+            } else {
+                showPicker(pickResult.pickedMesh);
+            }
+
         } else {
             hidePicker();
         }
@@ -771,5 +792,6 @@ window.addEventListener('DOMContentLoaded', async event => {
 
 
     importMeshFromURL();
+    initMenu();
 
 });

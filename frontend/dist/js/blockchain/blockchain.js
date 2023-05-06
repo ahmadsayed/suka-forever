@@ -168,10 +168,10 @@ async function fetchAccountData() {
 }
 
 async function generateAuthToken(tokenid) {
-//     cachSignature: `
-//     tokenId,
-//     signature
-// `,
+    //     cachSignature: `
+    //     tokenId,
+    //     signature
+    // `,
     let authToken = null;
     let authTokenObject = await db.cachSignature.get(`${tokenid}:${selectedAccount}`);
     if (authTokenObject == null) {
@@ -181,8 +181,8 @@ async function generateAuthToken(tokenid) {
         let base64Signature = btoa(signature);
         authToken = `${base64message}.${base64Signature}`
         db.cachSignature.put({
-            tokenId: `${tokenid}:${selectedAccount}`, 
-            signature:authToken
+            tokenId: `${tokenid}:${selectedAccount}`,
+            signature: authToken
         });
     } else {
         authToken = authTokenObject.signature;
@@ -197,10 +197,10 @@ async function getTokenGltf(token) {
     try {
         const metadata = await getFromRemoteIPFS(cid);
         return `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`;
-    } catch(error){
+    } catch (error) {
         console.log(error);
     }
-    
+
 }
 
 async function listAllTokensbyAddress(address) {
@@ -243,8 +243,9 @@ async function listAllTokensbyAddress(address) {
         let cid = await contract.methods.tokenURI(token).call();
         console.log(`CID: ${cid}, Token: ${token}`);
         try {
-            const metadata = await getFromRemoteIPFS(cid);
-            loadMeshList(metadata, token, cid);
+            getFromRemoteIPFS(cid).then(metadata => {
+                loadMeshList(metadata, token, cid);
+            });
 
         } catch (error) {
             console.error(error);
@@ -255,72 +256,70 @@ async function listAllTokensbyAddress(address) {
 
 
         if (metadata.hasOwnProperty("img")) {
-            const imageData = await getFromRemoteIPFS(metadata.img);
-            const clone = template.content.cloneNode(true);
-            clone.querySelector(".my-suka").src = imageData.image;
-            clone.querySelector(".my-suka").addEventListener("dragstart", (event) => {
-                // store a ref. on the dragged elem
-                draggedToken = {
-                    name: token,
-                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
-                }
-                if (!metadata.location) {
-                    draggedToken.location = {
-                        x: 0,
-                        y: 0,
-                        z: 0
-                    };
-                    draggedToken.rotation = {
-                        x: 0,
-                        y: 0,
-                        z: 0
+            //const imageData = await 
+
+            getFromRemoteIPFS(metadata.img).then(imageData => {
+                const clone = template.content.cloneNode(true);
+                clone.querySelector(".my-suka").src = imageData.image;
+                clone.querySelector(".my-suka").addEventListener("dragstart", (event) => {
+                    // store a ref. on the dragged elem
+                    draggedToken = {
+                        name: token,
+                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`
                     }
-                }                
-            });
+                    if (!metadata.location) {
+                        draggedToken.location = {
+                            x: 0,
+                            y: 0,
+                            z: 0
+                        };
+                        draggedToken.rotation = {
+                            x: 0,
+                            y: 0,
+                            z: 0
+                        }
+                    }
+                });
+                clone.querySelector(".my-suka").onclick = async function () {
+                    authToken = await generateAuthToken(token);
+                    document.querySelector("#apikey").style.display = "block";
+                    currentSuka = {
+                        name: token,
+                        gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`,
+                        tokens: metadata.tokens
+                    }
+                    switchToView();
+                    importMesh(currentSuka);
+                    localStorage.setItem(currentSuka.name, cid);
 
+                    updateHistoryList();
+                    activeProject = convertNumberToString(BigInt(token));
+                    document.getElementById("publish").disabled = false;
 
-            clone.querySelector(".my-suka").onclick = async function () {
-                authToken = await generateAuthToken(token);
-                document.querySelector("#apikey").style.display = "block";
-                currentSuka = {
-                    name: token,
-                    gltf: `https://ipfs.sukaverse.club/ipfs/${metadata.cid}?name=${convertNumberToString(BigInt(token))}.gltf`,
-                    tokens: metadata.tokens
-                }
-                switchToView();
-                importMesh(currentSuka);
-                localStorage.setItem(currentSuka.name, cid);
-
-                updateHistoryList();
-                activeProject = convertNumberToString(BigInt(token));
-                document.getElementById("publish").disabled = false;
-
-                document.getElementById("notification").textContent = `Active project -> ${activeProject}`
-                const form = new FormData();
-                form.append('data', currentSuka.name);
-                async function subscribe() {
-                    await client.pubsub.unsubscribe(authToken);
-                    await client.pubsub.subscribe(authToken, (result) => {
-                        var textDecoder = new TextDecoder("utf-8");
-                        decoded = textDecoder.decode(result.data);
-                        currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;
-                        importMesh(currentSuka);
-                        console.log(result);
-                        console.log(decoded);
-                    })
-                }
-                subscribe();
-                const interval = setInterval(async function () {
+                    document.getElementById("notification").textContent = `Active project -> ${activeProject}`
+                    const form = new FormData();
+                    form.append('data', currentSuka.name);
+                    async function subscribe() {
+                        await client.pubsub.unsubscribe(authToken);
+                        await client.pubsub.subscribe(authToken, (result) => {
+                            var textDecoder = new TextDecoder("utf-8");
+                            decoded = textDecoder.decode(result.data);
+                            currentSuka.gltf = `https://ipfs.sukaverse.club/ipfs/${decoded}?name=${convertNumberToString(BigInt(token))}.gltf`;
+                            importMesh(currentSuka);
+                            console.log(result);
+                            console.log(decoded);
+                        })
+                    }
                     subscribe();
-                }, 60000);
+                    const interval = setInterval(async function () {
+                        subscribe();
+                    }, 60000);
+                }
+                sukaList.appendChild(clone);
 
-            }
-
-            sukaList.appendChild(clone);
-
+            })
         }
     }
-
 }
 
 
@@ -389,8 +388,8 @@ function updateProject(cid, tokenID) {
         })
         .on('error', function (error, receipt) {
             console.log(`receipt: ${JSON.stringify(receipt)}, error: ${JSON.stringify(error)}`);
-        }); 
-        document.querySelector("#apikey").style.display = "block";
+        });
+    document.querySelector("#apikey").style.display = "block";
 
 }
 

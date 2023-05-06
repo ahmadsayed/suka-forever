@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', event => {
     const accountContainer = document.querySelector("#about-container");
     const sukas = [
         {
-            brief: "A story from the Middleast",
+            brief: "A story from Middleast",
             name: "Rema",
             
             image: "https://ipfs.sukaverse.club/ipfs/QmVw4GrmA5T9wtXJDtyyuuCVZvkiwQA5QkdYRhCoNC1Lj5?filename=900x600.jpg",
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', event => {
  
         },
         {
-            brief: "A wild wild West",
+            brief: "Wild wild West",
             name: "Howdy",
             image: "https://ipfs.sukaverse.club/ipfs/QmR6omxqY1JAKq96kVrG8Vz9tku45VyuhmT2fPje9JDsHM?filename=900x600.jpg",
             story: "Howdy is a wise soul, He seeks adventures to fulfill his curiosity, He is solid yet thoughtful and considerate."
