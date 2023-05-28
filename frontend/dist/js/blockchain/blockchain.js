@@ -29,7 +29,17 @@ const networks = new Map();
 
 let draggedToken = null;
 
-
+networks.set('Wowen', {
+    contract: '0x9b8088C47DCc83987c87ce2C82390630f91d9c7c',
+    params: [
+        {
+            chainName: "Wowen Network",
+            chainId: `0x${(981).toString(16)}`,
+            nativeCurrency: { name: 'WOWn', decimals: 18, symbol: 'tFIL' },
+            rpcUrls: ['https://api.wowen.io/nodes/rpc']
+        }
+    ]
+})
 networks.set('FileCoin Testnet', {
     contract: '0x9A76f80b91865DF24C3B60Cc89872A087031C72c',
     params: [

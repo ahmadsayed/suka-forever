@@ -452,6 +452,7 @@ function switchToView() {
     dropArea.style.display = "none";
 
     containerGltf.style.display = "block";
+    canvas.height = 700;
     engine.resize();
     resize()
 }
