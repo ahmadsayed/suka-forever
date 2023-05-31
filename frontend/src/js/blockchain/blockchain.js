@@ -35,7 +35,7 @@ networks.set('Wowen', {
         {
             chainName: "Wowen Network",
             chainId: `0x${(981).toString(16)}`,
-            nativeCurrency: { name: 'WOWn', decimals: 18, symbol: 'tFIL' },
+            nativeCurrency: { name: 'WOWn', decimals: 18, symbol: 'WOWn' },
             rpcUrls: ['https://api.wowen.io/nodes/rpc']
         }
     ]
